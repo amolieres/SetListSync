@@ -1,7 +1,6 @@
-package com.amolieres.setlistync.core.domain.repository
+package com.amolieres.setlistync.core.domain.setList.repository
 
-import com.amolieres.setlistync.core.domain.model.SetList
-
+import com.amolieres.setlistync.core.domain.setList.model.SetList
 
 interface SetListRepository {
     suspend fun getSetLists(bandId: String): List<SetList>

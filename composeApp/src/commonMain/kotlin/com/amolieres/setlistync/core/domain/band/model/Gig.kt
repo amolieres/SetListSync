@@ -1,4 +1,4 @@
-package com.amolieres.setlistync.core.domain.model
+package com.amolieres.setlistync.core.domain.band.model
 
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
@@ -9,5 +9,5 @@ data class Gig @OptIn(ExperimentalTime::class) constructor(
     val venue: String? = null,
     val date: Instant? = null,
     val expectedDurationMinutes: Int? = null,
-    val setListId: String? = null
+    val setListIds: List<String>? = null
 )

@@ -1,7 +1,7 @@
-package com.amolieres.setlistync.core.domain.repository
+package com.amolieres.setlistync.core.domain.song.repository
 
-import com.amolieres.setlistync.core.domain.model.Song
-import com.amolieres.setlistync.core.domain.model.SongId
+import com.amolieres.setlistync.core.domain.song.model.Song
+import com.amolieres.setlistync.core.domain.song.model.SongId
 
 interface SongRepository {
     suspend fun getAllSongs(bandId: String): List<Song>
