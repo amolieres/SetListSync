@@ -11,19 +11,22 @@ import androidx.compose.ui.unit.dp
 import com.amolieres.setlistync.feature.user.presentation.UserAuthEvent
 import com.amolieres.setlistync.feature.user.presentation.UserAuthUiEvent
 import com.amolieres.setlistync.feature.user.presentation.UserAuthUiState
-import com.amolieres.setlistync.feature.user.presentation.UserAuthViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun UserAuthScreen(
     state: UserAuthUiState,
-    viewModel: UserAuthViewModel,
-    onNavigateToBands: () -> Unit
+    uiEventFlow: Flow<UserAuthUiEvent>,
+    onNavigateToMain: () -> Unit,
+    onScreenEvent: (UserAuthEvent) -> Unit,
 ) {
 
-    LaunchedEffect(viewModel) {
-        viewModel.uiEvent.collect { event ->
+    LaunchedEffect(uiEventFlow) {
+        uiEventFlow.collect { event ->
             when (event) {
-                is UserAuthUiEvent.OnSubmitSuccess -> onNavigateToBands()
+                is UserAuthUiEvent.OnSubmitSuccess -> onNavigateToMain()
             }
         }
     }
@@ -46,7 +49,7 @@ fun UserAuthScreen(
         AnimatedVisibility(!state.isLoginMode) {
             OutlinedTextField(
                 value = state.firstName,
-                onValueChange = { viewModel.onScreenEvent(UserAuthEvent.FirstNameChanged(it)) },
+                onValueChange = { onScreenEvent(UserAuthEvent.FirstNameChanged(it)) },
                 label = { Text("First Name") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -55,7 +58,7 @@ fun UserAuthScreen(
         AnimatedVisibility(!state.isLoginMode) {
             OutlinedTextField(
                 value = state.lastName,
-                onValueChange = { viewModel.onScreenEvent(UserAuthEvent.LastNameChanged(it)) },
+                onValueChange = { onScreenEvent(UserAuthEvent.LastNameChanged(it)) },
                 label = { Text("Last Name") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -64,7 +67,7 @@ fun UserAuthScreen(
 
         OutlinedTextField(
             value = state.email,
-            onValueChange = { viewModel.onScreenEvent(UserAuthEvent.EmailChanged(it)) },
+            onValueChange = { onScreenEvent(UserAuthEvent.EmailChanged(it)) },
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -73,7 +76,7 @@ fun UserAuthScreen(
 
         OutlinedTextField(
             value = state.password,
-            onValueChange = { viewModel.onScreenEvent(UserAuthEvent.PasswordChanged(it)) },
+            onValueChange = { onScreenEvent(UserAuthEvent.PasswordChanged(it)) },
             label = { Text("Password") },
             modifier = Modifier.fillMaxWidth(),
             visualTransformation = PasswordVisualTransformation()
@@ -83,7 +86,7 @@ fun UserAuthScreen(
 
         Button(
             onClick = {
-                viewModel.onScreenEvent(UserAuthEvent.Submit)
+                onScreenEvent(UserAuthEvent.Submit)
             },
             modifier = Modifier.fillMaxWidth(),
             enabled = state.isFormValid
@@ -93,7 +96,7 @@ fun UserAuthScreen(
 
         Spacer(Modifier.height(8.dp))
 
-        TextButton(onClick = { viewModel.onScreenEvent(UserAuthEvent.ToggleMode) }) {
+        TextButton(onClick = { onScreenEvent(UserAuthEvent.ToggleMode) }) {
             Text(
                 if (state.isLoginMode)
                     "Don't have an account? Create one"
@@ -112,4 +115,10 @@ fun UserAuthScreen(
             Text(text = it, color = MaterialTheme.colorScheme.error)
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun UserAuthScreenPreview() {
+    UserAuthScreen(UserAuthUiState(), onScreenEvent = {}, onNavigateToMain = {}, uiEventFlow = emptyFlow())
 }

@@ -7,7 +7,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.amolieres.setlistync.feature.band.list.ui.BandListScreen
+import com.amolieres.setlistync.feature.main.presentation.MainViewModel
+import com.amolieres.setlistync.feature.main.ui.MainScreen
 import com.amolieres.setlistync.feature.user.presentation.UserAuthViewModel
 import com.amolieres.setlistync.feature.user.ui.UserAuthScreen
 import org.koin.compose.viewmodel.koinViewModel
@@ -26,19 +27,30 @@ fun AppNavGraph(
             val state by viewModel.uiState.collectAsState()
             UserAuthScreen(
                 state,
-                viewModel,
-                onNavigateToBands = {
-                navController.navigate(Destinations.BandList) {
-                    popUpTo(Destinations.UserAuth) { inclusive = true }
-                }
-            })
+                onNavigateToMain = {
+                    navController.navigate(Destinations.MainScreen) {
+                        popUpTo(Destinations.UserAuth) { inclusive = false }
+                    }
+                },
+                uiEventFlow = viewModel.uiEvent,
+                onScreenEvent = viewModel::onScreenEvent
+            )
         }
 
-        composable(Destinations.BandList) {
-            BandListScreen(onAddBand = {
-                //TODO: Navigate to create band
-                //navController.navigate(Destinations.CreateBand)
-            })
+        composable(Destinations.MainScreen) {
+            val viewModel: MainViewModel = koinViewModel()
+            val state by viewModel.uiState.collectAsState()
+            
+            MainScreen(
+                state = state,
+                uiEventFlow = viewModel.uiEvent,
+                onScreenEvent = viewModel::onScreenEvent,
+                onNavigateToLogin = {
+                  navController.navigate(Destinations.UserAuth) {
+                      popUpTo(Destinations.MainScreen) { inclusive = false }
+                  }
+                }
+            )
         }
     }
 }
