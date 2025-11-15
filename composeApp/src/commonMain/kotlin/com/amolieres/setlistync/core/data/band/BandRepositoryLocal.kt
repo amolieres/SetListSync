@@ -1,4 +1,4 @@
-package com.amolieres.setlistync.core.data.user
+package com.amolieres.setlistync.core.data.band
 
 import com.amolieres.setlistync.core.domain.band.model.Band
 import com.amolieres.setlistync.core.domain.band.model.BandMember

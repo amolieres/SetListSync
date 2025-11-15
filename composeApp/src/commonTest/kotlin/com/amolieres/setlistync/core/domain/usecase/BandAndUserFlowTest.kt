@@ -1,6 +1,6 @@
 package com.amolieres.setlistync.core.domain.usecase
 
-import com.amolieres.setlistync.core.data.user.BandRepositoryLocal
+import com.amolieres.setlistync.core.data.band.BandRepositoryLocal
 import com.amolieres.setlistync.core.data.user.UserRepositoryLocal
 import com.amolieres.setlistync.core.domain.band.model.Band
 import com.amolieres.setlistync.core.domain.band.model.BandMember

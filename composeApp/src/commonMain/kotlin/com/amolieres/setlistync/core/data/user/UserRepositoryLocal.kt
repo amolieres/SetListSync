@@ -25,7 +25,7 @@ class UserRepositoryLocal : UserRepository {
         storage[user.id] = user
     }
 
-    override suspend fun deleteUser(id: String): User? = mutex.withLock {
+    override suspend fun deleteUser(id: String): Unit = mutex.withLock {
         storage.remove(id)
     }
 
