@@ -16,25 +16,34 @@ Managing setlists in a band often means juggling spreadsheets, PDFs, chat messag
 
 ### ✅ Phase 1 – Local SetList Manager (Offline)
 Core features:
-- Manage multiple **bands**
-- Manage **band members** (with roles: bass, guitar, vocals, drums…)
-- Manage **songs**  
+- 🟢 Manage **user** CRUD 
+- ⚪️ Manage my **band**
+- ⚪️ Manage **settings**  
+- ⚪️ Manage **band members** (with roles: bass, guitar, vocals, drums…)
+- ⚪️ Manage **songs**  
   - title, duration, key/tone, external links, etc.  
   - stored in a **global song library**
-- Add **member-specific song notes**  
+- ⚪️ Add **member-specific song notes**  
   - e.g. lyrics for singer, pedal settings for guitarist, first note for bassist
-- Manage **gigs & setlists**
+- ⚪️ Manage **gigs & setlists**
   - song order
   - compute total duration
-- **Export setlists** as PDF or image for sharing
+- ⚪️ **Export setlists** as PDF or image for sharing
 
 ---
 
+Technical Stack: 
+- ⚪️ Local database (Room or SQLDelight) for offline persistency
+- ⚪️ User DataStore ( https://developer.android.com/kotlin/multiplatform/datastore?hl=fr)
+- ⚪️ Printer management 
+- ⚪️ Internationalization (FR/EN)
+- ⚪️ PDF exporter
+
+
 ### 🔜 Phase 2 – Live Sync Mode (Online)
 Add collaboration & real-time sync:
-- User **accounts**
 - **API + database + hosting**
-- Enable **cloud sync** of bands, songs, notes, setlists
+- Enable **cloud sync** of users, bands, songs, notes, setlists
 - “**Show Time**” mode
   - master device controls current song
   - follower devices display the song and their notes
