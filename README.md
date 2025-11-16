@@ -33,7 +33,7 @@ Core features:
 ---
 
 Technical Stack: 
-- ⚪️ Local database (Room or SQLDelight) for offline persistency
+- 🟢 Local database >> ROOM
 - ⚪️ User DataStore ( https://developer.android.com/kotlin/multiplatform/datastore?hl=fr)
 - ⚪️ Printer management 
 - ⚪️ Internationalization (FR/EN)
