@@ -18,7 +18,7 @@ Managing setlists in a band often means juggling spreadsheets, PDFs, chat messag
 Core features:
 - 🟢 Manage **user** CRUD 
 - ⚪️ Manage my **band**
-- ⚪️ Manage **settings**  
+- 🟠 Manage **settings**  
 - ⚪️ Manage **band members** (with roles: bass, guitar, vocals, drums…)
 - ⚪️ Manage **songs**  
   - title, duration, key/tone, external links, etc.  
@@ -34,7 +34,7 @@ Core features:
 
 Technical Stack: 
 - 🟢 Local database >> ROOM
-- ⚪️ User DataStore ( https://developer.android.com/kotlin/multiplatform/datastore?hl=fr)
+- 🟠 User DataStore ( https://developer.android.com/kotlin/multiplatform/datastore?hl=fr)
 - ⚪️ Printer management 
 - ⚪️ Internationalization (FR/EN)
 - ⚪️ PDF exporter
