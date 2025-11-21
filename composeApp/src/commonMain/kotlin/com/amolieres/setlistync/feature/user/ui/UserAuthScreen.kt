@@ -17,16 +17,16 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun UserAuthScreen(
-    state: UserAuthUiState,
-    uiEventFlow: Flow<UserAuthUiEvent>,
+    uiState: UserAuthUiState,
+    eventFlow: Flow<UserAuthEvent>,
     onNavigateToMain: () -> Unit,
-    onScreenEvent: (UserAuthEvent) -> Unit,
+    onScreenEvent: (UserAuthUiEvent) -> Unit,
 ) {
 
-    LaunchedEffect(uiEventFlow) {
-        uiEventFlow.collect { event ->
+    LaunchedEffect(eventFlow) {
+        eventFlow.collect { event ->
             when (event) {
-                is UserAuthUiEvent.OnSubmitSuccess -> onNavigateToMain()
+                is UserAuthEvent.OnSubmitSuccess -> onNavigateToMain()
             }
         }
     }
@@ -39,26 +39,26 @@ fun UserAuthScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = if (state.isLoginMode) "Login" else "Create Account",
+            text = if (uiState.isLoginMode) "Login" else "Create Account",
             style = MaterialTheme.typography.headlineSmall
         )
 
         Spacer(Modifier.height(16.dp))
 
 
-        AnimatedVisibility(!state.isLoginMode) {
+        AnimatedVisibility(!uiState.isLoginMode) {
             OutlinedTextField(
-                value = state.firstName,
-                onValueChange = { onScreenEvent(UserAuthEvent.FirstNameChanged(it)) },
+                value = uiState.firstName,
+                onValueChange = { onScreenEvent(UserAuthUiEvent.FirstNameChanged(it)) },
                 label = { Text("First Name") },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(Modifier.height(8.dp))
         }
-        AnimatedVisibility(!state.isLoginMode) {
+        AnimatedVisibility(!uiState.isLoginMode) {
             OutlinedTextField(
-                value = state.lastName,
-                onValueChange = { onScreenEvent(UserAuthEvent.LastNameChanged(it)) },
+                value = uiState.lastName,
+                onValueChange = { onScreenEvent(UserAuthUiEvent.LastNameChanged(it)) },
                 label = { Text("Last Name") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -66,8 +66,8 @@ fun UserAuthScreen(
         }
 
         OutlinedTextField(
-            value = state.email,
-            onValueChange = { onScreenEvent(UserAuthEvent.EmailChanged(it)) },
+            value = uiState.email,
+            onValueChange = { onScreenEvent(UserAuthUiEvent.EmailChanged(it)) },
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -75,8 +75,8 @@ fun UserAuthScreen(
         Spacer(Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = state.password,
-            onValueChange = { onScreenEvent(UserAuthEvent.PasswordChanged(it)) },
+            value = uiState.password,
+            onValueChange = { onScreenEvent(UserAuthUiEvent.PasswordChanged(it)) },
             label = { Text("Password") },
             modifier = Modifier.fillMaxWidth(),
             visualTransformation = PasswordVisualTransformation()
@@ -86,31 +86,31 @@ fun UserAuthScreen(
 
         Button(
             onClick = {
-                onScreenEvent(UserAuthEvent.Submit)
+                onScreenEvent(UserAuthUiEvent.Submit)
             },
             modifier = Modifier.fillMaxWidth(),
-            enabled = state.isFormValid
+            enabled = uiState.isFormValid
         ) {
-            Text(if (state.isLoginMode) "Login" else "Create Account")
+            Text(if (uiState.isLoginMode) "Login" else "Create Account")
         }
 
         Spacer(Modifier.height(8.dp))
 
-        TextButton(onClick = { onScreenEvent(UserAuthEvent.ToggleMode) }) {
+        TextButton(onClick = { onScreenEvent(UserAuthUiEvent.ToggleMode) }) {
             Text(
-                if (state.isLoginMode)
+                if (uiState.isLoginMode)
                     "Don't have an account? Create one"
                 else
                     "Already have an account? Login"
             )
         }
 
-        if (state.isLoading) {
+        if (uiState.isLoading) {
             Spacer(Modifier.height(12.dp))
             CircularProgressIndicator()
         }
 
-        state.error?.let {
+        uiState.error?.let {
             Spacer(Modifier.height(12.dp))
             Text(text = it, color = MaterialTheme.colorScheme.error)
         }
@@ -120,5 +120,5 @@ fun UserAuthScreen(
 @Preview(showBackground = true)
 @Composable
 fun UserAuthScreenPreview() {
-    UserAuthScreen(UserAuthUiState(), onScreenEvent = {}, onNavigateToMain = {}, uiEventFlow = emptyFlow())
+    UserAuthScreen(UserAuthUiState(), onScreenEvent = {}, onNavigateToMain = {}, eventFlow = emptyFlow())
 }

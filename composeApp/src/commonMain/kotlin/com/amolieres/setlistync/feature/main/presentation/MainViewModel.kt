@@ -6,54 +6,27 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 
 class MainViewModel() : ViewModel() {
 
-    private val _uiEvent = MutableSharedFlow<MainUiEvent>()
-    val uiEvent: SharedFlow<MainUiEvent> = _uiEvent
+    private val _Event = MutableSharedFlow<MainEvent>()
+    val event: SharedFlow<MainEvent> = _Event
 
 
     private val _uiState = MutableStateFlow(MainUiState())
     val uiState: StateFlow<MainUiState> = _uiState
 
-    fun onScreenEvent(event: MainEvent) {
+    fun onScreenEvent(event: MainUiEvent) {
         when (event) {
-            MainEvent.OnLogoutClicked -> {
-                _uiState.value = _uiState.value.copy(
-                    showConfirmDialog = ConfirmDialogType.Logout
-                )
-            }
-            MainEvent.OnDeleteAccountClicked -> {
-                _uiState.value = _uiState.value.copy(
-                    showConfirmDialog = ConfirmDialogType.DeleteAccount
-                )
-            }
-            MainEvent.OnLogoutConfirmed -> logout()
-            MainEvent.OnDeleteConfirmed -> deleteAccount()
-            MainEvent.OnDialogDismiss -> hideDialog()
+            MainUiEvent.OnSettingsClicked -> _uiState.update { it.copy(showSettingsDialog = true) }
+            MainUiEvent.OnSettingsDismiss -> _uiState.update { it.copy(showSettingsDialog = false) }
         }
     }
 
-    private fun hideDialog() {
-        _uiState.value = _uiState.value.copy(showConfirmDialog = null)
-    }
-    private fun logout() {
-        hideDialog()
-        viewModelScope.launch {
-            emit(MainUiEvent.NavigateToLogin)
-        }
-    }
-
-    private fun deleteAccount() {
-        hideDialog()
-        viewModelScope.launch {
-            emit(MainUiEvent.NavigateToLogin)
-        }
-    }
-
-    private fun emit(event: MainUiEvent) {
-        viewModelScope.launch { _uiEvent.emit(event) }
+    private fun emit(event: MainEvent) {
+        viewModelScope.launch { _Event.emit(event) }
     }
 }

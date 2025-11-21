@@ -24,26 +24,26 @@ fun AppNavGraph(
 
         composable(Destinations.UserAuth) {
             val viewModel: UserAuthViewModel = koinViewModel()
-            val state by viewModel.uiState.collectAsState()
+            val uiState by viewModel.uiState.collectAsState()
             UserAuthScreen(
-                state,
+                uiState,
                 onNavigateToMain = {
                     navController.navigate(Destinations.MainScreen) {
                         popUpTo(Destinations.UserAuth) { inclusive = false }
                     }
                 },
-                uiEventFlow = viewModel.uiEvent,
+                eventFlow = viewModel.event,
                 onScreenEvent = viewModel::onScreenEvent
             )
         }
 
         composable(Destinations.MainScreen) {
             val viewModel: MainViewModel = koinViewModel()
-            val state by viewModel.uiState.collectAsState()
+            val uiState by viewModel.uiState.collectAsState()
             
             MainScreen(
-                state = state,
-                uiEventFlow = viewModel.uiEvent,
+                uiState = uiState,
+                eventFlow = viewModel.event,
                 onScreenEvent = viewModel::onScreenEvent,
                 onNavigateToLogin = {
                   navController.navigate(Destinations.UserAuth) {
