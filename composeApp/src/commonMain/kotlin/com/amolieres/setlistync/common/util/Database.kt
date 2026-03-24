@@ -10,6 +10,7 @@ fun getRoomDatabase(
     builder: RoomDatabase.Builder<SetListSyncDatabase>
 ): SetListSyncDatabase {
     return builder
+        .fallbackToDestructiveMigration(dropAllTables = true)
         .setDriver(BundledSQLiteDriver())
         .setQueryCoroutineContext(Dispatchers.IO)
         .build()
