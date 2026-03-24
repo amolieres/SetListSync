@@ -1,4 +1,4 @@
-package com.amolieres.setlistync
+package com.amolieres.setlistync.common.util
 
 import androidx.room.Room
 import androidx.room.RoomDatabase

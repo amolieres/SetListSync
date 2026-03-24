@@ -8,27 +8,29 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.amolieres.setlistync.feature.main.presentation.ConfirmDialogType
 import com.amolieres.setlistync.feature.main.presentation.MainEvent
 import com.amolieres.setlistync.feature.main.presentation.MainUiState
+import com.amolieres.setlistync.feature.settings.presentation.SettingsViewModel
+import com.amolieres.setlistync.feature.settings.ui.SettingsDialog
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
-    state: MainUiState,
-    uiEventFlow: Flow<MainUiEvent>,
-    onScreenEvent: (MainEvent) -> Unit,
+    uiState: MainUiState,
+    eventFlow: Flow<MainEvent>,
+    onScreenEvent: (MainUiEvent) -> Unit,
     onNavigateToLogin: () -> Unit
 ) {
-    var showMenu by remember { mutableStateOf(false) }
+    val settingsVm: SettingsViewModel = koinViewModel()
 
-    LaunchedEffect(uiEventFlow) {
-        uiEventFlow.collect { event ->
+    LaunchedEffect(eventFlow) {
+        eventFlow.collect { event ->
             when (event) {
-                is MainUiEvent.NavigateToLogin -> onNavigateToLogin()
+                is MainEvent.NavigateToLogin -> onNavigateToLogin()
             }
         }
     }
@@ -39,27 +41,10 @@ fun MainScreen(
                 title = { Text("SetListSync") },
                 actions = {
                     Box {
-                        IconButton(onClick = { showMenu = true }) {
+                        IconButton(onClick = {
+                            onScreenEvent(MainUiEvent.OnSettingsClicked)
+                        }) {
                             Icon(Icons.Default.Settings, contentDescription = "Settings")
-                        }
-                        DropdownMenu(
-                            expanded = showMenu,
-                            onDismissRequest = { showMenu = false }
-                        ) {
-                            DropdownMenuItem(
-                                text = { Text("Log out") },
-                                onClick = {
-                                    showMenu = false
-                                    onScreenEvent(MainEvent.OnLogoutClicked)
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text("Delete my account") },
-                                onClick = {
-                                    showMenu = false
-                                    onScreenEvent(MainEvent.OnDeleteAccountClicked)
-                                }
-                            )
                         }
                     }
                 }
@@ -69,42 +54,30 @@ fun MainScreen(
         Box(modifier = Modifier.padding(padding).fillMaxSize()) {
             // For now empty screen
             Text(
-                state.contentText,
+                uiState.contentText,
                 modifier = Modifier.padding(16.dp)
             )
         }
     }
 
-    // Dialogs
-    state.showConfirmDialog?.let { dialogType ->
-        AlertDialog(
-            onDismissRequest = { onScreenEvent(MainEvent.OnDialogDismiss) },
-            title = { Text(when(dialogType) {
-                ConfirmDialogType.Logout -> "Logout"
-                ConfirmDialogType.DeleteAccount -> "Delete account"
-            }) },
-            text = { Text(when(dialogType) {
-                ConfirmDialogType.Logout -> "Are you sure you want to log out?"
-                ConfirmDialogType.DeleteAccount -> "This will permanently delete your account. Continue?"
-            }) },
-            confirmButton = {
-                TextButton(onClick = {
-                    onScreenEvent(when(dialogType) {
-                        ConfirmDialogType.Logout -> MainEvent.OnLogoutConfirmed
-                        ConfirmDialogType.DeleteAccount -> MainEvent.OnDeleteConfirmed
-                    })
-                }) { Text("Yes") }
-            },
-            dismissButton = {
-                TextButton(onClick = { onScreenEvent(MainEvent.OnDialogDismiss)  }) { Text("Cancel") }
+    if(uiState.showSettingsDialog) {
+        val state by settingsVm.uiState.collectAsState()
+        SettingsDialog(
+            uiState = state,
+            eventsFlow = settingsVm.events,
+            onScreenEvent = { settingsVm.onScreenEvent(it) },
+            onDismiss = { onScreenEvent(MainUiEvent.OnSettingsDismiss) },
+            onNavigateToLogin = {
+                onScreenEvent(MainUiEvent.OnSettingsDismiss)
+                onNavigateToLogin()
             }
         )
     }
+
 }
 
 @Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
     MainScreen(MainUiState(), emptyFlow(), {}, {})
-
 }
