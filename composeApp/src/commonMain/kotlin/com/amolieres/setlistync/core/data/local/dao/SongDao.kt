@@ -15,6 +15,9 @@ interface SongDao {
     @Query("SELECT * FROM songs")
     suspend fun getAllSongs(): List<SongEntity>
 
+    @Query("SELECT * FROM songs WHERE bandId = :bandId")
+    suspend fun getSongsByBandId(bandId: String): List<SongEntity>
+
     @Update
     suspend fun updateSong(song: SongEntity)
 

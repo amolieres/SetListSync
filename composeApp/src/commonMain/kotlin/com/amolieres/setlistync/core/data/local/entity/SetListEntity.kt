@@ -10,6 +10,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "set_lists")
 data class SetListEntity(
     @PrimaryKey val id: String,
+    val bandId: String,
     val name: String,
     val orderedSongIds: String  // JSON-encoded List<String>
 )

@@ -23,4 +23,7 @@ interface BandMemberDao {
 
     @Query("DELETE FROM band_members WHERE bandId = :bandId")
     suspend fun deleteMembersByBandId(bandId: String)
+
+    @Query("SELECT DISTINCT bandId FROM band_members WHERE userId = :userId")
+    suspend fun getBandIdsByUserId(userId: String): List<String>
 }

@@ -15,6 +15,9 @@ interface SetListDao {
     @Query("SELECT * FROM set_lists")
     suspend fun getAllSetLists(): List<SetListEntity>
 
+    @Query("SELECT * FROM set_lists WHERE bandId = :bandId")
+    suspend fun getSetListsByBandId(bandId: String): List<SetListEntity>
+
     @Update
     suspend fun updateSetList(setList: SetListEntity)
 
