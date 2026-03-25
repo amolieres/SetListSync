@@ -20,8 +20,15 @@ class SetListRepositoryImpl(
         setListDao.insertSetList(setList.toEntity(bandId))
     }
 
+    override suspend fun getSetList(id: String): SetList? =
+        setListDao.getSetListById(id)?.toDomain()
+
     override suspend fun updateSetList(bandId: String, setList: SetList) {
         setListDao.updateSetList(setList.toEntity(bandId))
+    }
+
+    override suspend fun deleteSetList(id: String) {
+        setListDao.deleteSetList(id)
     }
 
     // --- Mappers ---
