@@ -14,30 +14,32 @@ Managing setlists in a band often means juggling spreadsheets, PDFs, chat messag
 
 ## 🚀 MVP Roadmap
 
-### ✅ Phase 1 – Local SetList Manager (Offline)
-Core features:
-- 🟢 Manage **user** CRUD 
-- ⚪️ Manage my **band**
-- 🟠 Manage **settings**  
-- ⚪️ Manage **band members** (with roles: bass, guitar, vocals, drums…)
-- ⚪️ Manage **songs**  
-  - title, duration, key/tone, external links, etc.  
+### Phase 1 – Local SetList Manager (Offline)
+
+**Legend:** 🟢 Done &nbsp;|&nbsp; 🟠 In progress &nbsp;|&nbsp; ⚪️ Not started
+
+#### Features
+- 🟢 Manage **user** CRUD
+- 🟢 Manage **band** (create, list, delete)
+- 🟢 Manage **band members** (add, edit, delete — with roles: bass, guitar, vocals, drums…)
+- 🟠 Manage **settings** (DataStore session wired, settings screen UI in progress)
+- ⚪️ Manage **songs**
+  - title, duration, key/tone, external links, etc.
   - stored in a **global song library**
-- ⚪️ Add **member-specific song notes**  
+- ⚪️ Add **member-specific song notes**
   - e.g. lyrics for singer, pedal settings for guitarist, first note for bassist
 - ⚪️ Manage **gigs & setlists**
   - song order
   - compute total duration
 - ⚪️ **Export setlists** as PDF or image for sharing
 
----
-
-Technical Stack: 
-- 🟢 Local database >> ROOM
-- 🟠 User DataStore ( https://developer.android.com/kotlin/multiplatform/datastore?hl=fr)
-- ⚪️ Printer management 
+#### Technical Stack
+- 🟢 Local database — Room (Android, iOS, Desktop)
+- 🟢 User session — DataStore (current user ID, password hash, notation preference FR/EN)
+- 🟢 Reactive architecture — Kotlin Flows throughout (Room → Repository → UseCase → ViewModel → UI)
 - ⚪️ Internationalization (FR/EN)
 - ⚪️ PDF exporter
+- ⚪️ Printer management
 
 
 ### 🔜 Phase 2 – Live Sync Mode (Online)
@@ -94,7 +96,22 @@ Make planning smarter:
 ---
 
 ## ✅ Current Status
-🛠 In development – focusing on **Phase 1 (Local SetList Manager)**
+
+**Phase 1 — In development**
+
+| Area | Status | Notes |
+|------|--------|-------|
+| Architecture (Clean Arch + MVVM + Koin DI) | 🟢 Done | All layers in place |
+| Room database (entities, DAOs, migrations) | 🟢 Done | Band, BandMember, User, Song, Gig, SetList entities |
+| DataStore (user session) | 🟢 Done | userId, password hash, notation preference |
+| User feature | 🟢 Done | Full CRUD |
+| Band feature | 🟢 Done | Create/list/delete bands, full member management with roles |
+| Navigation (Compose Navigation) | 🟢 Done | Main → Band Detail wired up |
+| Settings feature | 🟠 In progress | DataStore wired, screen UI pending |
+| Song feature | ⚪️ Not started | Domain + data layer scaffolded, no UI yet |
+| Gig & SetList feature | ⚪️ Not started | Domain + data layer scaffolded, no UI yet |
+| PDF export | ⚪️ Not started | — |
+| i18n (FR/EN) | ⚪️ Not started | — |
 
 ---
 
