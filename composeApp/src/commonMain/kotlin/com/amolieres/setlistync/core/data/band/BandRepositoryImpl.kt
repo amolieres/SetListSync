@@ -8,6 +8,9 @@ import com.amolieres.setlistync.core.domain.band.model.Band
 import com.amolieres.setlistync.core.domain.band.model.BandMember
 import com.amolieres.setlistync.core.domain.band.model.Role
 import com.amolieres.setlistync.core.domain.band.repository.BandRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -36,6 +39,26 @@ class BandRepositoryImpl(
             entity.toDomain(members)
         }
     }
+
+    // Reactive — reacts to changes in both tables so member count stays live
+    override fun observeAllBands(): Flow<List<Band>> =
+        combine(
+            bandDao.observeAllBands(),
+            bandMemberDao.observeAllMembers()
+        ) { bands, allMembers ->
+            bands.map { entity ->
+                val members = allMembers.filter { it.bandId == entity.id }.map { it.toDomain() }
+                entity.toDomain(members)
+            }
+        }
+
+    override fun observeBand(bandId: String): Flow<Band?> =
+        combine(
+            bandDao.observeBandById(bandId),
+            bandMemberDao.observeMembersByBandId(bandId)
+        ) { entity, members ->
+            entity?.toDomain(members.map { it.toDomain() })
+        }
 
     override suspend fun updateBand(band: Band) {
         bandDao.updateBand(band.toEntity())

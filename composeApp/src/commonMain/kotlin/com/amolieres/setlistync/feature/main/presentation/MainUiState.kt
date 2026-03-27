@@ -1,6 +1,12 @@
 package com.amolieres.setlistync.feature.main.presentation
 
+import com.amolieres.setlistync.core.domain.band.model.Band
+
 data class MainUiState(
     val showSettingsDialog: Boolean = false,
-    val contentText: String = "Welcome to SetListSync 🎵",
+    val isLoading: Boolean = true,
+    val bands: List<Band> = emptyList(),
+    val error: String? = null,
+    val showCreateBandDialog: Boolean = false,
+    val createBandName: String = ""
 )

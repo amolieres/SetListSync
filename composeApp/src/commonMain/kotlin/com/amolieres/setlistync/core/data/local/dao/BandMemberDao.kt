@@ -2,6 +2,7 @@ package com.amolieres.setlistync.core.data.local.dao
 
 import androidx.room.*
 import com.amolieres.setlistync.core.data.local.entity.BandMemberEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BandMemberDao {
@@ -14,6 +15,12 @@ interface BandMemberDao {
 
     @Query("SELECT * FROM band_members WHERE bandId = :bandId")
     suspend fun getMembersByBandId(bandId: String): List<BandMemberEntity>
+
+    @Query("SELECT * FROM band_members WHERE bandId = :bandId")
+    fun observeMembersByBandId(bandId: String): Flow<List<BandMemberEntity>>
+
+    @Query("SELECT * FROM band_members")
+    fun observeAllMembers(): Flow<List<BandMemberEntity>>
 
     @Update
     suspend fun updateMember(member: BandMemberEntity)
