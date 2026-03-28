@@ -106,7 +106,15 @@ class BandRepositoryImpl(
 
     // --- Mappers ---
 
-    private fun Band.toEntity() = BandEntity(id = id, name = name)
+    private fun Band.toEntity() = BandEntity(
+        id = id,
+        name = name,
+        email = email,
+        instagramUrl = instagramUrl,
+        facebookUrl = facebookUrl,
+        tiktokUrl = tiktokUrl,
+        genres = Json.encodeToString(genres)
+    )
 
     private fun BandMember.toEntity(bandId: String) = BandMemberEntity(
         id = id,
@@ -119,7 +127,12 @@ class BandRepositoryImpl(
     private fun BandEntity.toDomain(members: List<BandMember>) = Band(
         id = id,
         name = name,
-        members = members
+        members = members,
+        email = email,
+        instagramUrl = instagramUrl,
+        facebookUrl = facebookUrl,
+        tiktokUrl = tiktokUrl,
+        genres = Json.decodeFromString(genres)
     )
 
     private fun BandMemberEntity.toDomain() = BandMember(

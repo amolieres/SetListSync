@@ -9,5 +9,5 @@ fun getDatabaseBuilder(): RoomDatabase.Builder<SetListSyncDatabase> {
     val dbFile = File(System.getProperty("java.io.tmpdir"), "sls_room.db")
     return Room.databaseBuilder<SetListSyncDatabase>(
         name = dbFile.absolutePath,
-    )
+    ).addMigrations(SetListSyncDatabase.MIGRATION_2_3)
 }

@@ -148,4 +148,17 @@ class BandDetailViewModelTest {
         assertEquals(1, events.size)
         assertEquals(BandDetailEvent.NavigateToMembers, events.first())
     }
+
+    @Test
+    fun `OnEditInfoClicked emits NavigateToEdit`() = runTest(testDispatcher) {
+        collectUiState()
+        val events = mutableListOf<BandDetailEvent>()
+        collectEvents(events)
+
+        viewModel.onScreenEvent(BandDetailUiEvent.OnEditInfoClicked)
+        advanceUntilIdle()
+
+        assertEquals(1, events.size)
+        assertEquals(BandDetailEvent.NavigateToEdit, events.first())
+    }
 }

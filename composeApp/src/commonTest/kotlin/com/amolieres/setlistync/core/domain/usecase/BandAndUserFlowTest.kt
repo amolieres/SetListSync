@@ -1,6 +1,5 @@
 package com.amolieres.setlistync.core.domain.usecase
 
-import com.amolieres.setlistync.core.domain.band.model.Band
 import com.amolieres.setlistync.core.domain.band.model.BandMember
 import com.amolieres.setlistync.core.domain.band.model.Role
 import com.amolieres.setlistync.core.domain.band.usecase.AddMemberToBandUseCase
@@ -21,19 +20,16 @@ class BandAndUserFlowTest {
         val getBandsForUser = GetBandsForUserUseCase(bandRepo)
 
         val userId = "u1"
-        val bandA = Band(id = "b1", name = "Alpha")
-        val bandB = Band(id = "b2", name = "Beta")
+        val bandA = createBand(name = "Alpha")
+        val bandB = createBand(name = "Beta")
 
-        createBand(bandA)
-        createBand(bandB)
-
-        addMember("b1", BandMember(id = "m1", userId = userId, roles = listOf(Role.GUITAR)))
-        addMember("b2", BandMember(id = "m2", userId = userId, roles = listOf(Role.BASS, Role.VOCALS)))
+        addMember(bandA.id, BandMember(id = "m1", userId = userId, roles = listOf(Role.GUITAR)))
+        addMember(bandB.id, BandMember(id = "m2", userId = userId, roles = listOf(Role.BASS, Role.VOCALS)))
 
         val bands = getBandsForUser(userId)
         assertEquals(2, bands.size)
-        val a = bands.find { it.id == "b1" }!!
-        val b = bands.find { it.id == "b2" }!!
+        val a = bands.find { it.id == bandA.id }!!
+        val b = bands.find { it.id == bandB.id }!!
         assertEquals(1, a.members.size)
         assertEquals(userId, a.members.first().userId)
         assertEquals(2, b.members.first().roles.size)

@@ -29,7 +29,8 @@ fun MainScreen(
     eventFlow: Flow<MainEvent>,
     onScreenEvent: (MainUiEvent) -> Unit,
     onNavigateToLogin: () -> Unit,
-    onNavigateToBandDetail: (String) -> Unit = {}
+    onNavigateToBandDetail: (String) -> Unit = {},
+    onNavigateToBandCreation: () -> Unit = {}
 ) {
     val settingsVm: SettingsViewModel = koinViewModel()
 
@@ -38,6 +39,7 @@ fun MainScreen(
             when (event) {
                 is MainEvent.NavigateToLogin -> onNavigateToLogin()
                 is MainEvent.NavigateToBandDetail -> onNavigateToBandDetail(event.bandId)
+                MainEvent.NavigateToBandCreation -> onNavigateToBandCreation()
             }
         }
     }
@@ -88,15 +90,6 @@ fun MainScreen(
                 }
             }
         }
-    }
-
-    if (uiState.showCreateBandDialog) {
-        CreateBandDialog(
-            bandName = uiState.createBandName,
-            onNameChanged = { onScreenEvent(MainUiEvent.OnCreateBandNameChanged(it)) },
-            onConfirm = { onScreenEvent(MainUiEvent.OnCreateBandConfirmed) },
-            onDismiss = { onScreenEvent(MainUiEvent.OnCreateBandDismiss) }
-        )
     }
 
     if (uiState.showSettingsDialog) {

@@ -6,7 +6,5 @@ data class MainUiState(
     val showSettingsDialog: Boolean = false,
     val isLoading: Boolean = true,
     val bands: List<Band> = emptyList(),
-    val error: String? = null,
-    val showCreateBandDialog: Boolean = false,
-    val createBandName: String = ""
+    val error: String? = null
 )

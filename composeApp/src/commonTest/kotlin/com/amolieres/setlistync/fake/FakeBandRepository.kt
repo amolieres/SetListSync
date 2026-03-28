@@ -20,7 +20,13 @@ class FakeBandRepository : BandRepository {
     /** Directly controllable flow for [observeBand] — set this in ViewModel tests. */
     val bandFlow = MutableStateFlow<Band?>(null)
 
+    /** Pre-populate the in-memory store without going through a suspend function. */
+    fun seedBand(band: Band) {
+        bands[band.id] = band
+    }
+
     // Recorded calls for assertions in ViewModel tests
+    var lastUpdatedBand: Band? = null
     var lastAddedMember: Pair<String, BandMember>? = null
     var lastUpdatedMember: Pair<String, BandMember>? = null
     var lastRemovedMemberId: Pair<String, String>? = null
@@ -42,6 +48,7 @@ class FakeBandRepository : BandRepository {
     override suspend fun getAllBands(): List<Band> = bands.values.toList()
 
     override suspend fun updateBand(band: Band) {
+        lastUpdatedBand = band
         bands[band.id] = band
     }
 

@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class BandDetailViewModel(
@@ -41,11 +42,15 @@ class BandDetailViewModel(
 
     fun onScreenEvent(event: BandDetailUiEvent) {
         when (event) {
+            BandDetailUiEvent.OnEditInfoClicked ->
+                viewModelScope.launch { _event.emit(BandDetailEvent.NavigateToEdit) }
             BandDetailUiEvent.OnMembersSectionClicked ->
                 viewModelScope.launch { _event.emit(BandDetailEvent.NavigateToMembers) }
-            BandDetailUiEvent.OnDeleteBandClicked -> _showDeleteBandConfirm.value = true
+            BandDetailUiEvent.OnDeleteBandClicked ->
+                _showDeleteBandConfirm.update { true }
             BandDetailUiEvent.OnDeleteBandConfirmed -> doDeleteBand()
-            BandDetailUiEvent.OnDeleteBandDismiss -> _showDeleteBandConfirm.value = false
+            BandDetailUiEvent.OnDeleteBandDismiss ->
+                _showDeleteBandConfirm.update { false }
         }
     }
 

@@ -7,9 +7,13 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.amolieres.setlistync.feature.band.creation.presentation.BandCreationViewModel
+import com.amolieres.setlistync.feature.band.creation.ui.BandCreationScreen
 import com.amolieres.setlistync.feature.band.detail.presentation.BandDetailViewModel
+import com.amolieres.setlistync.feature.band.edit.presentation.BandEditViewModel
 import com.amolieres.setlistync.feature.band.members.presentation.BandMembersViewModel
 import com.amolieres.setlistync.feature.band.detail.ui.BandDetailScreen
+import com.amolieres.setlistync.feature.band.edit.ui.BandEditScreen
 import com.amolieres.setlistync.feature.band.members.ui.BandMembersScreen
 import com.amolieres.setlistync.feature.main.presentation.MainViewModel
 import com.amolieres.setlistync.feature.main.ui.MainScreen
@@ -54,6 +58,25 @@ fun AppNavGraph(
                 },
                 onNavigateToBandDetail = { bandId ->
                     navController.navigate(Destinations.bandDetail(bandId))
+                },
+                onNavigateToBandCreation = {
+                    navController.navigate(Destinations.BandCreation)
+                }
+            )
+        }
+
+        composable(Destinations.BandCreation) {
+            val viewModel: BandCreationViewModel = koinViewModel()
+            val uiState by viewModel.uiState.collectAsState()
+            BandCreationScreen(
+                uiState = uiState,
+                eventsFlow = viewModel.events,
+                onScreenEvent = viewModel::onScreenEvent,
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToBandDetail = { bandId ->
+                    navController.navigate(Destinations.bandDetail(bandId)) {
+                        popUpTo(Destinations.BandCreation) { inclusive = true }
+                    }
                 }
             )
         }
@@ -66,7 +89,19 @@ fun AppNavGraph(
                 eventFlow = viewModel.event,
                 onScreenEvent = viewModel::onScreenEvent,
                 onNavigateBack = { navController.popBackStack() },
-                onNavigateToMembers = { navController.navigate(Destinations.bandMembers(viewModel.bandId)) }
+                onNavigateToMembers = { navController.navigate(Destinations.bandMembers(viewModel.bandId)) },
+                onNavigateToEdit = { navController.navigate(Destinations.bandEdit(viewModel.bandId)) }
+            )
+        }
+
+        composable(Destinations.BandEdit) {
+            val viewModel: BandEditViewModel = koinViewModel()
+            val uiState by viewModel.uiState.collectAsState()
+            BandEditScreen(
+                uiState = uiState,
+                eventsFlow = viewModel.events,
+                onScreenEvent = viewModel::onScreenEvent,
+                onNavigateBack = { navController.popBackStack() }
             )
         }
 
