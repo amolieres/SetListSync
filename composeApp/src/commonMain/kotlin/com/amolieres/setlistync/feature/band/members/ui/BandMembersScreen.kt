@@ -1,0 +1,108 @@
+package com.amolieres.setlistync.feature.band.members.ui
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.amolieres.setlistync.core.domain.band.model.BandMember
+import com.amolieres.setlistync.feature.band.members.presentation.BandMembersUiEvent
+import com.amolieres.setlistync.feature.band.members.presentation.BandMembersUiState
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BandMembersScreen(
+    uiState: BandMembersUiState,
+    onScreenEvent: (BandMembersUiEvent) -> Unit,
+    onNavigateBack: () -> Unit
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Members") },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(onClick = { onScreenEvent(BandMembersUiEvent.OnAddMemberClicked) }) {
+                Icon(Icons.Default.Add, contentDescription = "Add member")
+            }
+        }
+    ) { padding ->
+        when {
+            uiState.isLoading -> Box(
+                Modifier.fillMaxSize().padding(padding),
+                contentAlignment = Alignment.Center
+            ) { CircularProgressIndicator() }
+
+            uiState.members.isEmpty() -> Box(
+                Modifier.fillMaxSize().padding(padding),
+                contentAlignment = Alignment.Center
+            ) { Text("No members yet. Tap + to add one.") }
+
+            else -> LazyColumn(
+                Modifier.fillMaxSize().padding(padding),
+                contentPadding = PaddingValues(bottom = 88.dp)
+            ) {
+                items(uiState.members) { member ->
+                    MemberListItem(
+                        member = member,
+                        onEdit = { onScreenEvent(BandMembersUiEvent.OnEditMemberClicked(member)) },
+                        onDelete = { onScreenEvent(BandMembersUiEvent.OnDeleteMemberClicked(member.id)) }
+                    )
+                    HorizontalDivider()
+                }
+            }
+        }
+    }
+
+    if (uiState.showMemberDialog) {
+        MemberDialog(
+            title = if (uiState.editingMember != null) "Edit member" else "Add member",
+            nickname = uiState.memberNickname,
+            selectedRoles = uiState.memberRoles,
+            onNicknameChanged = { onScreenEvent(BandMembersUiEvent.OnMemberNicknameChanged(it)) },
+            onRoleToggled = { onScreenEvent(BandMembersUiEvent.OnMemberRoleToggled(it)) },
+            onConfirm = { onScreenEvent(BandMembersUiEvent.OnMemberDialogConfirmed) },
+            onDismiss = { onScreenEvent(BandMembersUiEvent.OnMemberDialogDismiss) }
+        )
+    }
+}
+
+@Composable
+private fun MemberListItem(
+    member: BandMember,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit
+) {
+    ListItem(
+        headlineContent = { Text(member.nickname ?: "Member") },
+        supportingContent = {
+            if (member.roles.isNotEmpty()) {
+                Text(member.roles.joinToString(" · ") { it.name.lowercase().replaceFirstChar { c -> c.uppercase() } })
+            }
+        },
+        trailingContent = {
+            Row {
+                IconButton(onClick = onEdit) {
+                    Icon(Icons.Default.Edit, contentDescription = "Edit")
+                }
+                IconButton(onClick = onDelete) {
+                    Icon(Icons.Default.Delete, contentDescription = "Delete")
+                }
+            }
+        }
+    )
+}

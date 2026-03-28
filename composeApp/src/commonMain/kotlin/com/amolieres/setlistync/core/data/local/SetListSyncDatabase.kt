@@ -5,6 +5,9 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.SQLiteConnection
+import androidx.sqlite.execSQL
 import com.amolieres.setlistync.core.data.local.converter.Converters
 import com.amolieres.setlistync.core.data.local.dao.*
 import com.amolieres.setlistync.core.data.local.entity.*
@@ -19,7 +22,7 @@ import com.amolieres.setlistync.core.data.local.entity.*
         SetListEntity::class,
         GigEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -32,6 +35,18 @@ abstract class SetListSyncDatabase : RoomDatabase() {
     abstract fun songNoteDao(): SongNoteDao
     abstract fun setListDao(): SetListDao
     abstract fun gigDao(): GigDao
+
+    companion object {
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(connection: SQLiteConnection) {
+                connection.execSQL("ALTER TABLE bands ADD COLUMN email TEXT")
+                connection.execSQL("ALTER TABLE bands ADD COLUMN instagramUrl TEXT")
+                connection.execSQL("ALTER TABLE bands ADD COLUMN facebookUrl TEXT")
+                connection.execSQL("ALTER TABLE bands ADD COLUMN tiktokUrl TEXT")
+                connection.execSQL("ALTER TABLE bands ADD COLUMN genres TEXT NOT NULL DEFAULT '[]'")
+            }
+        }
+    }
 }
 
 @Suppress("KotlinNoActualForExpect")

@@ -30,9 +30,12 @@ val useCaseModule = module {
     factory { CreateBandUseCase(get()) }
     factory { GetBandUseCase(get()) }
     factory { GetAllBandsUseCase(get()) }
+    factory { ObserveAllBandsUseCase(get()) }
+    factory { ObserveBandUseCase(get()) }
     factory { GetBandsForUserUseCase(get()) }
     factory { DeleteBandUseCase(get()) }
     factory { DeleteAllBandsUseCase(get()) }
+    factory { UpdateBandUseCase(get()) }
     factory { AddMemberToBandUseCase(get()) }
     factory { RemoveMemberFromBandUseCase(get()) }
     factory { UpdateMemberInBandUseCase(get()) }

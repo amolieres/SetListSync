@@ -37,7 +37,6 @@ fun SettingsDialog(
     onDismiss: () -> Unit,
     onNavigateToLogin: () -> Unit
 ) {
-
     LaunchedEffect(eventsFlow) {
         eventsFlow.collect { event ->
             when (event) {
@@ -52,7 +51,6 @@ fun SettingsDialog(
         text = {
             HorizontalDivider()
             Column(Modifier.verticalScroll(rememberScrollState())) {
-                // --- My Account ---
                 Text("Account", style = MaterialTheme.typography.titleMedium)
                 Spacer(Modifier.height(8.dp))
                 Text("${uiState.userName} (${uiState.userEmail})")
@@ -71,10 +69,8 @@ fun SettingsDialog(
 
                 Spacer(Modifier.height(16.dp))
 
-                // --- Preferences ---
                 Text("Display", style = MaterialTheme.typography.titleMedium)
                 Spacer(Modifier.height(8.dp))
-                // Notation radio buttons
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     RadioButton(
                         selected = uiState.notation == NoteNotation.FR,
@@ -92,7 +88,6 @@ fun SettingsDialog(
                     Text("American (C D E...)")
                 }
             }
-
         },
         confirmButton = {
             HorizontalDivider()
@@ -100,39 +95,27 @@ fun SettingsDialog(
         }
     )
 
-    // Dialogs
     uiState.showConfirmDialog?.let { dialogType ->
-        AlertDialog(
-            onDismissRequest = { onScreenEvent(SettingsUiEvent.OnDialogDismiss) },
-            title = { Text(when(dialogType) {
-                ConfirmDialogType.Logout -> "Logout"
-                ConfirmDialogType.DeleteAccount -> "Delete account"
-            }) },
-            text = { Text(when(dialogType) {
-                ConfirmDialogType.Logout -> "Are you sure you want to log out?"
-                ConfirmDialogType.DeleteAccount -> "This will permanently delete your account. Continue?"
-            }) },
-            confirmButton = {
-                TextButton(onClick = {
-                    onScreenEvent(when(dialogType) {
+        SettingsConfirmDialog(
+            dialogType = dialogType,
+            onConfirm = {
+                onScreenEvent(
+                    when (dialogType) {
                         ConfirmDialogType.Logout -> SettingsUiEvent.OnLogoutConfirmed
                         ConfirmDialogType.DeleteAccount -> SettingsUiEvent.OnDeleteConfirmed
-                    })
-                }) { Text("Yes") }
+                    }
+                )
             },
-            dismissButton = {
-                TextButton(onClick = { onScreenEvent(SettingsUiEvent.OnDialogDismiss)  }) { Text("Cancel") }
-            }
+            onDismiss = { onScreenEvent(SettingsUiEvent.OnDialogDismiss) }
         )
     }
 }
-
-
 
 @Preview
 @Composable
 fun SettingsDialogPreview() {
     SettingsDialog(
-        SettingsUiState(isLoading = true, userEmail = "mail@mail.com", userName = "userName"), emptyFlow(), {}, {}, {}
+        SettingsUiState(isLoading = true, userEmail = "mail@mail.com", userName = "userName"),
+        emptyFlow(), {}, {}, {}
     )
 }
