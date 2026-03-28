@@ -1,4 +1,4 @@
-package com.amolieres.setlistync.feature.band.presentation
+package com.amolieres.setlistync.feature.band.members.presentation
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -6,16 +6,12 @@ import androidx.lifecycle.viewModelScope
 import com.amolieres.setlistync.core.domain.band.model.BandMember
 import com.amolieres.setlistync.core.domain.band.model.Role
 import com.amolieres.setlistync.core.domain.band.usecase.AddMemberToBandUseCase
-import com.amolieres.setlistync.core.domain.band.usecase.DeleteBandUseCase
 import com.amolieres.setlistync.core.domain.band.usecase.ObserveBandUseCase
 import com.amolieres.setlistync.core.domain.band.usecase.RemoveMemberFromBandUseCase
 import com.amolieres.setlistync.core.domain.band.usecase.UpdateMemberInBandUseCase
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -23,51 +19,46 @@ import kotlinx.coroutines.launch
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-class BandDetailViewModel(
+class BandMembersViewModel(
     savedStateHandle: SavedStateHandle,
     observeBand: ObserveBandUseCase,
     private val addMember: AddMemberToBandUseCase,
     private val removeMember: RemoveMemberFromBandUseCase,
-    private val updateMember: UpdateMemberInBandUseCase,
-    private val deleteBand: DeleteBandUseCase
+    private val updateMember: UpdateMemberInBandUseCase
 ) : ViewModel() {
 
     private val bandId: String = checkNotNull(savedStateHandle.get<String>("bandId"))
-
-    private val _event = MutableSharedFlow<BandDetailEvent>()
-    val event: SharedFlow<BandDetailEvent> = _event.asSharedFlow()
 
     private data class ViewState(
         val showMemberDialog: Boolean = false,
         val editingMember: BandMember? = null,
         val memberNickname: String = "",
-        val memberRoles: Set<Role> = emptySet(),
-        val showDeleteBandConfirm: Boolean = false
+        val memberRoles: Set<Role> = emptySet()
     )
 
-    private val _uiState = MutableStateFlow(ViewState())
+    private val _viewState = MutableStateFlow(ViewState())
 
-    val uiState: StateFlow<BandDetailUiState> = combine(
+    val uiState: StateFlow<BandMembersUiState> = combine(
         observeBand(bandId),
-        _uiState
+        _viewState
     ) { band, view ->
-        BandDetailUiState(
+        BandMembersUiState(
             isLoading = false,
-            band = band,
+            bandName = band?.name ?: "",
+            members = band?.members ?: emptyList(),
             showMemberDialog = view.showMemberDialog,
             editingMember = view.editingMember,
             memberNickname = view.memberNickname,
-            memberRoles = view.memberRoles,
-            showDeleteBandConfirm = view.showDeleteBandConfirm
+            memberRoles = view.memberRoles
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), BandDetailUiState())
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), BandMembersUiState())
 
-    fun onScreenEvent(event: BandDetailUiEvent) {
+    fun onScreenEvent(event: BandMembersUiEvent) {
         when (event) {
-            BandDetailUiEvent.OnAddMemberClicked -> _uiState.update {
+            BandMembersUiEvent.OnAddMemberClicked -> _viewState.update {
                 it.copy(showMemberDialog = true, editingMember = null, memberNickname = "", memberRoles = emptySet())
             }
-            is BandDetailUiEvent.OnEditMemberClicked -> _uiState.update {
+            is BandMembersUiEvent.OnEditMemberClicked -> _viewState.update {
                 it.copy(
                     showMemberDialog = true,
                     editingMember = event.member,
@@ -75,19 +66,16 @@ class BandDetailViewModel(
                     memberRoles = event.member.roles.toSet()
                 )
             }
-            is BandDetailUiEvent.OnDeleteMemberClicked -> deleteMember(event.memberId)
-            BandDetailUiEvent.OnMemberDialogDismiss -> dismissMemberDialog()
-            is BandDetailUiEvent.OnMemberNicknameChanged -> _uiState.update { it.copy(memberNickname = event.nickname) }
-            is BandDetailUiEvent.OnMemberRoleToggled -> toggleRole(event.role)
-            BandDetailUiEvent.OnMemberDialogConfirmed -> saveMember()
-            BandDetailUiEvent.OnDeleteBandClicked -> _uiState.update { it.copy(showDeleteBandConfirm = true) }
-            BandDetailUiEvent.OnDeleteBandConfirmed -> doDeleteBand()
-            BandDetailUiEvent.OnDeleteBandDismiss -> _uiState.update { it.copy(showDeleteBandConfirm = false) }
+            is BandMembersUiEvent.OnDeleteMemberClicked -> deleteMember(event.memberId)
+            BandMembersUiEvent.OnMemberDialogDismiss -> dismissDialog()
+            is BandMembersUiEvent.OnMemberNicknameChanged -> _viewState.update { it.copy(memberNickname = event.nickname) }
+            is BandMembersUiEvent.OnMemberRoleToggled -> toggleRole(event.role)
+            BandMembersUiEvent.OnMemberDialogConfirmed -> saveMember()
         }
     }
 
     private fun toggleRole(role: Role) {
-        _uiState.update { state ->
+        _viewState.update { state ->
             val roles = state.memberRoles.toMutableSet()
             if (role in roles) roles.remove(role) else roles.add(role)
             state.copy(memberRoles = roles)
@@ -96,7 +84,7 @@ class BandDetailViewModel(
 
     @OptIn(ExperimentalUuidApi::class)
     private fun saveMember() {
-        val view = _uiState.value
+        val view = _viewState.value
         val nickname = view.memberNickname.trim().ifBlank { null }
         val roles = view.memberRoles.toList()
 
@@ -114,27 +102,18 @@ class BandDetailViewModel(
                     )
                 )
             }
-            dismissMemberDialog()
-            // No manual reload — Room Flow re-emits automatically
+            dismissDialog()
         }
     }
 
     private fun deleteMember(memberId: String) {
         viewModelScope.launch {
             removeMember(bandId, memberId)
-            // No manual reload — Room Flow re-emits automatically
         }
     }
 
-    private fun doDeleteBand() {
-        viewModelScope.launch {
-            deleteBand(bandId)
-            _event.emit(BandDetailEvent.NavigateBack)
-        }
-    }
-
-    private fun dismissMemberDialog() {
-        _uiState.update {
+    private fun dismissDialog() {
+        _viewState.update {
             it.copy(showMemberDialog = false, editingMember = null, memberNickname = "", memberRoles = emptySet())
         }
     }

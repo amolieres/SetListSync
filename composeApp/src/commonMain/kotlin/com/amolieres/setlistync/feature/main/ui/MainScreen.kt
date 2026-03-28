@@ -90,33 +90,15 @@ fun MainScreen(
         }
     }
 
-    // Create band dialog
     if (uiState.showCreateBandDialog) {
-        AlertDialog(
-            onDismissRequest = { onScreenEvent(MainUiEvent.OnCreateBandDismiss) },
-            title = { Text("New band") },
-            text = {
-                OutlinedTextField(
-                    value = uiState.createBandName,
-                    onValueChange = { onScreenEvent(MainUiEvent.OnCreateBandNameChanged(it)) },
-                    label = { Text("Band name") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
-                )
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = { onScreenEvent(MainUiEvent.OnCreateBandConfirmed) },
-                    enabled = uiState.createBandName.isNotBlank()
-                ) { Text("Create") }
-            },
-            dismissButton = {
-                TextButton(onClick = { onScreenEvent(MainUiEvent.OnCreateBandDismiss) }) { Text("Cancel") }
-            }
+        CreateBandDialog(
+            bandName = uiState.createBandName,
+            onNameChanged = { onScreenEvent(MainUiEvent.OnCreateBandNameChanged(it)) },
+            onConfirm = { onScreenEvent(MainUiEvent.OnCreateBandConfirmed) },
+            onDismiss = { onScreenEvent(MainUiEvent.OnCreateBandDismiss) }
         )
     }
 
-    // Settings dialog
     if (uiState.showSettingsDialog) {
         val state by settingsVm.uiState.collectAsState()
         SettingsDialog(

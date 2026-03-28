@@ -1,6 +1,7 @@
 package com.amolieres.setlistync.common.di
 
-import com.amolieres.setlistync.feature.band.presentation.BandDetailViewModel
+import com.amolieres.setlistync.feature.band.detail.presentation.BandDetailViewModel
+import com.amolieres.setlistync.feature.band.members.presentation.BandMembersViewModel
 import com.amolieres.setlistync.feature.main.presentation.MainViewModel
 import com.amolieres.setlistync.feature.settings.presentation.SettingsViewModel
 import com.amolieres.setlistync.feature.user.presentation.UserAuthViewModel
@@ -13,5 +14,6 @@ val viewModelModule = module {
         SettingsViewModel(get(), get(), get(), get(), get())
     }
     viewModel { MainViewModel(get(), get()) }         // ObserveAllBandsUseCase, CreateBandUseCase
-    viewModel { BandDetailViewModel(get(), get(), get(), get(), get(), get()) }  // SavedStateHandle, ObserveBandUseCase, ...
+    viewModel { BandDetailViewModel(get(), get(), get()) }                       // SavedStateHandle, ObserveBandUseCase, DeleteBandUseCase
+    viewModel { BandMembersViewModel(get(), get(), get(), get(), get()) }        // SavedStateHandle, ObserveBandUseCase, AddMember, RemoveMember, UpdateMember
 }
