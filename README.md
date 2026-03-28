@@ -20,7 +20,10 @@ Managing setlists in a band often means juggling spreadsheets, PDFs, chat messag
 
 #### Features
 - 🟢 Manage **user** CRUD
-- 🟢 Manage **band** (create, list, delete)
+- 🟢 Manage **band** (create, list, detail, edit, delete)
+  - Multi-step creation screen (name + genres → social URLs → members)
+  - Band info: name, email, Instagram / Facebook / TikTok URLs, musical genres
+  - Dedicated edit screen (`BandEditScreen`) separate from detail view
 - 🟢 Manage **band members** (add, edit, delete — with roles: bass, guitar, vocals, drums…)
 - 🟠 Manage **settings** (DataStore session wired, settings screen UI in progress)
 - ⚪️ Manage **songs**
@@ -34,9 +37,10 @@ Managing setlists in a band often means juggling spreadsheets, PDFs, chat messag
 - ⚪️ **Export setlists** as PDF or image for sharing
 
 #### Technical Stack
-- 🟢 Local database — Room (Android, iOS, Desktop)
+- 🟢 Local database — Room (Android, iOS, Desktop) — v3 (migration v2→v3 applied)
 - 🟢 User session — DataStore (current user ID, password hash, notation preference FR/EN)
 - 🟢 Reactive architecture — Kotlin Flows throughout (Room → Repository → UseCase → ViewModel → UI)
+- 🟢 ViewModel unit tests — `BandDetailViewModelTest`, `BandEditViewModelTest` (commonTest)
 - ⚪️ Internationalization (FR/EN)
 - ⚪️ PDF exporter
 - ⚪️ Printer management
@@ -102,11 +106,15 @@ Make planning smarter:
 | Area | Status | Notes |
 |------|--------|-------|
 | Architecture (Clean Arch + MVVM + Koin DI) | 🟢 Done | All layers in place |
-| Room database (entities, DAOs, migrations) | 🟢 Done | Band, BandMember, User, Song, Gig, SetList entities |
+| Room database (entities, DAOs, migrations) | 🟢 Done | v3 — Band, BandMember, User, Song, Gig, SetList entities |
 | DataStore (user session) | 🟢 Done | userId, password hash, notation preference |
 | User feature | 🟢 Done | Full CRUD |
-| Band feature | 🟢 Done | Create/list/delete bands, full member management with roles |
-| Navigation (Compose Navigation) | 🟢 Done | Main → Band Detail wired up |
+| Band feature — create | 🟢 Done | 3-step screen: name + genres, social URLs, members |
+| Band feature — detail & delete | 🟢 Done | Info header (email, genres, social), delete with confirm dialog |
+| Band feature — edit | 🟢 Done | Dedicated `BandEditScreen` / `BandEditViewModel` |
+| Band members feature | 🟢 Done | Add, edit, delete with roles (guitar, bass, vocals, drums…) |
+| Navigation (Compose Navigation) | 🟢 Done | All band screens wired: Main → Creation, Detail, Edit, Members |
+| ViewModel unit tests | 🟢 Done | `BandDetailViewModelTest`, `BandEditViewModelTest` |
 | Settings feature | 🟠 In progress | DataStore wired, screen UI pending |
 | Song feature | ⚪️ Not started | Domain + data layer scaffolded, no UI yet |
 | Gig & SetList feature | ⚪️ Not started | Domain + data layer scaffolded, no UI yet |
