@@ -18,7 +18,10 @@ import com.amolieres.setlistync.core.domain.band.model.Band
 import com.amolieres.setlistync.feature.band.detail.presentation.BandDetailEvent
 import com.amolieres.setlistync.feature.band.detail.presentation.BandDetailUiEvent
 import com.amolieres.setlistync.feature.band.detail.presentation.BandDetailUiState
+import setlistsync.composeapp.generated.resources.Res
+import setlistsync.composeapp.generated.resources.*
 import kotlinx.coroutines.flow.Flow
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -46,12 +49,12 @@ fun BandDetailScreen(
                 title = { Text(uiState.band?.name ?: "") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.action_back))
                     }
                 },
                 actions = {
                     IconButton(onClick = { onScreenEvent(BandDetailUiEvent.OnDeleteBandClicked) }) {
-                        Icon(Icons.Default.Delete, contentDescription = "Delete band")
+                        Icon(Icons.Default.Delete, contentDescription = stringResource(Res.string.band_detail_cd_delete))
                     }
                 }
             )
@@ -66,7 +69,7 @@ fun BandDetailScreen(
             uiState.band == null -> Box(
                 Modifier.fillMaxSize().padding(padding),
                 contentAlignment = Alignment.Center
-            ) { Text("Band not found.") }
+            ) { Text(stringResource(Res.string.band_detail_not_found)) }
 
             else -> Column(
                 Modifier
@@ -82,10 +85,10 @@ fun BandDetailScreen(
 
                 val memberCount = uiState.band.members.size
                 ListItem(
-                    headlineContent = { Text("Members") },
+                    headlineContent = { Text(stringResource(Res.string.band_detail_section_members)) },
                     trailingContent = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text("$memberCount member${if (memberCount != 1) "s" else ""}")
+                            Text("$memberCount ${stringResource(if (memberCount == 1) Res.string.member_singular else Res.string.member_plural)}")
                             Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null)
                         }
                     },
@@ -93,7 +96,7 @@ fun BandDetailScreen(
                 )
                 HorizontalDivider()
                 ListItem(
-                    headlineContent = { Text("Set Lists") },
+                    headlineContent = { Text(stringResource(Res.string.band_detail_section_setlists)) },
                     trailingContent = {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowForward,
@@ -129,9 +132,9 @@ private fun BandInfoSection(band: Band, onEditClicked: () -> Unit) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Informations", style = MaterialTheme.typography.titleSmall)
+            Text(stringResource(Res.string.band_detail_section_info), style = MaterialTheme.typography.titleSmall)
             IconButton(onClick = onEditClicked) {
-                Icon(Icons.Default.Edit, contentDescription = "Modifier les informations")
+                Icon(Icons.Default.Edit, contentDescription = stringResource(Res.string.band_detail_cd_edit_info))
             }
         }
 
@@ -145,7 +148,7 @@ private fun BandInfoSection(band: Band, onEditClicked: () -> Unit) {
 
         if (!hasAnyInfo) {
             Text(
-                "Aucune information renseignée.",
+                stringResource(Res.string.band_detail_no_info),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

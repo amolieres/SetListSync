@@ -16,6 +16,9 @@ import androidx.compose.ui.unit.dp
 import com.amolieres.setlistync.core.domain.band.model.BandMember
 import com.amolieres.setlistync.feature.band.members.presentation.BandMembersUiEvent
 import com.amolieres.setlistync.feature.band.members.presentation.BandMembersUiState
+import setlistsync.composeapp.generated.resources.Res
+import setlistsync.composeapp.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,17 +30,17 @@ fun BandMembersScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Members") },
+                title = { Text(stringResource(Res.string.band_members_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.action_back))
                     }
                 }
             )
         },
         floatingActionButton = {
             FloatingActionButton(onClick = { onScreenEvent(BandMembersUiEvent.OnAddMemberClicked) }) {
-                Icon(Icons.Default.Add, contentDescription = "Add member")
+                Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.band_members_cd_add))
             }
         }
     ) { padding ->
@@ -50,7 +53,7 @@ fun BandMembersScreen(
             uiState.members.isEmpty() -> Box(
                 Modifier.fillMaxSize().padding(padding),
                 contentAlignment = Alignment.Center
-            ) { Text("No members yet. Tap + to add one.") }
+            ) { Text(stringResource(Res.string.band_members_empty)) }
 
             else -> LazyColumn(
                 Modifier.fillMaxSize().padding(padding),
@@ -70,7 +73,7 @@ fun BandMembersScreen(
 
     if (uiState.showMemberDialog) {
         MemberDialog(
-            title = if (uiState.editingMember != null) "Edit member" else "Add member",
+            title = if (uiState.editingMember != null) stringResource(Res.string.member_dialog_edit_title) else stringResource(Res.string.member_dialog_add_title),
             nickname = uiState.memberNickname,
             selectedRoles = uiState.memberRoles,
             onNicknameChanged = { onScreenEvent(BandMembersUiEvent.OnMemberNicknameChanged(it)) },
@@ -88,7 +91,7 @@ private fun MemberListItem(
     onDelete: () -> Unit
 ) {
     ListItem(
-        headlineContent = { Text(member.nickname ?: "Member") },
+        headlineContent = { Text(member.nickname ?: stringResource(Res.string.band_members_default_name)) },
         supportingContent = {
             if (member.roles.isNotEmpty()) {
                 Text(member.roles.joinToString(" · ") { it.name.lowercase().replaceFirstChar { c -> c.uppercase() } })
@@ -97,10 +100,10 @@ private fun MemberListItem(
         trailingContent = {
             Row {
                 IconButton(onClick = onEdit) {
-                    Icon(Icons.Default.Edit, contentDescription = "Edit")
+                    Icon(Icons.Default.Edit, contentDescription = stringResource(Res.string.band_members_cd_edit))
                 }
                 IconButton(onClick = onDelete) {
-                    Icon(Icons.Default.Delete, contentDescription = "Delete")
+                    Icon(Icons.Default.Delete, contentDescription = stringResource(Res.string.band_members_cd_delete))
                 }
             }
         }

@@ -25,8 +25,11 @@ import com.amolieres.setlistync.feature.settings.presentation.ConfirmDialogType
 import com.amolieres.setlistync.feature.settings.presentation.SettingsEvent
 import com.amolieres.setlistync.feature.settings.presentation.SettingsUiEvent
 import com.amolieres.setlistync.feature.settings.presentation.SettingsUiState
+import setlistsync.composeapp.generated.resources.Res
+import setlistsync.composeapp.generated.resources.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -47,29 +50,29 @@ fun SettingsDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Settings") },
+        title = { Text(stringResource(Res.string.settings_title)) },
         text = {
             HorizontalDivider()
             Column(Modifier.verticalScroll(rememberScrollState())) {
-                Text("Account", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(Res.string.settings_section_account), style = MaterialTheme.typography.titleMedium)
                 Spacer(Modifier.height(8.dp))
                 Text("${uiState.userName} (${uiState.userEmail})")
                 Spacer(Modifier.height(12.dp))
 
                 Button(onClick = { onScreenEvent(SettingsUiEvent.OnLogoutClicked) }) {
-                    Text("Log out")
+                    Text(stringResource(Res.string.settings_btn_logout))
                 }
                 Spacer(Modifier.height(8.dp))
                 Button(
                     onClick = { onScreenEvent(SettingsUiEvent.OnDeleteAccountClicked) },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
                 ) {
-                    Text("Delete")
+                    Text(stringResource(Res.string.settings_btn_delete_account))
                 }
 
                 Spacer(Modifier.height(16.dp))
 
-                Text("Display", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(Res.string.settings_section_display), style = MaterialTheme.typography.titleMedium)
                 Spacer(Modifier.height(8.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     RadioButton(
@@ -77,7 +80,7 @@ fun SettingsDialog(
                         onClick = { onScreenEvent(SettingsUiEvent.NotationChanged(NoteNotation.FR)) }
                     )
                     Spacer(Modifier.width(8.dp))
-                    Text("French (Do Ré Mi...)")
+                    Text(stringResource(Res.string.settings_notation_french))
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     RadioButton(
@@ -85,13 +88,13 @@ fun SettingsDialog(
                         onClick = { onScreenEvent(SettingsUiEvent.NotationChanged(NoteNotation.EN)) }
                     )
                     Spacer(Modifier.width(8.dp))
-                    Text("American (C D E...)")
+                    Text(stringResource(Res.string.settings_notation_american))
                 }
             }
         },
         confirmButton = {
             HorizontalDivider()
-            TextButton(onClick = onDismiss) { Text("Close") }
+            TextButton(onClick = onDismiss) { Text(stringResource(Res.string.action_close)) }
         }
     )
 
