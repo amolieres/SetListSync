@@ -41,7 +41,9 @@ Managing setlists in a band often means juggling spreadsheets, PDFs, chat messag
 - 🟢 User session — DataStore (current user ID, password hash, notation preference FR/EN)
 - 🟢 Reactive architecture — Kotlin Flows throughout (Room → Repository → UseCase → ViewModel → UI)
 - 🟢 ViewModel unit tests — `BandDetailViewModelTest`, `BandEditViewModelTest` (commonTest)
-- ⚪️ Internationalization (FR/EN)
+- 🟢 Internationalization (FR/EN) — all strings centralized in `composeResources/values/strings.xml`, French translation in `values-fr/strings.xml`
+- ⚪️ App theme — custom Material 3 color scheme & typography
+- ⚪️ App icon — launcher icon for Android, iOS, Desktop
 - ⚪️ PDF exporter
 - ⚪️ Printer management
 
@@ -115,11 +117,13 @@ Make planning smarter:
 | Band members feature | 🟢 Done | Add, edit, delete with roles (guitar, bass, vocals, drums…) |
 | Navigation (Compose Navigation) | 🟢 Done | All band screens wired: Main → Creation, Detail, Edit, Members |
 | ViewModel unit tests | 🟢 Done | `BandDetailViewModelTest`, `BandEditViewModelTest` |
+| i18n (FR/EN) | 🟢 Done | All strings in `composeResources/values/strings.xml` (EN) + `values-fr/strings.xml` (FR) |
 | Settings feature | 🟠 In progress | DataStore wired, screen UI pending |
+| App theme (Material 3) | ⚪️ Not started | Custom color scheme & typography |
+| App icon | ⚪️ Not started | Launcher icon for Android, iOS, Desktop |
 | Song feature | ⚪️ Not started | Domain + data layer scaffolded, no UI yet |
 | Gig & SetList feature | ⚪️ Not started | Domain + data layer scaffolded, no UI yet |
 | PDF export | ⚪️ Not started | — |
-| i18n (FR/EN) | ⚪️ Not started | — |
 
 ---
 
