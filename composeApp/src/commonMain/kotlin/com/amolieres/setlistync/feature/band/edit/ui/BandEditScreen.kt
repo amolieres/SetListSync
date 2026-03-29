@@ -21,7 +21,10 @@ import androidx.compose.ui.unit.dp
 import com.amolieres.setlistync.feature.band.edit.presentation.BandEditEvent
 import com.amolieres.setlistync.feature.band.edit.presentation.BandEditUiEvent
 import com.amolieres.setlistync.feature.band.edit.presentation.BandEditUiState
+import setlistsync.composeapp.generated.resources.Res
+import setlistsync.composeapp.generated.resources.*
 import kotlinx.coroutines.flow.Flow
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -42,10 +45,10 @@ fun BandEditScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Modifier le groupe") },
+                title = { Text(stringResource(Res.string.band_edit_title)) },
                 navigationIcon = {
                     IconButton(onClick = { onScreenEvent(BandEditUiEvent.OnBackClicked) }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Retour")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.action_back))
                     }
                 }
             )
@@ -60,7 +63,7 @@ fun BandEditScreen(
             uiState.bandNotFound -> Box(
                 Modifier.fillMaxSize().padding(padding),
                 contentAlignment = Alignment.Center
-            ) { Text("Groupe introuvable.") }
+            ) { Text(stringResource(Res.string.band_edit_not_found)) }
 
             else -> Column(
                 modifier = Modifier
@@ -70,11 +73,11 @@ fun BandEditScreen(
                     .padding(horizontal = 16.dp, vertical = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // ── Nom ──────────────────────────────────────────────────────
+                // ── Name ─────────────────────────────────────────────────────
                 OutlinedTextField(
                     value = uiState.name,
                     onValueChange = { onScreenEvent(BandEditUiEvent.OnNameChanged(it)) },
-                    label = { Text("Nom du groupe *") },
+                    label = { Text(stringResource(Res.string.label_band_name_required)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words)
@@ -82,8 +85,8 @@ fun BandEditScreen(
 
                 HorizontalDivider()
 
-                // ── Styles musicaux ──────────────────────────────────────────
-                Text("Styles musicaux", style = MaterialTheme.typography.labelLarge)
+                // ── Musical styles ───────────────────────────────────────────
+                Text(stringResource(Res.string.label_musical_styles), style = MaterialTheme.typography.labelLarge)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -92,7 +95,7 @@ fun BandEditScreen(
                     OutlinedTextField(
                         value = uiState.genreInput,
                         onValueChange = { onScreenEvent(BandEditUiEvent.OnGenreInputChanged(it)) },
-                        label = { Text("Ajouter un style") },
+                        label = { Text(stringResource(Res.string.label_add_style)) },
                         modifier = Modifier.weight(1f),
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
@@ -101,7 +104,7 @@ fun BandEditScreen(
                         })
                     )
                     IconButton(onClick = { onScreenEvent(BandEditUiEvent.OnAddGenreClicked) }) {
-                        Icon(Icons.Default.Add, contentDescription = "Ajouter style")
+                        Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.cd_add_style))
                     }
                 }
                 if (uiState.genres.isNotEmpty()) {
@@ -114,7 +117,7 @@ fun BandEditScreen(
                                 trailingIcon = {
                                     Icon(
                                         Icons.Default.Close,
-                                        contentDescription = "Supprimer $genre",
+                                        contentDescription = stringResource(Res.string.cd_remove_genre, genre),
                                         modifier = Modifier.size(16.dp)
                                     )
                                 }
@@ -126,11 +129,11 @@ fun BandEditScreen(
                 HorizontalDivider()
 
                 // ── Contact ───────────────────────────────────────────────────
-                Text("Contact", style = MaterialTheme.typography.labelLarge)
+                Text(stringResource(Res.string.label_contact), style = MaterialTheme.typography.labelLarge)
                 OutlinedTextField(
                     value = uiState.email,
                     onValueChange = { onScreenEvent(BandEditUiEvent.OnEmailChanged(it)) },
-                    label = { Text("Email (optionnel)") },
+                    label = { Text(stringResource(Res.string.label_email_optional)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
@@ -138,33 +141,33 @@ fun BandEditScreen(
 
                 HorizontalDivider()
 
-                // ── Réseaux sociaux ──────────────────────────────────────────
-                Text("Réseaux sociaux", style = MaterialTheme.typography.labelLarge)
+                // ── Social networks ──────────────────────────────────────────
+                Text(stringResource(Res.string.label_social_networks), style = MaterialTheme.typography.labelLarge)
                 OutlinedTextField(
                     value = uiState.instagramUrl,
                     onValueChange = { onScreenEvent(BandEditUiEvent.OnInstagramChanged(it)) },
-                    label = { Text("Instagram URL (optionnel)") },
+                    label = { Text(stringResource(Res.string.label_instagram_url_optional)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
                 OutlinedTextField(
                     value = uiState.facebookUrl,
                     onValueChange = { onScreenEvent(BandEditUiEvent.OnFacebookChanged(it)) },
-                    label = { Text("Facebook URL (optionnel)") },
+                    label = { Text(stringResource(Res.string.label_facebook_url_optional)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
                 OutlinedTextField(
                     value = uiState.tiktokUrl,
                     onValueChange = { onScreenEvent(BandEditUiEvent.OnTiktokChanged(it)) },
-                    label = { Text("TikTok URL (optionnel)") },
+                    label = { Text(stringResource(Res.string.label_tiktok_url_optional)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
 
                 Spacer(Modifier.height(8.dp))
 
-                // ── Bouton Enregistrer ────────────────────────────────────────
+                // ── Save button ───────────────────────────────────────────────
                 Button(
                     onClick = { onScreenEvent(BandEditUiEvent.OnSaveClicked) },
                     enabled = uiState.name.isNotBlank() && !uiState.isSaving,
@@ -177,7 +180,7 @@ fun BandEditScreen(
                             color = MaterialTheme.colorScheme.onPrimary
                         )
                     } else {
-                        Text("Enregistrer")
+                        Text(stringResource(Res.string.action_save))
                     }
                 }
             }

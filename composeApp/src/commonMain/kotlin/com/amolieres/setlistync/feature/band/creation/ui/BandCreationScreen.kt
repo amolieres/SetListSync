@@ -20,7 +20,10 @@ import com.amolieres.setlistync.feature.band.creation.presentation.BandCreationE
 import com.amolieres.setlistync.feature.band.creation.presentation.BandCreationUiEvent
 import com.amolieres.setlistync.feature.band.creation.presentation.BandCreationUiState
 import com.amolieres.setlistync.feature.band.members.ui.MemberDialog
+import setlistsync.composeapp.generated.resources.Res
+import setlistsync.composeapp.generated.resources.*
 import kotlinx.coroutines.flow.Flow
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,10 +46,10 @@ fun BandCreationScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Nouveau groupe") },
+                title = { Text(stringResource(Res.string.band_creation_title)) },
                 navigationIcon = {
                     IconButton(onClick = { onScreenEvent(BandCreationUiEvent.OnBackClicked) }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.action_back))
                     }
                 }
             )
@@ -83,7 +86,7 @@ fun BandCreationScreen(
                         onClick = { onScreenEvent(BandCreationUiEvent.OnBackClicked) },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("Retour")
+                        Text(stringResource(Res.string.action_back))
                     }
                 }
                 Button(
@@ -98,7 +101,7 @@ fun BandCreationScreen(
                             color = MaterialTheme.colorScheme.onPrimary
                         )
                     } else {
-                        Text(if (uiState.currentStep == 3) "Créer" else "Suivant")
+                        Text(if (uiState.currentStep == 3) stringResource(Res.string.band_creation_btn_create) else stringResource(Res.string.action_next))
                     }
                 }
             }
@@ -107,7 +110,7 @@ fun BandCreationScreen(
 
     if (uiState.showMemberDialog) {
         MemberDialog(
-            title = "Ajouter un membre",
+            title = stringResource(Res.string.band_creation_add_member),
             nickname = uiState.memberNickname,
             selectedRoles = uiState.memberRoles,
             onNicknameChanged = { onScreenEvent(BandCreationUiEvent.OnMemberNicknameChanged(it)) },
@@ -130,13 +133,13 @@ private fun Step1Content(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = "Étape 1 — Informations principales",
+            text = stringResource(Res.string.band_creation_step1_title),
             style = MaterialTheme.typography.titleMedium
         )
         OutlinedTextField(
             value = uiState.bandName,
             onValueChange = { onScreenEvent(BandCreationUiEvent.OnBandNameChanged(it)) },
-            label = { Text("Nom du groupe *") },
+            label = { Text(stringResource(Res.string.label_band_name_required)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )
@@ -148,7 +151,7 @@ private fun Step1Content(
             OutlinedTextField(
                 value = uiState.genreInput,
                 onValueChange = { onScreenEvent(BandCreationUiEvent.OnGenreInputChanged(it)) },
-                label = { Text("Ajouter un style") },
+                label = { Text(stringResource(Res.string.label_add_style)) },
                 modifier = Modifier.weight(1f),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
@@ -157,11 +160,11 @@ private fun Step1Content(
                 })
             )
             IconButton(onClick = { onScreenEvent(BandCreationUiEvent.OnAddGenreClicked) }) {
-                Icon(Icons.Default.Add, contentDescription = "Ajouter genre")
+                Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.band_creation_cd_add_genre))
             }
         }
         if (uiState.genres.isNotEmpty()) {
-            Text("Styles musicaux :", style = MaterialTheme.typography.labelLarge)
+            Text(stringResource(Res.string.band_creation_genres_section), style = MaterialTheme.typography.labelLarge)
             uiState.genres.forEach { genre ->
                 GenreChip(genre = genre, onRemove = { onScreenEvent(BandCreationUiEvent.OnRemoveGenre(genre)) })
             }
@@ -178,7 +181,7 @@ private fun GenreChip(genre: String, onRemove: () -> Unit) {
         trailingIcon = {
             Icon(
                 Icons.Default.Close,
-                contentDescription = "Supprimer $genre",
+                contentDescription = stringResource(Res.string.cd_remove_genre, genre),
                 modifier = Modifier.size(16.dp)
             )
         }
@@ -197,13 +200,13 @@ private fun Step2Content(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = "Étape 2 — Contact & réseaux sociaux",
+            text = stringResource(Res.string.band_creation_step2_title),
             style = MaterialTheme.typography.titleMedium
         )
         OutlinedTextField(
             value = uiState.email,
             onValueChange = { onScreenEvent(BandCreationUiEvent.OnEmailChanged(it)) },
-            label = { Text("Email (optionnel)") },
+            label = { Text(stringResource(Res.string.label_email_optional)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
@@ -211,21 +214,21 @@ private fun Step2Content(
         OutlinedTextField(
             value = uiState.instagramUrl,
             onValueChange = { onScreenEvent(BandCreationUiEvent.OnInstagramUrlChanged(it)) },
-            label = { Text("Instagram URL (optionnel)") },
+            label = { Text(stringResource(Res.string.label_instagram_url_optional)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )
         OutlinedTextField(
             value = uiState.facebookUrl,
             onValueChange = { onScreenEvent(BandCreationUiEvent.OnFacebookUrlChanged(it)) },
-            label = { Text("Facebook URL (optionnel)") },
+            label = { Text(stringResource(Res.string.label_facebook_url_optional)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )
         OutlinedTextField(
             value = uiState.tiktokUrl,
             onValueChange = { onScreenEvent(BandCreationUiEvent.OnTiktokUrlChanged(it)) },
-            label = { Text("TikTok URL (optionnel)") },
+            label = { Text(stringResource(Res.string.label_tiktok_url_optional)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )
@@ -244,7 +247,7 @@ private fun Step3Content(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = "Étape 3 — Membres",
+            text = stringResource(Res.string.band_creation_step3_title),
             style = MaterialTheme.typography.titleMedium
         )
         Button(
@@ -253,14 +256,14 @@ private fun Step3Content(
         ) {
             Icon(Icons.Default.Add, contentDescription = null)
             Spacer(Modifier.width(8.dp))
-            Text("Ajouter un membre")
+            Text(stringResource(Res.string.band_creation_add_member))
         }
         if (uiState.members.isNotEmpty()) {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 items(uiState.members) { member ->
                     ListItem(
                         headlineContent = {
-                            Text(member.nickname ?: "Membre sans surnom")
+                            Text(member.nickname ?: stringResource(Res.string.band_creation_member_no_nickname))
                         },
                         supportingContent = {
                             if (member.roles.isNotEmpty()) {
@@ -273,7 +276,7 @@ private fun Step3Content(
             }
         } else {
             Text(
-                text = "Aucun membre ajouté pour l'instant.",
+                text = stringResource(Res.string.band_creation_no_members),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

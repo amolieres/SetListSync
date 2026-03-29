@@ -17,8 +17,11 @@ import com.amolieres.setlistync.feature.main.presentation.MainUiEvent
 import com.amolieres.setlistync.feature.main.presentation.MainUiState
 import com.amolieres.setlistync.feature.settings.presentation.SettingsViewModel
 import com.amolieres.setlistync.feature.settings.ui.SettingsDialog
+import setlistsync.composeapp.generated.resources.Res
+import setlistsync.composeapp.generated.resources.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -47,17 +50,17 @@ fun MainScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("SetListSync") },
+                title = { Text(stringResource(Res.string.app_name)) },
                 actions = {
                     IconButton(onClick = { onScreenEvent(MainUiEvent.OnSettingsClicked) }) {
-                        Icon(Icons.Default.Settings, contentDescription = "Settings")
+                        Icon(Icons.Default.Settings, contentDescription = stringResource(Res.string.main_cd_settings))
                     }
                 }
             )
         },
         floatingActionButton = {
             FloatingActionButton(onClick = { onScreenEvent(MainUiEvent.OnCreateBandClicked) }) {
-                Icon(Icons.Default.Add, contentDescription = "Create band")
+                Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.main_cd_create_band))
             }
         }
     ) { padding ->
@@ -70,7 +73,7 @@ fun MainScreen(
             uiState.bands.isEmpty() -> Box(
                 Modifier.fillMaxSize().padding(padding),
                 contentAlignment = Alignment.Center
-            ) { Text("No bands yet. Tap + to create one.") }
+            ) { Text(stringResource(Res.string.main_empty)) }
 
             else -> LazyColumn(
                 Modifier.fillMaxSize().padding(padding),
@@ -80,7 +83,8 @@ fun MainScreen(
                     ListItem(
                         headlineContent = { Text(band.name) },
                         supportingContent = {
-                            Text("${band.members.size} member${if (band.members.size != 1) "s" else ""}")
+                            val n = band.members.size
+                            Text("$n ${stringResource(if (n == 1) Res.string.member_singular else Res.string.member_plural)}")
                         },
                         modifier = Modifier
                             .fillMaxWidth()

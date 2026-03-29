@@ -17,6 +17,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.amolieres.setlistync.core.domain.band.model.Role
+import setlistsync.composeapp.generated.resources.Res
+import setlistsync.composeapp.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun MemberDialog(
@@ -36,11 +39,11 @@ internal fun MemberDialog(
                 OutlinedTextField(
                     value = nickname,
                     onValueChange = onNicknameChanged,
-                    label = { Text("Nickname (optional)") },
+                    label = { Text(stringResource(Res.string.member_dialog_label_nickname)) },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(Modifier.height(12.dp))
-                Text("Roles", style = MaterialTheme.typography.labelLarge)
+                Text(stringResource(Res.string.member_dialog_section_roles), style = MaterialTheme.typography.labelLarge)
                 Spacer(Modifier.height(4.dp))
                 Role.entries.forEach { role ->
                     Row(
@@ -58,10 +61,10 @@ internal fun MemberDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = onConfirm) { Text("Save") }
+            TextButton(onClick = onConfirm) { Text(stringResource(Res.string.action_save)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(Res.string.action_cancel)) }
         }
     )
 }
