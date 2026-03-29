@@ -37,6 +37,7 @@ kotlin {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.koin.android)
+            implementation(libs.androidx.splashscreen)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -122,6 +123,12 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "com.amolieres.setlistync"
             packageVersion = "1.0.0"
+            // macOS needs .icns, Windows needs .ico — PNG used here for Linux.
+            // Generate platform-specific formats from src/desktopMain/resources/ic_launcher.png
+            // when packaging for macOS/Windows distributions.
+            linux {
+                iconFile.set(project.file("src/desktopMain/resources/ic_launcher.png"))
+            }
         }
     }
 }
