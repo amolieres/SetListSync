@@ -3,19 +3,18 @@ package com.amolieres.setlistync.feature.band.creation.ui
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
+import com.amolieres.setlistync.app.designsystem.AppDimens
+import com.amolieres.setlistync.app.designsystem.components.AppGenreInput
+import com.amolieres.setlistync.app.designsystem.components.AppLoadingButton
+import com.amolieres.setlistync.app.designsystem.components.AppRemovableChip
 import com.amolieres.setlistync.feature.band.creation.presentation.BandCreationEvent
 import com.amolieres.setlistync.feature.band.creation.presentation.BandCreationUiEvent
 import com.amolieres.setlistync.feature.band.creation.presentation.BandCreationUiState
@@ -65,7 +64,7 @@ fun BandCreationScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(AppDimens.SpacingL))
 
             Box(modifier = Modifier.weight(1f)) {
                 when (uiState.currentStep) {
@@ -78,8 +77,8 @@ fun BandCreationScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    .padding(horizontal = AppDimens.SpacingL, vertical = AppDimens.SpacingM),
+                horizontalArrangement = Arrangement.spacedBy(AppDimens.SpacingS)
             ) {
                 if (uiState.currentStep > 1) {
                     OutlinedButton(
@@ -89,20 +88,13 @@ fun BandCreationScreen(
                         Text(stringResource(Res.string.action_back))
                     }
                 }
-                Button(
+                AppLoadingButton(
                     onClick = { onScreenEvent(BandCreationUiEvent.OnNextClicked) },
+                    isLoading = uiState.isLoading,
                     enabled = uiState.currentStep != 1 || uiState.bandName.isNotBlank(),
                     modifier = Modifier.weight(1f)
                 ) {
-                    if (uiState.isLoading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(20.dp),
-                            strokeWidth = 2.dp,
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
-                    } else {
-                        Text(if (uiState.currentStep == 3) stringResource(Res.string.band_creation_btn_create) else stringResource(Res.string.action_next))
-                    }
+                    Text(if (uiState.currentStep == 3) stringResource(Res.string.band_creation_btn_create) else stringResource(Res.string.action_next))
                 }
             }
         }
@@ -129,8 +121,8 @@ private fun Step1Content(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .padding(horizontal = AppDimens.SpacingL),
+        verticalArrangement = Arrangement.spacedBy(AppDimens.SpacingL)
     ) {
         Text(
             text = stringResource(Res.string.band_creation_step1_title),
@@ -143,49 +135,24 @@ private fun Step1Content(
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            OutlinedTextField(
-                value = uiState.genreInput,
-                onValueChange = { onScreenEvent(BandCreationUiEvent.OnGenreInputChanged(it)) },
-                label = { Text(stringResource(Res.string.label_add_style)) },
-                modifier = Modifier.weight(1f),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(onDone = {
-                    onScreenEvent(BandCreationUiEvent.OnAddGenreClicked)
-                })
-            )
-            IconButton(onClick = { onScreenEvent(BandCreationUiEvent.OnAddGenreClicked) }) {
-                Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.band_creation_cd_add_genre))
-            }
-        }
+        AppGenreInput(
+            value = uiState.genreInput,
+            onValueChange = { onScreenEvent(BandCreationUiEvent.OnGenreInputChanged(it)) },
+            onAdd = { onScreenEvent(BandCreationUiEvent.OnAddGenreClicked) },
+            label = stringResource(Res.string.label_add_style),
+            addContentDescription = stringResource(Res.string.band_creation_cd_add_genre)
+        )
         if (uiState.genres.isNotEmpty()) {
             Text(stringResource(Res.string.band_creation_genres_section), style = MaterialTheme.typography.labelLarge)
             uiState.genres.forEach { genre ->
-                GenreChip(genre = genre, onRemove = { onScreenEvent(BandCreationUiEvent.OnRemoveGenre(genre)) })
+                AppRemovableChip(
+                    label = genre,
+                    onRemove = { onScreenEvent(BandCreationUiEvent.OnRemoveGenre(genre)) },
+                    removeContentDescription = stringResource(Res.string.cd_remove_genre, genre)
+                )
             }
         }
     }
-}
-
-@Composable
-private fun GenreChip(genre: String, onRemove: () -> Unit) {
-    InputChip(
-        selected = false,
-        onClick = onRemove,
-        label = { Text(genre) },
-        trailingIcon = {
-            Icon(
-                Icons.Default.Close,
-                contentDescription = stringResource(Res.string.cd_remove_genre, genre),
-                modifier = Modifier.size(16.dp)
-            )
-        }
-    )
 }
 
 @Composable
@@ -196,8 +163,8 @@ private fun Step2Content(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .padding(horizontal = AppDimens.SpacingL),
+        verticalArrangement = Arrangement.spacedBy(AppDimens.SpacingL)
     ) {
         Text(
             text = stringResource(Res.string.band_creation_step2_title),
@@ -243,8 +210,8 @@ private fun Step3Content(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .padding(horizontal = AppDimens.SpacingL),
+        verticalArrangement = Arrangement.spacedBy(AppDimens.SpacingL)
     ) {
         Text(
             text = stringResource(Res.string.band_creation_step3_title),
@@ -255,11 +222,11 @@ private fun Step3Content(
             modifier = Modifier.fillMaxWidth()
         ) {
             Icon(Icons.Default.Add, contentDescription = null)
-            Spacer(Modifier.width(8.dp))
+            Spacer(Modifier.width(AppDimens.SpacingS))
             Text(stringResource(Res.string.band_creation_add_member))
         }
         if (uiState.members.isNotEmpty()) {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(AppDimens.SpacingXxs)) {
                 items(uiState.members) { member ->
                     ListItem(
                         headlineContent = {

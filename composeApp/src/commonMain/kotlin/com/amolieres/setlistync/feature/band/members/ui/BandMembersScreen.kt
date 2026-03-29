@@ -10,9 +10,10 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import com.amolieres.setlistync.app.designsystem.AppDimens
+import com.amolieres.setlistync.app.designsystem.components.AppCenteredLoader
+import com.amolieres.setlistync.app.designsystem.components.AppCenteredMessage
 import com.amolieres.setlistync.core.domain.band.model.BandMember
 import com.amolieres.setlistync.feature.band.members.presentation.BandMembersUiEvent
 import com.amolieres.setlistync.feature.band.members.presentation.BandMembersUiState
@@ -45,19 +46,16 @@ fun BandMembersScreen(
         }
     ) { padding ->
         when {
-            uiState.isLoading -> Box(
-                Modifier.fillMaxSize().padding(padding),
-                contentAlignment = Alignment.Center
-            ) { CircularProgressIndicator() }
+            uiState.isLoading -> AppCenteredLoader(Modifier.padding(padding))
 
-            uiState.members.isEmpty() -> Box(
-                Modifier.fillMaxSize().padding(padding),
-                contentAlignment = Alignment.Center
-            ) { Text(stringResource(Res.string.band_members_empty)) }
+            uiState.members.isEmpty() -> AppCenteredMessage(
+                text = stringResource(Res.string.band_members_empty),
+                modifier = Modifier.padding(padding)
+            )
 
             else -> LazyColumn(
                 Modifier.fillMaxSize().padding(padding),
-                contentPadding = PaddingValues(bottom = 88.dp)
+                contentPadding = PaddingValues(bottom = AppDimens.FabSpacing)
             ) {
                 items(uiState.members) { member ->
                     MemberListItem(

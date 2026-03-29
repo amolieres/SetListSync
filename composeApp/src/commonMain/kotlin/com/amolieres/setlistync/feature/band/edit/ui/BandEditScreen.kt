@@ -2,22 +2,22 @@ package com.amolieres.setlistync.feature.band.edit.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
+import com.amolieres.setlistync.app.designsystem.AppDimens
+import com.amolieres.setlistync.app.designsystem.components.AppCenteredLoader
+import com.amolieres.setlistync.app.designsystem.components.AppCenteredMessage
+import com.amolieres.setlistync.app.designsystem.components.AppGenreInput
+import com.amolieres.setlistync.app.designsystem.components.AppLoadingButton
+import com.amolieres.setlistync.app.designsystem.components.AppRemovableChip
 import com.amolieres.setlistync.feature.band.edit.presentation.BandEditEvent
 import com.amolieres.setlistync.feature.band.edit.presentation.BandEditUiEvent
 import com.amolieres.setlistync.feature.band.edit.presentation.BandEditUiState
@@ -55,23 +55,20 @@ fun BandEditScreen(
         }
     ) { padding ->
         when {
-            uiState.isLoading -> Box(
-                Modifier.fillMaxSize().padding(padding),
-                contentAlignment = Alignment.Center
-            ) { CircularProgressIndicator() }
+            uiState.isLoading -> AppCenteredLoader(Modifier.padding(padding))
 
-            uiState.bandNotFound -> Box(
-                Modifier.fillMaxSize().padding(padding),
-                contentAlignment = Alignment.Center
-            ) { Text(stringResource(Res.string.band_edit_not_found)) }
+            uiState.bandNotFound -> AppCenteredMessage(
+                text = stringResource(Res.string.band_edit_not_found),
+                modifier = Modifier.padding(padding)
+            )
 
             else -> Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                    .padding(horizontal = AppDimens.SpacingL, vertical = AppDimens.SpacingM),
+                verticalArrangement = Arrangement.spacedBy(AppDimens.SpacingL)
             ) {
                 // ── Name ─────────────────────────────────────────────────────
                 OutlinedTextField(
@@ -87,40 +84,20 @@ fun BandEditScreen(
 
                 // ── Musical styles ───────────────────────────────────────────
                 Text(stringResource(Res.string.label_musical_styles), style = MaterialTheme.typography.labelLarge)
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    OutlinedTextField(
-                        value = uiState.genreInput,
-                        onValueChange = { onScreenEvent(BandEditUiEvent.OnGenreInputChanged(it)) },
-                        label = { Text(stringResource(Res.string.label_add_style)) },
-                        modifier = Modifier.weight(1f),
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                        keyboardActions = KeyboardActions(onDone = {
-                            onScreenEvent(BandEditUiEvent.OnAddGenreClicked)
-                        })
-                    )
-                    IconButton(onClick = { onScreenEvent(BandEditUiEvent.OnAddGenreClicked) }) {
-                        Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.cd_add_style))
-                    }
-                }
+                AppGenreInput(
+                    value = uiState.genreInput,
+                    onValueChange = { onScreenEvent(BandEditUiEvent.OnGenreInputChanged(it)) },
+                    onAdd = { onScreenEvent(BandEditUiEvent.OnAddGenreClicked) },
+                    label = stringResource(Res.string.label_add_style),
+                    addContentDescription = stringResource(Res.string.cd_add_style)
+                )
                 if (uiState.genres.isNotEmpty()) {
-                    FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    FlowRow(horizontalArrangement = Arrangement.spacedBy(AppDimens.SpacingXxs)) {
                         uiState.genres.forEach { genre ->
-                            InputChip(
-                                selected = false,
-                                onClick = { onScreenEvent(BandEditUiEvent.OnRemoveGenre(genre)) },
-                                label = { Text(genre) },
-                                trailingIcon = {
-                                    Icon(
-                                        Icons.Default.Close,
-                                        contentDescription = stringResource(Res.string.cd_remove_genre, genre),
-                                        modifier = Modifier.size(16.dp)
-                                    )
-                                }
+                            AppRemovableChip(
+                                label = genre,
+                                onRemove = { onScreenEvent(BandEditUiEvent.OnRemoveGenre(genre)) },
+                                removeContentDescription = stringResource(Res.string.cd_remove_genre, genre)
                             )
                         }
                     }
@@ -165,23 +142,14 @@ fun BandEditScreen(
                     singleLine = true
                 )
 
-                Spacer(Modifier.height(8.dp))
-
                 // ── Save button ───────────────────────────────────────────────
-                Button(
+                AppLoadingButton(
                     onClick = { onScreenEvent(BandEditUiEvent.OnSaveClicked) },
-                    enabled = uiState.name.isNotBlank() && !uiState.isSaving,
+                    isLoading = uiState.isSaving,
+                    enabled = uiState.name.isNotBlank(),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    if (uiState.isSaving) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(20.dp),
-                            strokeWidth = 2.dp,
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
-                    } else {
-                        Text(stringResource(Res.string.action_save))
-                    }
+                    Text(stringResource(Res.string.action_save))
                 }
             }
         }

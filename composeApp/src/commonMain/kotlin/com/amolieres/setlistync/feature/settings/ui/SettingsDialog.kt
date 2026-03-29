@@ -19,7 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import com.amolieres.setlistync.app.designsystem.AppDimens
 import com.amolieres.setlistync.core.data.preferences.NoteNotation
 import com.amolieres.setlistync.feature.settings.presentation.ConfirmDialogType
 import com.amolieres.setlistync.feature.settings.presentation.SettingsEvent
@@ -55,14 +55,14 @@ fun SettingsDialog(
             HorizontalDivider()
             Column(Modifier.verticalScroll(rememberScrollState())) {
                 Text(stringResource(Res.string.settings_section_account), style = MaterialTheme.typography.titleMedium)
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(AppDimens.SpacingS))
                 Text("${uiState.userName} (${uiState.userEmail})")
-                Spacer(Modifier.height(12.dp))
+                Spacer(Modifier.height(AppDimens.SpacingM))
 
                 Button(onClick = { onScreenEvent(SettingsUiEvent.OnLogoutClicked) }) {
                     Text(stringResource(Res.string.settings_btn_logout))
                 }
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(AppDimens.SpacingS))
                 Button(
                     onClick = { onScreenEvent(SettingsUiEvent.OnDeleteAccountClicked) },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
@@ -70,16 +70,16 @@ fun SettingsDialog(
                     Text(stringResource(Res.string.settings_btn_delete_account))
                 }
 
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(AppDimens.SpacingL))
 
                 Text(stringResource(Res.string.settings_section_display), style = MaterialTheme.typography.titleMedium)
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(AppDimens.SpacingS))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     RadioButton(
                         selected = uiState.notation == NoteNotation.FR,
                         onClick = { onScreenEvent(SettingsUiEvent.NotationChanged(NoteNotation.FR)) }
                     )
-                    Spacer(Modifier.width(8.dp))
+                    Spacer(Modifier.width(AppDimens.SpacingS))
                     Text(stringResource(Res.string.settings_notation_french))
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -87,7 +87,7 @@ fun SettingsDialog(
                         selected = uiState.notation == NoteNotation.EN,
                         onClick = { onScreenEvent(SettingsUiEvent.NotationChanged(NoteNotation.EN)) }
                     )
-                    Spacer(Modifier.width(8.dp))
+                    Spacer(Modifier.width(AppDimens.SpacingS))
                     Text(stringResource(Res.string.settings_notation_american))
                 }
             }

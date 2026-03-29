@@ -13,7 +13,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import com.amolieres.setlistync.app.designsystem.AppDimens
+import com.amolieres.setlistync.app.designsystem.components.AppCenteredLoader
+import com.amolieres.setlistync.app.designsystem.components.AppCenteredMessage
+import com.amolieres.setlistync.app.designsystem.components.AppInfoRow
 import com.amolieres.setlistync.core.domain.band.model.Band
 import com.amolieres.setlistync.feature.band.detail.presentation.BandDetailEvent
 import com.amolieres.setlistync.feature.band.detail.presentation.BandDetailUiEvent
@@ -61,15 +64,12 @@ fun BandDetailScreen(
         }
     ) { padding ->
         when {
-            uiState.isLoading -> Box(
-                Modifier.fillMaxSize().padding(padding),
-                contentAlignment = Alignment.Center
-            ) { CircularProgressIndicator() }
+            uiState.isLoading -> AppCenteredLoader(Modifier.padding(padding))
 
-            uiState.band == null -> Box(
-                Modifier.fillMaxSize().padding(padding),
-                contentAlignment = Alignment.Center
-            ) { Text(stringResource(Res.string.band_detail_not_found)) }
+            uiState.band == null -> AppCenteredMessage(
+                text = stringResource(Res.string.band_detail_not_found),
+                modifier = Modifier.padding(padding)
+            )
 
             else -> Column(
                 Modifier
@@ -126,7 +126,11 @@ fun BandDetailScreen(
 
 @Composable
 private fun BandInfoSection(band: Band, onEditClicked: () -> Unit) {
-    Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = AppDimens.SpacingL, vertical = AppDimens.SpacingM)
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -138,7 +142,7 @@ private fun BandInfoSection(band: Band, onEditClicked: () -> Unit) {
             }
         }
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(AppDimens.SpacingS))
 
         val hasAnyInfo = band.email != null
             || band.instagramUrl != null
@@ -155,58 +159,29 @@ private fun BandInfoSection(band: Band, onEditClicked: () -> Unit) {
             return
         }
 
-        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(AppDimens.SpacingXs)) {
             if (band.genres.isNotEmpty()) {
                 Row(
                     verticalAlignment = Alignment.Top,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(AppDimens.SpacingS)
                 ) {
                     Icon(
                         Icons.Default.MusicNote,
                         contentDescription = null,
-                        modifier = Modifier.size(18.dp).padding(top = 2.dp),
+                        modifier = Modifier.size(AppDimens.IconSizeMedium).padding(top = AppDimens.SpacingXxs),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    FlowRow(horizontalArrangement = Arrangement.spacedBy(AppDimens.SpacingXxs)) {
                         band.genres.forEach { genre ->
                             SuggestionChip(onClick = {}, label = { Text(genre) })
                         }
                     }
                 }
             }
-            band.email?.let { BandInfoRow(icon = Icons.Default.Email, text = it) }
-            band.instagramUrl?.let { BandInfoRow(icon = Icons.Default.Share, text = it, label = "Instagram") }
-            band.facebookUrl?.let { BandInfoRow(icon = Icons.Default.Share, text = it, label = "Facebook") }
-            band.tiktokUrl?.let { BandInfoRow(icon = Icons.Default.Share, text = it, label = "TikTok") }
-        }
-    }
-}
-
-@Composable
-private fun BandInfoRow(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    text: String,
-    label: String? = null
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Icon(
-            icon,
-            contentDescription = null,
-            modifier = Modifier.size(18.dp),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Column {
-            if (label != null) {
-                Text(
-                    label,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            Text(text, style = MaterialTheme.typography.bodyMedium)
+            band.email?.let { AppInfoRow(icon = Icons.Default.Email, text = it) }
+            band.instagramUrl?.let { AppInfoRow(icon = Icons.Default.Share, text = it, label = "Instagram") }
+            band.facebookUrl?.let { AppInfoRow(icon = Icons.Default.Share, text = it, label = "Facebook") }
+            band.tiktokUrl?.let { AppInfoRow(icon = Icons.Default.Share, text = it, label = "TikTok") }
         }
     }
 }

@@ -15,7 +15,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import com.amolieres.setlistync.app.designsystem.AppDimens
 import com.amolieres.setlistync.core.domain.band.model.Role
 import setlistsync.composeapp.generated.resources.Res
 import setlistsync.composeapp.generated.resources.*
@@ -42,9 +42,9 @@ internal fun MemberDialog(
                     label = { Text(stringResource(Res.string.member_dialog_label_nickname)) },
                     modifier = Modifier.fillMaxWidth()
                 )
-                Spacer(Modifier.height(12.dp))
+                Spacer(Modifier.height(AppDimens.SpacingM))
                 Text(stringResource(Res.string.member_dialog_section_roles), style = MaterialTheme.typography.labelLarge)
-                Spacer(Modifier.height(4.dp))
+                Spacer(Modifier.height(AppDimens.SpacingXxs))
                 Role.entries.forEach { role ->
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -54,7 +54,7 @@ internal fun MemberDialog(
                             checked = role in selectedRoles,
                             onCheckedChange = { onRoleToggled(role) }
                         )
-                        Spacer(Modifier.width(8.dp))
+                        Spacer(Modifier.width(AppDimens.SpacingS))
                         Text(role.name.lowercase().replaceFirstChar { it.uppercase() })
                     }
                 }

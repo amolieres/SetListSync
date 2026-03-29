@@ -9,9 +9,10 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import com.amolieres.setlistync.app.designsystem.AppDimens
+import com.amolieres.setlistync.app.designsystem.components.AppCenteredLoader
+import com.amolieres.setlistync.app.designsystem.components.AppCenteredMessage
 import com.amolieres.setlistync.feature.main.presentation.MainEvent
 import com.amolieres.setlistync.feature.main.presentation.MainUiEvent
 import com.amolieres.setlistync.feature.main.presentation.MainUiState
@@ -65,19 +66,16 @@ fun MainScreen(
         }
     ) { padding ->
         when {
-            uiState.isLoading -> Box(
-                Modifier.fillMaxSize().padding(padding),
-                contentAlignment = Alignment.Center
-            ) { CircularProgressIndicator() }
+            uiState.isLoading -> AppCenteredLoader(Modifier.padding(padding))
 
-            uiState.bands.isEmpty() -> Box(
-                Modifier.fillMaxSize().padding(padding),
-                contentAlignment = Alignment.Center
-            ) { Text(stringResource(Res.string.main_empty)) }
+            uiState.bands.isEmpty() -> AppCenteredMessage(
+                text = stringResource(Res.string.main_empty),
+                modifier = Modifier.padding(padding)
+            )
 
             else -> LazyColumn(
                 Modifier.fillMaxSize().padding(padding),
-                contentPadding = PaddingValues(bottom = 88.dp)
+                contentPadding = PaddingValues(bottom = AppDimens.FabSpacing)
             ) {
                 items(uiState.bands) { band ->
                     ListItem(
