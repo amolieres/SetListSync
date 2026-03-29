@@ -24,7 +24,9 @@ import com.amolieres.setlistync.feature.band.edit.presentation.BandEditUiState
 import setlistsync.composeapp.generated.resources.Res
 import setlistsync.composeapp.generated.resources.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -154,4 +156,50 @@ fun BandEditScreen(
             }
         }
     }
+}
+
+// ── Previews ─────────────────────────────────────────────────────────────────
+
+@Preview
+@Composable
+fun BandEditScreenLoadingPreview() {
+    BandEditScreen(
+        uiState = BandEditUiState(isLoading = true),
+        eventsFlow = emptyFlow(),
+        onScreenEvent = {},
+        onNavigateBack = {}
+    )
+}
+
+@Preview
+@Composable
+fun BandEditScreenContentPreview() {
+    BandEditScreen(
+        uiState = BandEditUiState(
+            isLoading = false,
+            name = "The Rocketeers",
+            email = "contact@rocketeers.com",
+            instagramUrl = "instagram.com/rocketeers",
+            genres = listOf("Rock", "Indie"),
+            genreInput = ""
+        ),
+        eventsFlow = emptyFlow(),
+        onScreenEvent = {},
+        onNavigateBack = {}
+    )
+}
+
+@Preview
+@Composable
+fun BandEditScreenSavingPreview() {
+    BandEditScreen(
+        uiState = BandEditUiState(
+            isLoading = false,
+            name = "The Rocketeers",
+            isSaving = true
+        ),
+        eventsFlow = emptyFlow(),
+        onScreenEvent = {},
+        onNavigateBack = {}
+    )
 }

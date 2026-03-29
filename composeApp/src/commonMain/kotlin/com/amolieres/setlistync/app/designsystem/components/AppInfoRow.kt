@@ -4,6 +4,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -12,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.amolieres.setlistync.app.designsystem.AppDimens
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 /**
  * A row displaying a leading [icon] alongside a [text] value.
@@ -43,5 +47,22 @@ fun AppInfoRow(
             }
             Text(text, style = MaterialTheme.typography.bodyMedium)
         }
+    }
+}
+
+// ── Previews ─────────────────────────────────────────────────────────────────
+
+@Preview
+@Composable
+private fun AppInfoRowSimplePreview() {
+    AppInfoRow(icon = Icons.Default.Email, text = "contact@band.com")
+}
+
+@Preview
+@Composable
+private fun AppInfoRowWithLabelPreview() {
+    Column(verticalArrangement = Arrangement.spacedBy(AppDimens.SpacingXs)) {
+        AppInfoRow(icon = Icons.Default.Share, text = "instagram.com/myband", label = "Instagram")
+        AppInfoRow(icon = Icons.Default.Share, text = "facebook.com/myband", label = "Facebook")
     }
 }

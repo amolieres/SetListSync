@@ -22,7 +22,11 @@ import com.amolieres.setlistync.feature.band.members.ui.MemberDialog
 import setlistsync.composeapp.generated.resources.Res
 import setlistsync.composeapp.generated.resources.*
 import kotlinx.coroutines.flow.Flow
+import com.amolieres.setlistync.core.domain.band.model.BandMember
+import com.amolieres.setlistync.core.domain.band.model.Role
+import kotlinx.coroutines.flow.emptyFlow
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -249,4 +253,58 @@ private fun Step3Content(
             )
         }
     }
+}
+
+// ── Previews ─────────────────────────────────────────────────────────────────
+
+@Preview
+@Composable
+fun BandCreationScreenStep1Preview() {
+    BandCreationScreen(
+        uiState = BandCreationUiState(
+            currentStep = 1,
+            bandName = "The Rocketeers",
+            genres = listOf("Rock", "Indie")
+        ),
+        eventsFlow = emptyFlow(),
+        onScreenEvent = {},
+        onNavigateBack = {},
+        onNavigateToBandDetail = {}
+    )
+}
+
+@Preview
+@Composable
+fun BandCreationScreenStep2Preview() {
+    BandCreationScreen(
+        uiState = BandCreationUiState(
+            currentStep = 2,
+            bandName = "The Rocketeers",
+            email = "contact@rocketeers.com",
+            instagramUrl = "instagram.com/rocketeers"
+        ),
+        eventsFlow = emptyFlow(),
+        onScreenEvent = {},
+        onNavigateBack = {},
+        onNavigateToBandDetail = {}
+    )
+}
+
+@Preview
+@Composable
+fun BandCreationScreenStep3Preview() {
+    BandCreationScreen(
+        uiState = BandCreationUiState(
+            currentStep = 3,
+            bandName = "The Rocketeers",
+            members = listOf(
+                BandMember(id = "1", userId = null, nickname = "John", roles = listOf(Role.VOCALS, Role.GUITAR)),
+                BandMember(id = "2", userId = null, nickname = "Jane", roles = listOf(Role.DRUMS))
+            )
+        ),
+        eventsFlow = emptyFlow(),
+        onScreenEvent = {},
+        onNavigateBack = {},
+        onNavigateToBandDetail = {}
+    )
 }

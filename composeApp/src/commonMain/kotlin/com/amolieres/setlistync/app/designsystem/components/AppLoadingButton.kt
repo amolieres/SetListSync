@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.amolieres.setlistync.app.designsystem.AppDimens
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 /**
  * A [Button] that swaps its content for a [CircularProgressIndicator] while [isLoading] is true.
@@ -35,5 +37,23 @@ fun AppLoadingButton(
         } else {
             content()
         }
+    }
+}
+
+// ── Previews ─────────────────────────────────────────────────────────────────
+
+@Preview
+@Composable
+private fun AppLoadingButtonIdlePreview() {
+    AppLoadingButton(onClick = {}, isLoading = false) {
+        Text("Enregistrer")
+    }
+}
+
+@Preview
+@Composable
+private fun AppLoadingButtonLoadingPreview() {
+    AppLoadingButton(onClick = {}, isLoading = true) {
+        Text("Enregistrer")
     }
 }

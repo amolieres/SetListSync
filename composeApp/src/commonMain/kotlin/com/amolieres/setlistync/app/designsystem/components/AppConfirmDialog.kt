@@ -5,6 +5,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 /**
  * A generic confirmation [AlertDialog] with confirm and dismiss actions.
@@ -38,5 +39,34 @@ fun AppConfirmDialog(
         dismissButton = {
             TextButton(onClick = onDismiss) { Text(dismissLabel) }
         }
+    )
+}
+
+// ── Previews ─────────────────────────────────────────────────────────────────
+
+@Preview
+@Composable
+private fun AppConfirmDialogPreview() {
+    AppConfirmDialog(
+        title = "Déconnexion",
+        message = "Voulez-vous vraiment vous déconnecter ?",
+        confirmLabel = "Oui",
+        dismissLabel = "Annuler",
+        onConfirm = {},
+        onDismiss = {}
+    )
+}
+
+@Preview
+@Composable
+private fun AppConfirmDialogDestructivePreview() {
+    AppConfirmDialog(
+        title = "Supprimer le groupe",
+        message = "Cette action est irréversible. Supprimer « The Rocketeers » ?",
+        confirmLabel = "Supprimer",
+        dismissLabel = "Annuler",
+        onConfirm = {},
+        onDismiss = {},
+        destructiveConfirm = true
     )
 }

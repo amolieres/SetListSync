@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import com.amolieres.setlistync.app.designsystem.AppDimens
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 /**
  * A row combining an [OutlinedTextField] and an [IconButton] (Add) for entering genre tags.
@@ -48,4 +49,18 @@ fun AppGenreInput(
             Icon(Icons.Default.Add, contentDescription = addContentDescription)
         }
     }
+}
+
+// ── Previews ─────────────────────────────────────────────────────────────────
+
+@Preview
+@Composable
+private fun AppGenreInputEmptyPreview() {
+    AppGenreInput(value = "", onValueChange = {}, onAdd = {}, label = "Ajouter un style")
+}
+
+@Preview
+@Composable
+private fun AppGenreInputFilledPreview() {
+    AppGenreInput(value = "Rock", onValueChange = {}, onAdd = {}, label = "Ajouter un style")
 }

@@ -19,7 +19,9 @@ import com.amolieres.setlistync.feature.band.members.presentation.BandMembersUiE
 import com.amolieres.setlistync.feature.band.members.presentation.BandMembersUiState
 import setlistsync.composeapp.generated.resources.Res
 import setlistsync.composeapp.generated.resources.*
+import com.amolieres.setlistync.core.domain.band.model.Role
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -105,5 +107,44 @@ private fun MemberListItem(
                 }
             }
         }
+    )
+}
+
+// ── Previews ─────────────────────────────────────────────────────────────────
+
+@Preview
+@Composable
+fun BandMembersScreenLoadingPreview() {
+    BandMembersScreen(
+        uiState = BandMembersUiState(isLoading = true),
+        onScreenEvent = {},
+        onNavigateBack = {}
+    )
+}
+
+@Preview
+@Composable
+fun BandMembersScreenEmptyPreview() {
+    BandMembersScreen(
+        uiState = BandMembersUiState(isLoading = false, members = emptyList()),
+        onScreenEvent = {},
+        onNavigateBack = {}
+    )
+}
+
+@Preview
+@Composable
+fun BandMembersScreenContentPreview() {
+    BandMembersScreen(
+        uiState = BandMembersUiState(
+            isLoading = false,
+            members = listOf(
+                BandMember(id = "1", userId = null, nickname = "John", roles = listOf(Role.VOCALS, Role.GUITAR)),
+                BandMember(id = "2", userId = null, nickname = "Jane", roles = listOf(Role.DRUMS)),
+                BandMember(id = "3", userId = null, nickname = "Bob", roles = listOf(Role.BASS))
+            )
+        ),
+        onScreenEvent = {},
+        onNavigateBack = {}
     )
 }

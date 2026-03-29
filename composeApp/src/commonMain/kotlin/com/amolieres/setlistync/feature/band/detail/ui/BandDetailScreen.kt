@@ -24,7 +24,11 @@ import com.amolieres.setlistync.feature.band.detail.presentation.BandDetailUiSta
 import setlistsync.composeapp.generated.resources.Res
 import setlistsync.composeapp.generated.resources.*
 import kotlinx.coroutines.flow.Flow
+import com.amolieres.setlistync.core.domain.band.model.BandMember
+import com.amolieres.setlistync.core.domain.band.model.Role
+import kotlinx.coroutines.flow.emptyFlow
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -184,4 +188,54 @@ private fun BandInfoSection(band: Band, onEditClicked: () -> Unit) {
             band.tiktokUrl?.let { AppInfoRow(icon = Icons.Default.Share, text = it, label = "TikTok") }
         }
     }
+}
+
+// ── Previews ─────────────────────────────────────────────────────────────────
+
+private val previewBandDetail = Band(
+    id = "1",
+    name = "The Rocketeers",
+    members = listOf(
+        BandMember(id = "1", userId = null, nickname = "John", roles = listOf(Role.VOCALS, Role.GUITAR)),
+        BandMember(id = "2", userId = null, nickname = "Jane", roles = listOf(Role.DRUMS))
+    ),
+    genres = listOf("Rock", "Indie"),
+    email = "contact@rocketeers.com",
+    instagramUrl = "instagram.com/rocketeers"
+)
+
+@Preview
+@Composable
+fun BandDetailScreenLoadingPreview() {
+    BandDetailScreen(
+        uiState = BandDetailUiState(isLoading = true),
+        eventFlow = emptyFlow(),
+        onScreenEvent = {},
+        onNavigateBack = {},
+        onNavigateToMembers = {}
+    )
+}
+
+@Preview
+@Composable
+fun BandDetailScreenContentPreview() {
+    BandDetailScreen(
+        uiState = BandDetailUiState(isLoading = false, band = previewBandDetail),
+        eventFlow = emptyFlow(),
+        onScreenEvent = {},
+        onNavigateBack = {},
+        onNavigateToMembers = {}
+    )
+}
+
+@Preview
+@Composable
+fun BandDetailScreenNotFoundPreview() {
+    BandDetailScreen(
+        uiState = BandDetailUiState(isLoading = false, band = null),
+        eventFlow = emptyFlow(),
+        onScreenEvent = {},
+        onNavigateBack = {},
+        onNavigateToMembers = {}
+    )
 }

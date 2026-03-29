@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.amolieres.setlistync.app.designsystem.AppDimens
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 /**
  * An [InputChip] with a trailing close icon.
@@ -32,4 +33,12 @@ fun AppRemovableChip(
             )
         }
     )
+}
+
+// ── Previews ─────────────────────────────────────────────────────────────────
+
+@Preview
+@Composable
+private fun AppRemovableChipPreview() {
+    AppRemovableChip(label = "Rock", onRemove = {})
 }
