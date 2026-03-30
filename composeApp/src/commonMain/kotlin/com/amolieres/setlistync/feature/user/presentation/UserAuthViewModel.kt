@@ -3,6 +3,7 @@ package com.amolieres.setlistync.feature.user.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.amolieres.setlistync.core.domain.user.model.User
+import com.amolieres.setlistync.core.domain.user.usecase.AutoLoginUseCase
 import com.amolieres.setlistync.core.domain.user.usecase.CreateUserUseCase
 import com.amolieres.setlistync.core.domain.user.usecase.LoginUserUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -16,7 +17,8 @@ import kotlin.uuid.ExperimentalUuidApi
 
 class UserAuthViewModel(
     private val createUserUseCase: CreateUserUseCase,
-    private val loginUserUseCase: LoginUserUseCase
+    private val loginUserUseCase: LoginUserUseCase,
+    private val autoLoginUseCase: AutoLoginUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UserAuthUiState())
@@ -24,6 +26,17 @@ class UserAuthViewModel(
 
     private val _event = MutableSharedFlow<UserAuthEvent>()
     val event: SharedFlow<UserAuthEvent> = _event.asSharedFlow()
+
+    init {
+        viewModelScope.launch {
+            val user = autoLoginUseCase()
+            if (user != null) {
+                _event.emit(UserAuthEvent.OnSubmitSuccess(user))
+            } else {
+                _uiState.update { it.copy(isCheckingSession = false) }
+            }
+        }
+    }
 
     fun onScreenEvent(event: UserAuthUiEvent) {
         when (event) {
@@ -79,7 +92,7 @@ class UserAuthViewModel(
         }
     }
 
-    private suspend fun handleLogin(email: String, password: String) : Result<User> =
+    private suspend fun handleLogin(email: String, password: String): Result<User> =
         loginUserUseCase.invoke(email, password)
 
     @OptIn(ExperimentalUuidApi::class)

@@ -3,6 +3,7 @@ package com.amolieres.setlistync.feature.user.presentation
 import com.amolieres.setlistync.core.domain.user.model.User
 
 data class UserAuthUiState(
+    val isCheckingSession: Boolean = true,
     val firstName: String = "",
     val lastName: String = "",
     val email: String = "",

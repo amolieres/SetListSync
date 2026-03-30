@@ -11,7 +11,7 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val viewModelModule = module {
-    viewModel { UserAuthViewModel(get(), get()) }
+    viewModel { UserAuthViewModel(get(), get(), get()) }         // CreateUserUseCase, LoginUserUseCase, AutoLoginUseCase
     viewModel { SettingsViewModel(get(), get(), get(), get(), get()) }
     viewModel { MainViewModel(get()) }                                            // ObserveAllBandsUseCase
     viewModel { BandCreationViewModel(get(), get()) }                             // CreateBandUseCase, AddMemberToBandUseCase
