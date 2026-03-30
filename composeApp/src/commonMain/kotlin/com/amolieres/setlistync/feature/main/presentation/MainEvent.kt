@@ -3,5 +3,6 @@ package com.amolieres.setlistync.feature.main.presentation
 sealed interface MainEvent {
     object NavigateToLogin : MainEvent
     object NavigateToBandCreation : MainEvent
+    object NavigateToSettings : MainEvent
     data class NavigateToBandDetail(val bandId: String) : MainEvent
 }
