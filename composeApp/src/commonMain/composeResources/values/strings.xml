@@ -41,6 +41,12 @@
         <item quantity="other">%1$d setlists</item>
     </plurals>
 
+    <!-- ── Band detail — song count ──────────────────────────────── -->
+    <plurals name="band_detail_songs">
+        <item quantity="one">%1$d song</item>
+        <item quantity="other">%1$d songs</item>
+    </plurals>
+
     <!-- ── User authentication ───────────────────────────────────── -->
     <string name="auth_title_login">Login</string>
     <string name="auth_title_create_account">Create Account</string>
@@ -67,10 +73,22 @@
     <string name="band_detail_cd_delete">Delete band</string>
     <string name="band_detail_not_found">Band not found.</string>
     <string name="band_detail_section_members">Members</string>
+    <string name="band_detail_section_songs">Songs</string>
+    <string name="band_detail_cd_add_song">Add a song</string>
+    <string name="band_detail_songs_empty">No songs yet. Tap + to add one.</string>
     <string name="band_detail_section_setlists">Set Lists</string>
     <string name="band_detail_section_info">Information</string>
     <string name="band_detail_cd_edit_info">Edit information</string>
     <string name="band_detail_no_info">No information provided.</string>
+
+    <!-- ── Song dialog ───────────────────────────────────────────── -->
+    <string name="song_dialog_add_title">Add a song</string>
+    <string name="song_dialog_label_title">Title *</string>
+    <string name="song_dialog_label_minutes">Min.</string>
+    <string name="song_dialog_label_seconds">Sec.</string>
+    <string name="song_dialog_label_key">Key (optional)</string>
+    <string name="song_dialog_label_tempo">Tempo BPM (optional)</string>
+    <string name="song_cd_delete">Delete song</string>
 
     <!-- ── Delete band dialog ────────────────────────────────────── -->
     <string name="delete_band_title">Delete band</string>

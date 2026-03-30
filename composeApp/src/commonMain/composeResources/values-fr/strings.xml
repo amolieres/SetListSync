@@ -43,6 +43,13 @@
         <item quantity="other">%1$d setlists</item>
     </plurals>
 
+    <!-- ── Détail du groupe — compteur de morceaux ────────────────── -->
+    <plurals name="band_detail_songs">
+        <item quantity="zero">%1$d morceau</item>
+        <item quantity="one">%1$d morceau</item>
+        <item quantity="other">%1$d morceaux</item>
+    </plurals>
+
     <!-- ── Authentification ───────────────────────────────────────── -->
     <string name="auth_title_login">Connexion</string>
     <string name="auth_title_create_account">Créer un compte</string>
@@ -69,10 +76,22 @@
     <string name="band_detail_cd_delete">Supprimer le groupe</string>
     <string name="band_detail_not_found">Groupe introuvable.</string>
     <string name="band_detail_section_members">Membres</string>
+    <string name="band_detail_section_songs">Morceaux</string>
+    <string name="band_detail_cd_add_song">Ajouter un morceau</string>
+    <string name="band_detail_songs_empty">Aucun morceau. Appuyez sur + pour en ajouter un.</string>
     <string name="band_detail_section_setlists">Set Lists</string>
     <string name="band_detail_section_info">Informations</string>
     <string name="band_detail_cd_edit_info">Modifier les informations</string>
     <string name="band_detail_no_info">Aucune information renseignée.</string>
+
+    <!-- ── Dialogue morceau ───────────────────────────────────────── -->
+    <string name="song_dialog_add_title">Ajouter un morceau</string>
+    <string name="song_dialog_label_title">Titre *</string>
+    <string name="song_dialog_label_minutes">Min.</string>
+    <string name="song_dialog_label_seconds">Sec.</string>
+    <string name="song_dialog_label_key">Tonalité (optionnel)</string>
+    <string name="song_dialog_label_tempo">Tempo BPM (optionnel)</string>
+    <string name="song_cd_delete">Supprimer le morceau</string>
 
     <!-- ── Dialogue de suppression du groupe ─────────────────────── -->
     <string name="delete_band_title">Supprimer le groupe</string>

@@ -51,6 +51,7 @@ val useCaseModule = module {
     // Song
     factory { AddSongUseCase(get()) }
     factory { GetAllSongsUseCase(get()) }
+    factory { ObserveSongsUseCase(get()) }
     factory { GetSongUseCase(get()) }
     factory { UpdateSongUseCase(get()) }
     factory { DeleteSongUseCase(get(), get()) }

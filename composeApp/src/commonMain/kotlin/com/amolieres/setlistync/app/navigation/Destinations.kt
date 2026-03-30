@@ -8,6 +8,8 @@ object Destinations {
     fun bandDetail(bandId: String) = "band_detail/$bandId"
     const val BandMembers = "band_members/{bandId}"
     fun bandMembers(bandId: String) = "band_members/$bandId"
+    const val BandSongs = "band_songs/{bandId}"
+    fun bandSongs(bandId: String) = "band_songs/$bandId"
     const val BandCreation = "band_creation"
     const val BandEdit = "band_edit/{bandId}"
     fun bandEdit(bandId: String) = "band_edit/$bandId"

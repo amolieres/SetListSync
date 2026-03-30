@@ -5,6 +5,8 @@ import com.amolieres.setlistync.core.data.local.entity.SongEntity
 import com.amolieres.setlistync.core.domain.song.model.Song
 import com.amolieres.setlistync.core.domain.song.model.SongId
 import com.amolieres.setlistync.core.domain.song.repository.SongRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -15,6 +17,9 @@ class SongRepositoryImpl(
 
     override suspend fun getAllSongs(bandId: String): List<Song> =
         songDao.getSongsByBandId(bandId).map { it.toDomain() }
+
+    override fun observeAllSongs(bandId: String): Flow<List<Song>> =
+        songDao.observeSongsByBandId(bandId).map { entities -> entities.map { it.toDomain() } }
 
     override suspend fun getSong(id: SongId): Song? =
         songDao.getSongById(id.value)?.toDomain()

@@ -18,15 +18,16 @@ import com.amolieres.setlistync.app.designsystem.components.AppCenteredLoader
 import com.amolieres.setlistync.app.designsystem.components.AppCenteredMessage
 import com.amolieres.setlistync.app.designsystem.components.AppInfoRow
 import com.amolieres.setlistync.core.domain.band.model.Band
+import com.amolieres.setlistync.core.domain.band.model.BandMember
+import com.amolieres.setlistync.core.domain.band.model.Role
 import com.amolieres.setlistync.feature.band.detail.presentation.BandDetailEvent
 import com.amolieres.setlistync.feature.band.detail.presentation.BandDetailUiEvent
 import com.amolieres.setlistync.feature.band.detail.presentation.BandDetailUiState
 import setlistsync.composeapp.generated.resources.Res
 import setlistsync.composeapp.generated.resources.*
 import kotlinx.coroutines.flow.Flow
-import com.amolieres.setlistync.core.domain.band.model.BandMember
-import com.amolieres.setlistync.core.domain.band.model.Role
 import kotlinx.coroutines.flow.emptyFlow
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -38,6 +39,7 @@ fun BandDetailScreen(
     onScreenEvent: (BandDetailUiEvent) -> Unit,
     onNavigateBack: () -> Unit,
     onNavigateToMembers: () -> Unit,
+    onNavigateToSongs: () -> Unit,
     onNavigateToEdit: () -> Unit = {}
 ) {
     LaunchedEffect(eventFlow) {
@@ -45,6 +47,7 @@ fun BandDetailScreen(
             when (event) {
                 BandDetailEvent.NavigateBack -> onNavigateBack()
                 BandDetailEvent.NavigateToMembers -> onNavigateToMembers()
+                BandDetailEvent.NavigateToSongs -> onNavigateToSongs()
                 BandDetailEvent.NavigateToEdit -> onNavigateToEdit()
             }
         }
@@ -87,6 +90,7 @@ fun BandDetailScreen(
                 )
                 HorizontalDivider()
 
+                // ── Members ───────────────────────────────────────────────
                 val memberCount = uiState.band.members.size
                 ListItem(
                     headlineContent = { Text(stringResource(Res.string.band_detail_section_members)) },
@@ -99,6 +103,21 @@ fun BandDetailScreen(
                     modifier = Modifier.clickable { onScreenEvent(BandDetailUiEvent.OnMembersSectionClicked) }
                 )
                 HorizontalDivider()
+
+                // ── Songs ─────────────────────────────────────────────────
+                ListItem(
+                    headlineContent = { Text(stringResource(Res.string.band_detail_section_songs)) },
+                    trailingContent = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(pluralStringResource(Res.plurals.band_detail_songs, uiState.songCount, uiState.songCount))
+                            Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null)
+                        }
+                    },
+                    modifier = Modifier.clickable { onScreenEvent(BandDetailUiEvent.OnSongsSectionClicked) }
+                )
+                HorizontalDivider()
+
+                // ── SetLists (not yet available) ──────────────────────────
                 ListItem(
                     headlineContent = { Text(stringResource(Res.string.band_detail_section_setlists)) },
                     trailingContent = {
@@ -126,7 +145,7 @@ fun BandDetailScreen(
     }
 }
 
-// ── Info section (read-only) ─────────────────────────────────────────────────
+// ── Info section ─────────────────────────────────────────────────────────────
 
 @Composable
 private fun BandInfoSection(band: Band, onEditClicked: () -> Unit) {
@@ -212,7 +231,8 @@ fun BandDetailScreenLoadingPreview() {
         eventFlow = emptyFlow(),
         onScreenEvent = {},
         onNavigateBack = {},
-        onNavigateToMembers = {}
+        onNavigateToMembers = {},
+        onNavigateToSongs = {}
     )
 }
 
@@ -220,11 +240,12 @@ fun BandDetailScreenLoadingPreview() {
 @Composable
 fun BandDetailScreenContentPreview() {
     BandDetailScreen(
-        uiState = BandDetailUiState(isLoading = false, band = previewBandDetail),
+        uiState = BandDetailUiState(isLoading = false, band = previewBandDetail, songCount = 5),
         eventFlow = emptyFlow(),
         onScreenEvent = {},
         onNavigateBack = {},
-        onNavigateToMembers = {}
+        onNavigateToMembers = {},
+        onNavigateToSongs = {}
     )
 }
 
@@ -236,6 +257,7 @@ fun BandDetailScreenNotFoundPreview() {
         eventFlow = emptyFlow(),
         onScreenEvent = {},
         onNavigateBack = {},
-        onNavigateToMembers = {}
+        onNavigateToMembers = {},
+        onNavigateToSongs = {}
     )
 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.amolieres.setlistync.core.domain.band.usecase.DeleteBandUseCase
 import com.amolieres.setlistync.core.domain.band.usecase.ObserveBandUseCase
+import com.amolieres.setlistync.core.domain.song.usecase.ObserveSongsUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -19,7 +20,8 @@ import kotlinx.coroutines.launch
 class BandDetailViewModel(
     savedStateHandle: SavedStateHandle,
     observeBand: ObserveBandUseCase,
-    private val deleteBand: DeleteBandUseCase
+    private val deleteBand: DeleteBandUseCase,
+    observeSongs: ObserveSongsUseCase
 ) : ViewModel() {
 
     val bandId: String = checkNotNull(savedStateHandle.get<String>("bandId"))
@@ -27,16 +29,22 @@ class BandDetailViewModel(
     private val _event = MutableSharedFlow<BandDetailEvent>()
     val event: SharedFlow<BandDetailEvent> = _event.asSharedFlow()
 
-    private val _showDeleteBandConfirm = MutableStateFlow(false)
+    private data class ViewState(
+        val showDeleteBandConfirm: Boolean = false
+    )
+
+    private val _viewState = MutableStateFlow(ViewState())
 
     val uiState: StateFlow<BandDetailUiState> = combine(
         observeBand(bandId),
-        _showDeleteBandConfirm
-    ) { band, showConfirm ->
+        observeSongs(bandId),
+        _viewState
+    ) { band, songs, view ->
         BandDetailUiState(
             isLoading = false,
             band = band,
-            showDeleteBandConfirm = showConfirm
+            showDeleteBandConfirm = view.showDeleteBandConfirm,
+            songCount = songs.size
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), BandDetailUiState())
 
@@ -46,11 +54,13 @@ class BandDetailViewModel(
                 viewModelScope.launch { _event.emit(BandDetailEvent.NavigateToEdit) }
             BandDetailUiEvent.OnMembersSectionClicked ->
                 viewModelScope.launch { _event.emit(BandDetailEvent.NavigateToMembers) }
+            BandDetailUiEvent.OnSongsSectionClicked ->
+                viewModelScope.launch { _event.emit(BandDetailEvent.NavigateToSongs) }
             BandDetailUiEvent.OnDeleteBandClicked ->
-                _showDeleteBandConfirm.update { true }
+                _viewState.update { it.copy(showDeleteBandConfirm = true) }
             BandDetailUiEvent.OnDeleteBandConfirmed -> doDeleteBand()
             BandDetailUiEvent.OnDeleteBandDismiss ->
-                _showDeleteBandConfirm.update { false }
+                _viewState.update { it.copy(showDeleteBandConfirm = false) }
         }
     }
 
