@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      Splash screen theme (Android 12+ SplashScreen API).
+      Background matches the app's primary color so the transition to
+      the in-app Compose splash is seamless.
+    -->
+    <style name="Theme.SetListSync.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#28638A</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_foreground</item>
+        <item name="postSplashScreenTheme">@android:style/Theme.Material.Light.NoActionBar</item>
+    </style>
+</resources>

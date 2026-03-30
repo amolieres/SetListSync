@@ -10,15 +10,18 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import com.amolieres.setlistync.app.designsystem.AppDimens
+import com.amolieres.setlistync.app.designsystem.components.AppCenteredLoader
+import com.amolieres.setlistync.app.designsystem.components.AppCenteredMessage
 import com.amolieres.setlistync.core.domain.band.model.BandMember
 import com.amolieres.setlistync.feature.band.members.presentation.BandMembersUiEvent
 import com.amolieres.setlistync.feature.band.members.presentation.BandMembersUiState
 import setlistsync.composeapp.generated.resources.Res
 import setlistsync.composeapp.generated.resources.*
+import com.amolieres.setlistync.core.domain.band.model.Role
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,19 +48,16 @@ fun BandMembersScreen(
         }
     ) { padding ->
         when {
-            uiState.isLoading -> Box(
-                Modifier.fillMaxSize().padding(padding),
-                contentAlignment = Alignment.Center
-            ) { CircularProgressIndicator() }
+            uiState.isLoading -> AppCenteredLoader(Modifier.padding(padding))
 
-            uiState.members.isEmpty() -> Box(
-                Modifier.fillMaxSize().padding(padding),
-                contentAlignment = Alignment.Center
-            ) { Text(stringResource(Res.string.band_members_empty)) }
+            uiState.members.isEmpty() -> AppCenteredMessage(
+                text = stringResource(Res.string.band_members_empty),
+                modifier = Modifier.padding(padding)
+            )
 
             else -> LazyColumn(
                 Modifier.fillMaxSize().padding(padding),
-                contentPadding = PaddingValues(bottom = 88.dp)
+                contentPadding = PaddingValues(bottom = AppDimens.FabSpacing)
             ) {
                 items(uiState.members) { member ->
                     MemberListItem(
@@ -107,5 +107,44 @@ private fun MemberListItem(
                 }
             }
         }
+    )
+}
+
+// ── Previews ─────────────────────────────────────────────────────────────────
+
+@Preview
+@Composable
+fun BandMembersScreenLoadingPreview() {
+    BandMembersScreen(
+        uiState = BandMembersUiState(isLoading = true),
+        onScreenEvent = {},
+        onNavigateBack = {}
+    )
+}
+
+@Preview
+@Composable
+fun BandMembersScreenEmptyPreview() {
+    BandMembersScreen(
+        uiState = BandMembersUiState(isLoading = false, members = emptyList()),
+        onScreenEvent = {},
+        onNavigateBack = {}
+    )
+}
+
+@Preview
+@Composable
+fun BandMembersScreenContentPreview() {
+    BandMembersScreen(
+        uiState = BandMembersUiState(
+            isLoading = false,
+            members = listOf(
+                BandMember(id = "1", userId = null, nickname = "John", roles = listOf(Role.VOCALS, Role.GUITAR)),
+                BandMember(id = "2", userId = null, nickname = "Jane", roles = listOf(Role.DRUMS)),
+                BandMember(id = "3", userId = null, nickname = "Bob", roles = listOf(Role.BASS))
+            )
+        ),
+        onScreenEvent = {},
+        onNavigateBack = {}
     )
 }

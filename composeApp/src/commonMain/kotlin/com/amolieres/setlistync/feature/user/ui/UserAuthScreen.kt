@@ -7,7 +7,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.unit.dp
+import com.amolieres.setlistync.app.designsystem.AppDimens
 import com.amolieres.setlistync.feature.user.presentation.UserAuthEvent
 import com.amolieres.setlistync.feature.user.presentation.UserAuthUiEvent
 import com.amolieres.setlistync.feature.user.presentation.UserAuthUiState
@@ -37,7 +37,7 @@ fun UserAuthScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(AppDimens.SpacingXl),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -46,7 +46,7 @@ fun UserAuthScreen(
             style = MaterialTheme.typography.headlineSmall
         )
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(AppDimens.SpacingL))
 
         AnimatedVisibility(!uiState.isLoginMode) {
             OutlinedTextField(
@@ -55,7 +55,7 @@ fun UserAuthScreen(
                 label = { Text(stringResource(Res.string.auth_label_first_name)) },
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(AppDimens.SpacingS))
         }
         AnimatedVisibility(!uiState.isLoginMode) {
             OutlinedTextField(
@@ -64,7 +64,7 @@ fun UserAuthScreen(
                 label = { Text(stringResource(Res.string.auth_label_last_name)) },
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(AppDimens.SpacingS))
         }
 
         OutlinedTextField(
@@ -74,7 +74,7 @@ fun UserAuthScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(AppDimens.SpacingS))
 
         OutlinedTextField(
             value = uiState.password,
@@ -84,19 +84,17 @@ fun UserAuthScreen(
             visualTransformation = PasswordVisualTransformation()
         )
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(AppDimens.SpacingL))
 
         Button(
-            onClick = {
-                onScreenEvent(UserAuthUiEvent.Submit)
-            },
+            onClick = { onScreenEvent(UserAuthUiEvent.Submit) },
             modifier = Modifier.fillMaxWidth(),
             enabled = uiState.isFormValid
         ) {
             Text(if (uiState.isLoginMode) stringResource(Res.string.auth_title_login) else stringResource(Res.string.auth_title_create_account))
         }
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(AppDimens.SpacingS))
 
         TextButton(onClick = { onScreenEvent(UserAuthUiEvent.ToggleMode) }) {
             Text(
@@ -108,12 +106,12 @@ fun UserAuthScreen(
         }
 
         if (uiState.isLoading) {
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(AppDimens.SpacingM))
             CircularProgressIndicator()
         }
 
         uiState.error?.let {
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(AppDimens.SpacingM))
             Text(text = it, color = MaterialTheme.colorScheme.error)
         }
     }

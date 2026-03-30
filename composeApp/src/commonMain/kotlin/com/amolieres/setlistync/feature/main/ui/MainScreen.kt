@@ -1,6 +1,5 @@
 package com.amolieres.setlistync.feature.main.ui
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -9,9 +8,10 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import com.amolieres.setlistync.app.designsystem.AppDimens
+import com.amolieres.setlistync.app.designsystem.components.AppCenteredLoader
+import com.amolieres.setlistync.app.designsystem.components.AppCenteredMessage
 import com.amolieres.setlistync.feature.main.presentation.MainEvent
 import com.amolieres.setlistync.feature.main.presentation.MainUiEvent
 import com.amolieres.setlistync.feature.main.presentation.MainUiState
@@ -65,32 +65,28 @@ fun MainScreen(
         }
     ) { padding ->
         when {
-            uiState.isLoading -> Box(
-                Modifier.fillMaxSize().padding(padding),
-                contentAlignment = Alignment.Center
-            ) { CircularProgressIndicator() }
+            uiState.isLoading -> AppCenteredLoader(Modifier.padding(padding))
 
-            uiState.bands.isEmpty() -> Box(
-                Modifier.fillMaxSize().padding(padding),
-                contentAlignment = Alignment.Center
-            ) { Text(stringResource(Res.string.main_empty)) }
+            uiState.bands.isEmpty() -> AppCenteredMessage(
+                text = stringResource(Res.string.main_empty),
+                modifier = Modifier.padding(padding)
+            )
 
             else -> LazyColumn(
-                Modifier.fillMaxSize().padding(padding),
-                contentPadding = PaddingValues(bottom = 88.dp)
+                modifier = Modifier.fillMaxSize().padding(padding),
+                contentPadding = PaddingValues(
+                    start = AppDimens.SpacingL,
+                    end = AppDimens.SpacingL,
+                    top = AppDimens.SpacingM,
+                    bottom = AppDimens.FabSpacing
+                ),
+                verticalArrangement = Arrangement.spacedBy(AppDimens.SpacingM)
             ) {
                 items(uiState.bands) { band ->
-                    ListItem(
-                        headlineContent = { Text(band.name) },
-                        supportingContent = {
-                            val n = band.members.size
-                            Text("$n ${stringResource(if (n == 1) Res.string.member_singular else Res.string.member_plural)}")
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onScreenEvent(MainUiEvent.OnBandClicked(band.id)) }
+                    BandItem(
+                        band = band,
+                        onClick = { onScreenEvent(MainUiEvent.OnBandClicked(band.id)) }
                     )
-                    HorizontalDivider()
                 }
             }
         }
