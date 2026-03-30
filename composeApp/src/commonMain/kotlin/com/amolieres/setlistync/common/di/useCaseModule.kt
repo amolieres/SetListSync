@@ -5,6 +5,7 @@ import com.amolieres.setlistync.core.domain.preferences.ObserveNotationUseCase
 import com.amolieres.setlistync.core.domain.preferences.SetNotationUseCase
 import com.amolieres.setlistync.core.domain.setList.usecase.*
 import com.amolieres.setlistync.core.domain.song.usecase.*
+import com.amolieres.setlistync.core.domain.user.usecase.AutoLoginUseCase
 import com.amolieres.setlistync.core.domain.user.usecase.CreateUserUseCase
 import com.amolieres.setlistync.core.domain.user.usecase.DeleteCurrentUserUseCase
 import com.amolieres.setlistync.core.domain.user.usecase.GetCurrentUserUseCase
@@ -15,6 +16,7 @@ import org.koin.dsl.module
 
 val useCaseModule = module {
     // User
+    factory { AutoLoginUseCase(get(), get()) }
     factory { CreateUserUseCase(get(), get()) }
     factory { GetUserByIdUseCase(get()) }
     factory { LogoutUserUseCase(get()) }

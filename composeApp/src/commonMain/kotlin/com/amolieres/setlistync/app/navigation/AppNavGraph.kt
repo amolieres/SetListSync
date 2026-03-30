@@ -1,5 +1,7 @@
 package com.amolieres.setlistync.app.navigation
 
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -17,6 +19,8 @@ import com.amolieres.setlistync.feature.band.edit.ui.BandEditScreen
 import com.amolieres.setlistync.feature.band.members.ui.BandMembersScreen
 import com.amolieres.setlistync.feature.main.presentation.MainViewModel
 import com.amolieres.setlistync.feature.main.ui.MainScreen
+import com.amolieres.setlistync.feature.settings.presentation.SettingsViewModel
+import com.amolieres.setlistync.feature.settings.ui.SettingsScreen
 import com.amolieres.setlistync.feature.user.presentation.UserAuthViewModel
 import com.amolieres.setlistync.feature.user.ui.UserAuthScreen
 import org.koin.compose.viewmodel.koinViewModel
@@ -56,11 +60,34 @@ fun AppNavGraph(
                         popUpTo(Destinations.MainScreen) { inclusive = false }
                     }
                 },
+                onNavigateToSettings = {
+                    navController.navigate(Destinations.Settings)
+                },
                 onNavigateToBandDetail = { bandId ->
                     navController.navigate(Destinations.bandDetail(bandId))
                 },
                 onNavigateToBandCreation = {
                     navController.navigate(Destinations.BandCreation)
+                }
+            )
+        }
+
+        composable(
+            route = Destinations.Settings,
+            enterTransition = { slideInHorizontally { it } },
+            popExitTransition = { slideOutHorizontally { it } }
+        ) {
+            val viewModel: SettingsViewModel = koinViewModel()
+            val uiState by viewModel.uiState.collectAsState()
+            SettingsScreen(
+                uiState = uiState,
+                eventsFlow = viewModel.events,
+                onScreenEvent = viewModel::onScreenEvent,
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToLogin = {
+                    navController.navigate(Destinations.UserAuth) {
+                        popUpTo(Destinations.MainScreen) { inclusive = true }
+                    }
                 }
             )
         }

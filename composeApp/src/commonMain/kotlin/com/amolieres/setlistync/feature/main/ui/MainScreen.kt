@@ -15,15 +15,12 @@ import com.amolieres.setlistync.app.designsystem.components.AppCenteredMessage
 import com.amolieres.setlistync.feature.main.presentation.MainEvent
 import com.amolieres.setlistync.feature.main.presentation.MainUiEvent
 import com.amolieres.setlistync.feature.main.presentation.MainUiState
-import com.amolieres.setlistync.feature.settings.presentation.SettingsViewModel
-import com.amolieres.setlistync.feature.settings.ui.SettingsDialog
 import setlistsync.composeapp.generated.resources.Res
 import setlistsync.composeapp.generated.resources.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,17 +29,17 @@ fun MainScreen(
     eventFlow: Flow<MainEvent>,
     onScreenEvent: (MainUiEvent) -> Unit,
     onNavigateToLogin: () -> Unit,
+    onNavigateToSettings: () -> Unit = {},
     onNavigateToBandDetail: (String) -> Unit = {},
     onNavigateToBandCreation: () -> Unit = {}
 ) {
-    val settingsVm: SettingsViewModel = koinViewModel()
-
     LaunchedEffect(eventFlow) {
         eventFlow.collect { event ->
             when (event) {
                 is MainEvent.NavigateToLogin -> onNavigateToLogin()
                 is MainEvent.NavigateToBandDetail -> onNavigateToBandDetail(event.bandId)
                 MainEvent.NavigateToBandCreation -> onNavigateToBandCreation()
+                MainEvent.NavigateToSettings -> onNavigateToSettings()
             }
         }
     }
@@ -90,20 +87,6 @@ fun MainScreen(
                 }
             }
         }
-    }
-
-    if (uiState.showSettingsDialog) {
-        val state by settingsVm.uiState.collectAsState()
-        SettingsDialog(
-            uiState = state,
-            eventsFlow = settingsVm.events,
-            onScreenEvent = { settingsVm.onScreenEvent(it) },
-            onDismiss = { onScreenEvent(MainUiEvent.OnSettingsDismiss) },
-            onNavigateToLogin = {
-                onScreenEvent(MainUiEvent.OnSettingsDismiss)
-                onNavigateToLogin()
-            }
-        )
     }
 }
 

@@ -25,8 +25,8 @@ Managing setlists in a band often means juggling spreadsheets, PDFs, chat messag
   - Band info: name, email, Instagram / Facebook / TikTok URLs, musical genres
   - Dedicated edit screen (`BandEditScreen`) separate from detail view
 - 🟢 Manage **band members** (add, edit, delete — with roles: bass, guitar, vocals, drums…)
-- 🟠 Manage **settings** (DataStore session wired, settings screen UI in progress)
-- ⚪️ Manage **songs**
+- 🟢 Manage **settings** (DataStore session wired, settings screen UI in progress)
+- 🟠 Manage **songs**
   - title, duration, key/tone, external links, etc.
   - stored in a **global song library**
 - ⚪️ Add **member-specific song notes**
@@ -42,8 +42,8 @@ Managing setlists in a band often means juggling spreadsheets, PDFs, chat messag
 - 🟢 Reactive architecture — Kotlin Flows throughout (Room → Repository → UseCase → ViewModel → UI)
 - 🟢 ViewModel unit tests — `BandDetailViewModelTest`, `BandEditViewModelTest` (commonTest)
 - 🟢 Internationalization (FR/EN) — all strings centralized in `composeResources/values/strings.xml`, French translation in `values-fr/strings.xml`
-- ⚪️ App theme — custom Material 3 color scheme & typography
-- ⚪️ App icon — launcher icon for Android, iOS, Desktop
+- 🟢 App theme — custom Material 3 color scheme & typography + extractable design system (`app/designsystem/`)
+- 🟢 App icon — launcher icon for Android, iOS, Desktop
 - ⚪️ PDF exporter
 - ⚪️ Printer management
 
@@ -118,10 +118,10 @@ Make planning smarter:
 | Navigation (Compose Navigation) | 🟢 Done | All band screens wired: Main → Creation, Detail, Edit, Members |
 | ViewModel unit tests | 🟢 Done | `BandDetailViewModelTest`, `BandEditViewModelTest` |
 | i18n (FR/EN) | 🟢 Done | All strings in `composeResources/values/strings.xml` (EN) + `values-fr/strings.xml` (FR) |
-| Settings feature | 🟠 In progress | DataStore wired, screen UI pending |
-| App theme (Material 3) | ⚪️ Not started | Custom color scheme & typography |
-| App icon | ⚪️ Not started | Launcher icon for Android, iOS, Desktop |
-| Song feature | ⚪️ Not started | Domain + data layer scaffolded, no UI yet |
+| Settings feature | 🟢 Done | DataStore wired, screen UI pending |
+| App theme (Material 3) | 🟢 Done | Custom color scheme & typography + design system in `app/designsystem/` (dimensions, reusable components) |
+| App icon | 🟢 Done | Launcher icon for Android, iOS, Desktop |
+| Song feature | 🟠 In progress  | Domain + data layer scaffolded, no UI yet |
 | Gig & SetList feature | ⚪️ Not started | Domain + data layer scaffolded, no UI yet |
 | PDF export | ⚪️ Not started | — |
 

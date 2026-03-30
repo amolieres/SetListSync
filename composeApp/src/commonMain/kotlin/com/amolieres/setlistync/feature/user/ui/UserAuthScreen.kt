@@ -8,6 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import com.amolieres.setlistync.app.designsystem.AppDimens
+import com.amolieres.setlistync.app.designsystem.components.AppCenteredLoader
 import com.amolieres.setlistync.feature.user.presentation.UserAuthEvent
 import com.amolieres.setlistync.feature.user.presentation.UserAuthUiEvent
 import com.amolieres.setlistync.feature.user.presentation.UserAuthUiState
@@ -32,6 +33,11 @@ fun UserAuthScreen(
                 is UserAuthEvent.OnSubmitSuccess -> onNavigateToMain()
             }
         }
+    }
+
+    if (uiState.isCheckingSession) {
+        AppCenteredLoader()
+        return
     }
 
     Column(
