@@ -1,6 +1,5 @@
 package com.amolieres.setlistync.feature.main.ui
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -74,21 +73,20 @@ fun MainScreen(
             )
 
             else -> LazyColumn(
-                Modifier.fillMaxSize().padding(padding),
-                contentPadding = PaddingValues(bottom = AppDimens.FabSpacing)
+                modifier = Modifier.fillMaxSize().padding(padding),
+                contentPadding = PaddingValues(
+                    start = AppDimens.SpacingL,
+                    end = AppDimens.SpacingL,
+                    top = AppDimens.SpacingM,
+                    bottom = AppDimens.FabSpacing
+                ),
+                verticalArrangement = Arrangement.spacedBy(AppDimens.SpacingM)
             ) {
                 items(uiState.bands) { band ->
-                    ListItem(
-                        headlineContent = { Text(band.name) },
-                        supportingContent = {
-                            val n = band.members.size
-                            Text("$n ${stringResource(if (n == 1) Res.string.member_singular else Res.string.member_plural)}")
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onScreenEvent(MainUiEvent.OnBandClicked(band.id)) }
+                    BandItem(
+                        band = band,
+                        onClick = { onScreenEvent(MainUiEvent.OnBandClicked(band.id)) }
                     )
-                    HorizontalDivider()
                 }
             }
         }

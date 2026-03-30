@@ -31,6 +31,18 @@
     <string name="member_singular">membre</string>
     <string name="member_plural">membres</string>
 
+    <!-- ── BandItem ───────────────────────────────────────────────── -->
+    <plurals name="band_item_members">
+        <item quantity="zero">%1$d membre</item>
+        <item quantity="one">%1$d membre</item>
+        <item quantity="other">%1$d membres</item>
+    </plurals>
+    <plurals name="band_item_setlists">
+        <item quantity="zero">%1$d setlist</item>
+        <item quantity="one">%1$d setlist</item>
+        <item quantity="other">%1$d setlists</item>
+    </plurals>
+
     <!-- ── Authentification ───────────────────────────────────────── -->
     <string name="auth_title_login">Connexion</string>
     <string name="auth_title_create_account">Créer un compte</string>
