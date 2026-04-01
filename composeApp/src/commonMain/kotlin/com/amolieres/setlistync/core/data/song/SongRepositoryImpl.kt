@@ -45,7 +45,8 @@ class SongRepositoryImpl(
         durationSeconds = durationSeconds,
         key = key,
         tempo = tempo,
-        externalLinks = Json.encodeToString(externalLinks)
+        externalLinks = Json.encodeToString(externalLinks),
+        originalArtist = originalArtist
     )
 
     private fun SongEntity.toDomain() = Song(
@@ -54,6 +55,7 @@ class SongRepositoryImpl(
         durationSeconds = durationSeconds,
         key = key,
         tempo = tempo,
-        externalLinks = Json.decodeFromString(externalLinks)
+        externalLinks = Json.decodeFromString(externalLinks),
+        originalArtist = originalArtist
     )
 }

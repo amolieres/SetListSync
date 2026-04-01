@@ -92,6 +92,7 @@
     <string name="song_dialog_label_seconds">Sec.</string>
     <string name="song_dialog_label_key">Key (optional)</string>
     <string name="song_dialog_label_tempo">Tempo BPM (optional)</string>
+    <string name="song_dialog_label_original_artist">Original artist (optional)</string>
     <string name="song_cd_delete">Delete song</string>
 
     <!-- ── Delete band dialog ────────────────────────────────────── -->

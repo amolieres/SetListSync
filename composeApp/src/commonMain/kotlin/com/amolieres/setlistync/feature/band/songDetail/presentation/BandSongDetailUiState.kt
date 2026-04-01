@@ -8,5 +8,6 @@ data class BandSongDetailUiState(
     val seconds: String = "",
     val key: String = "",
     val tempo: String = "",
+    val originalArtist: String = "",
     val isSaving: Boolean = false
 )

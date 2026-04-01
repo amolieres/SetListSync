@@ -40,6 +40,7 @@ class BandSongDetailViewModel(
         val seconds: String = "",
         val key: String = "",
         val tempo: String = "",
+        val originalArtist: String = "",
         val isSaving: Boolean = false,
         val originalSong: Song? = null
     )
@@ -56,6 +57,7 @@ class BandSongDetailViewModel(
                 seconds = view.seconds,
                 key = view.key,
                 tempo = view.tempo,
+                originalArtist = view.originalArtist,
                 isSaving = view.isSaving
             )
         }
@@ -81,6 +83,7 @@ class BandSongDetailViewModel(
                             seconds = if (secs > 0) secs.toString() else "",
                             key = song.key ?: "",
                             tempo = song.tempo?.toString() ?: "",
+                            originalArtist = song.originalArtist ?: "",
                             originalSong = song
                         )
                     }
@@ -103,6 +106,8 @@ class BandSongDetailViewModel(
                 _viewState.update { it.copy(key = event.key) }
             is BandSongDetailUiEvent.OnTempoChanged ->
                 _viewState.update { it.copy(tempo = event.tempo) }
+            is BandSongDetailUiEvent.OnOriginalArtistChanged ->
+                _viewState.update { it.copy(originalArtist = event.artist) }
             BandSongDetailUiEvent.OnSaveClicked -> save()
             BandSongDetailUiEvent.OnBackClicked ->
                 viewModelScope.launch { _event.emit(BandSongDetailEvent.NavigateBack) }
@@ -118,6 +123,7 @@ class BandSongDetailViewModel(
         val durationSeconds = minutes * 60 + seconds
         val key = view.key.trim().takeIf { it.isNotBlank() }
         val tempo = view.tempo.toIntOrNull()
+        val originalArtist = view.originalArtist.trim().takeIf { it.isNotBlank() }
 
         _viewState.update { it.copy(isSaving = true) }
         viewModelScope.launch {
@@ -127,13 +133,14 @@ class BandSongDetailViewModel(
                     title = title,
                     durationSeconds = durationSeconds,
                     key = key,
-                    tempo = tempo
+                    tempo = tempo,
+                    originalArtist = originalArtist
                 )
                 runCatching { updateSong(bandId, updated) }
                     .onSuccess { _event.emit(BandSongDetailEvent.NavigateBack) }
                     .onFailure { _viewState.update { it.copy(isSaving = false) } }
             } else {
-                addSong(bandId, title, durationSeconds, key, tempo)
+                addSong(bandId, title, durationSeconds, key, tempo, originalArtist = originalArtist)
                     .onSuccess { _event.emit(BandSongDetailEvent.NavigateBack) }
                     .onFailure { _viewState.update { it.copy(isSaving = false) } }
             }

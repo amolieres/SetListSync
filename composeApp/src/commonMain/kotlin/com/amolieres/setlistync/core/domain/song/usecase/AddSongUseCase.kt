@@ -14,7 +14,8 @@ class AddSongUseCase(private val repo: SongRepository) {
         durationSeconds: Int,
         key: String? = null,
         tempo: Int? = null,
-        externalLinks: List<String> = emptyList()
+        externalLinks: List<String> = emptyList(),
+        originalArtist: String? = null
     ): Result<Song> = runCatching {
         val song = Song(
             id = SongId(Uuid.random().toString()),
@@ -22,7 +23,8 @@ class AddSongUseCase(private val repo: SongRepository) {
             durationSeconds = durationSeconds,
             key = key?.trim(),
             tempo = tempo,
-            externalLinks = externalLinks
+            externalLinks = externalLinks,
+            originalArtist = originalArtist?.trim()
         )
         repo.addSong(bandId, song)
         song

@@ -6,6 +6,7 @@ sealed interface BandSongDetailUiEvent {
     data class OnSecondsChanged(val seconds: String) : BandSongDetailUiEvent
     data class OnKeyChanged(val key: String) : BandSongDetailUiEvent
     data class OnTempoChanged(val tempo: String) : BandSongDetailUiEvent
+    data class OnOriginalArtistChanged(val artist: String) : BandSongDetailUiEvent
     data object OnSaveClicked : BandSongDetailUiEvent
     data object OnBackClicked : BandSongDetailUiEvent
 }

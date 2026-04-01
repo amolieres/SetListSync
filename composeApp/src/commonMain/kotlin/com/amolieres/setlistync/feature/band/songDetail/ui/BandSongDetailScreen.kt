@@ -79,6 +79,13 @@ fun BandSongDetailScreen(
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
+                OutlinedTextField(
+                    value = uiState.originalArtist,
+                    onValueChange = { onScreenEvent(BandSongDetailUiEvent.OnOriginalArtistChanged(it)) },
+                    label = { Text(stringResource(Res.string.song_dialog_label_original_artist)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
+                )
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(AppDimens.SpacingS),
                     verticalAlignment = Alignment.CenterVertically

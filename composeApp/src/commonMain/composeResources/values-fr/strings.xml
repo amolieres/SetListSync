@@ -95,6 +95,7 @@
     <string name="song_dialog_label_seconds">Sec.</string>
     <string name="song_dialog_label_key">Tonalité (optionnel)</string>
     <string name="song_dialog_label_tempo">Tempo BPM (optionnel)</string>
+    <string name="song_dialog_label_original_artist">Artiste original (optionnel)</string>
     <string name="song_cd_delete">Supprimer le morceau</string>
 
     <!-- ── Dialogue de suppression du groupe ─────────────────────── -->

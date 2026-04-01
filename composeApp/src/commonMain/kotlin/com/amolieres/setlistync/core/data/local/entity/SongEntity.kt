@@ -14,5 +14,6 @@ data class SongEntity(
     val durationSeconds: Int,
     val key: String?,
     val tempo: Int?,
-    val externalLinks: String  // JSON-encoded List<String>
+    val externalLinks: String,  // JSON-encoded List<String>
+    val originalArtist: String? = null
 )

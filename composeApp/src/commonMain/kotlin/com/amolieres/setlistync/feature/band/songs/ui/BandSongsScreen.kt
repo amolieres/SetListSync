@@ -96,12 +96,21 @@ private fun SongListItem(song: Song, onEdit: () -> Unit, onDelete: () -> Unit) {
         modifier = Modifier.clickable(onClick = onEdit),
         headlineContent = { Text(song.title) },
         supportingContent = {
-            val parts = buildList {
-                add(song.durationSeconds.formatDuration())
-                song.key?.let { add(it) }
-                song.tempo?.let { add("$it BPM") }
+            Column {
+                song.originalArtist?.let {
+                    Text(it, style = MaterialTheme.typography.bodyMedium)
+                }
+                val parts = buildList {
+                    add(song.durationSeconds.formatDuration())
+                    song.key?.let { add(it) }
+                    song.tempo?.let { add("$it BPM") }
+                }
+                Text(
+                    parts.joinToString("  ·  "),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
-            Text(parts.joinToString("  ·  "))
         },
         trailingContent = {
             IconButton(onClick = onDelete) {
