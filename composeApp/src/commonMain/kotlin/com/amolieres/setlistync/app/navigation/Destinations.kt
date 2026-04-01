@@ -13,4 +13,7 @@ object Destinations {
     const val BandCreation = "band_creation"
     const val BandEdit = "band_edit/{bandId}"
     fun bandEdit(bandId: String) = "band_edit/$bandId"
+    const val BandSongDetail = "band_songs/{bandId}/song?songId={songId}"
+    fun newSong(bandId: String) = "band_songs/$bandId/song"
+    fun editSong(bandId: String, songId: String) = "band_songs/$bandId/song?songId=$songId"
 }

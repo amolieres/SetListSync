@@ -81,6 +81,10 @@
     <string name="band_detail_cd_edit_info">Edit information</string>
     <string name="band_detail_no_info">No information provided.</string>
 
+    <!-- ── Song detail screen ───────────────────────────────────── -->
+    <string name="song_detail_title_create">Add a song</string>
+    <string name="song_detail_title_edit">Edit song</string>
+
     <!-- ── Song dialog ───────────────────────────────────────────── -->
     <string name="song_dialog_add_title">Add a song</string>
     <string name="song_dialog_label_title">Title *</string>

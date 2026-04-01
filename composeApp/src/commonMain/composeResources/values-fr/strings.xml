@@ -84,6 +84,10 @@
     <string name="band_detail_cd_edit_info">Modifier les informations</string>
     <string name="band_detail_no_info">Aucune information renseignée.</string>
 
+    <!-- ── Écran détail morceau ──────────────────────────────────── -->
+    <string name="song_detail_title_create">Ajouter un morceau</string>
+    <string name="song_detail_title_edit">Modifier le morceau</string>
+
     <!-- ── Dialogue morceau ───────────────────────────────────────── -->
     <string name="song_dialog_add_title">Ajouter un morceau</string>
     <string name="song_dialog_label_title">Titre *</string>
