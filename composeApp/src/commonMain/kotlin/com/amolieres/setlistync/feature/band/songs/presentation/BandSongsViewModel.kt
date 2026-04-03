@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.amolieres.setlistync.core.domain.band.usecase.ObserveBandUseCase
+import com.amolieres.setlistync.core.domain.preferences.ObserveNotationUseCase
 import com.amolieres.setlistync.core.domain.song.model.SongId
 import com.amolieres.setlistync.core.domain.song.usecase.DeleteSongUseCase
 import com.amolieres.setlistync.core.domain.song.usecase.ObserveSongsUseCase
@@ -20,7 +21,8 @@ class BandSongsViewModel(
     savedStateHandle: SavedStateHandle,
     observeBand: ObserveBandUseCase,
     observeSongs: ObserveSongsUseCase,
-    private val deleteSong: DeleteSongUseCase
+    private val deleteSong: DeleteSongUseCase,
+    observeNotation: ObserveNotationUseCase
 ) : ViewModel() {
 
     val bandId: String = checkNotNull(savedStateHandle.get<String>("bandId"))
@@ -30,12 +32,14 @@ class BandSongsViewModel(
 
     val uiState: StateFlow<BandSongsUiState> = combine(
         observeBand(bandId),
-        observeSongs(bandId)
-    ) { band, songs ->
+        observeSongs(bandId),
+        observeNotation()
+    ) { band, songs, notation ->
         BandSongsUiState(
             isLoading = false,
             bandName = band?.name ?: "",
-            songs = songs
+            songs = songs,
+            noteNotation = notation
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), BandSongsUiState())
 

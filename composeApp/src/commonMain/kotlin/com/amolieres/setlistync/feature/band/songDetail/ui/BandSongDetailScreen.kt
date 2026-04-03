@@ -12,8 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
@@ -22,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.amolieres.setlistync.app.designsystem.AppDimens
 import com.amolieres.setlistync.app.designsystem.components.AppCenteredLoader
 import com.amolieres.setlistync.app.designsystem.components.AppLoadingButton
+import com.amolieres.setlistync.core.domain.song.model.SongKey
 import com.amolieres.setlistync.core.util.formatDuration
 import com.amolieres.setlistync.feature.band.songDetail.presentation.BandSongDetailEvent
 import com.amolieres.setlistync.feature.band.songDetail.presentation.BandSongDetailUiEvent
@@ -80,7 +80,7 @@ fun BandSongDetailScreen(
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(AppDimens.SpacingM)
             ) {
-                // Search bar
+                // ── Search bar ────────────────────────────────────────────────
                 OutlinedTextField(
                     value = uiState.searchQuery,
                     onValueChange = { onScreenEvent(BandSongDetailUiEvent.OnSearchQueryChanged(it)) },
@@ -105,7 +105,7 @@ fun BandSongDetailScreen(
                     )
                 )
 
-                // Search results dropdown
+                // ── Search results dropdown ───────────────────────────────────
                 if (uiState.searchResults.isNotEmpty()) {
                     Card(Modifier.fillMaxWidth()) {
                         LazyColumn(Modifier.heightIn(max = 240.dp)) {
@@ -125,7 +125,7 @@ fun BandSongDetailScreen(
                     }
                 }
 
-                // BPM/key loading indicator
+                // ── BPM/key loading indicator ─────────────────────────────────
                 if (uiState.isLoadingFeatures) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -140,6 +140,7 @@ fun BandSongDetailScreen(
                     }
                 }
 
+                // ── Title ─────────────────────────────────────────────────────
                 OutlinedTextField(
                     value = uiState.title,
                     onValueChange = { onScreenEvent(BandSongDetailUiEvent.OnTitleChanged(it)) },
@@ -147,6 +148,8 @@ fun BandSongDetailScreen(
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
+
+                // ── Original artist ───────────────────────────────────────────
                 OutlinedTextField(
                     value = uiState.originalArtist,
                     onValueChange = { onScreenEvent(BandSongDetailUiEvent.OnOriginalArtistChanged(it)) },
@@ -154,6 +157,8 @@ fun BandSongDetailScreen(
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
+
+                // ── Duration ──────────────────────────────────────────────────
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(AppDimens.SpacingS),
                     verticalAlignment = Alignment.CenterVertically
@@ -176,13 +181,51 @@ fun BandSongDetailScreen(
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
                 }
-                OutlinedTextField(
-                    value = uiState.key,
-                    onValueChange = { onScreenEvent(BandSongDetailUiEvent.OnKeyChanged(it)) },
-                    label = { Text(stringResource(Res.string.song_dialog_label_key)) },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
-                )
+
+                // ── Key — dropdown selector ───────────────────────────────────
+                var keyMenuExpanded by remember { mutableStateOf(false) }
+                ExposedDropdownMenuBox(
+                    expanded = keyMenuExpanded,
+                    onExpandedChange = { keyMenuExpanded = it }
+                ) {
+                    OutlinedTextField(
+                        value = uiState.key?.display(uiState.noteNotation) ?: "",
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text(stringResource(Res.string.song_dialog_label_key)) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor(MenuAnchorType.PrimaryNotEditable),
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = keyMenuExpanded)
+                        }
+                    )
+                    ExposedDropdownMenu(
+                        expanded = keyMenuExpanded,
+                        onDismissRequest = { keyMenuExpanded = false }
+                    ) {
+                        // "None" option
+                        DropdownMenuItem(
+                            text = { Text(stringResource(Res.string.song_dialog_key_none)) },
+                            onClick = {
+                                onScreenEvent(BandSongDetailUiEvent.OnKeyChanged(null))
+                                keyMenuExpanded = false
+                            }
+                        )
+                        HorizontalDivider()
+                        SongKey.entries.forEach { key ->
+                            DropdownMenuItem(
+                                text = { Text(key.display(uiState.noteNotation)) },
+                                onClick = {
+                                    onScreenEvent(BandSongDetailUiEvent.OnKeyChanged(key))
+                                    keyMenuExpanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+
+                // ── Tempo ─────────────────────────────────────────────────────
                 OutlinedTextField(
                     value = uiState.tempo,
                     onValueChange = { onScreenEvent(BandSongDetailUiEvent.OnTempoChanged(it)) },
@@ -191,6 +234,7 @@ fun BandSongDetailScreen(
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
+
                 Spacer(Modifier.height(AppDimens.SpacingS))
                 AppLoadingButton(
                     onClick = { onScreenEvent(BandSongDetailUiEvent.OnSaveClicked) },
@@ -227,7 +271,7 @@ fun BandSongDetailScreenEditPreview() {
             title = "Summer Rain",
             minutes = "3",
             seconds = "33",
-            key = "Am",
+            key = SongKey.A_MINOR,
             tempo = "120"
         ),
         eventFlow = emptyFlow(),

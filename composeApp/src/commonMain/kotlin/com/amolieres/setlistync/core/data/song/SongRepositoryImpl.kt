@@ -4,11 +4,10 @@ import com.amolieres.setlistync.core.data.local.dao.SongDao
 import com.amolieres.setlistync.core.data.local.entity.SongEntity
 import com.amolieres.setlistync.core.domain.song.model.Song
 import com.amolieres.setlistync.core.domain.song.model.SongId
+import com.amolieres.setlistync.core.domain.song.model.SongKey
 import com.amolieres.setlistync.core.domain.song.repository.SongRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class SongRepositoryImpl(
@@ -43,7 +42,7 @@ class SongRepositoryImpl(
         bandId = bandId,
         title = title,
         durationSeconds = durationSeconds,
-        key = key,
+        key = key?.englishName,       // stored as English notation string (e.g. "Am", "F#")
         tempo = tempo,
         externalLinks = Json.encodeToString(externalLinks),
         originalArtist = originalArtist
@@ -53,7 +52,7 @@ class SongRepositoryImpl(
         id = SongId(id),
         title = title,
         durationSeconds = durationSeconds,
-        key = key,
+        key = key?.let { SongKey.fromEnglishName(it) },  // null if stored value is unknown
         tempo = tempo,
         externalLinks = Json.decodeFromString(externalLinks),
         originalArtist = originalArtist

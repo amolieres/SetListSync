@@ -19,7 +19,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import com.amolieres.setlistync.app.designsystem.AppDimens
+import com.amolieres.setlistync.core.data.preferences.NoteNotation
 import com.amolieres.setlistync.core.domain.song.model.Song
+import com.amolieres.setlistync.core.domain.song.model.SongId
+import com.amolieres.setlistync.core.domain.song.model.SongKey
 import com.amolieres.setlistync.core.util.formatDuration
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -29,6 +32,7 @@ import setlistsync.composeapp.generated.resources.song_cd_delete
 @Composable
 fun SongItem(
     song: Song,
+    noteNotation: NoteNotation,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier
@@ -62,7 +66,7 @@ fun SongItem(
                 val subtitleParts = buildList {
                     song.originalArtist?.let { add(it) }
                     add(song.durationSeconds.formatDuration())
-                    song.key?.let { add(it) }
+                    song.key?.let { add(it.display(noteNotation)) }
                     song.tempo?.let { add("$it BPM") }
                 }
                 Text(
@@ -92,13 +96,32 @@ fun SongItem(
 private fun SongItemFullPreview() {
     SongItem(
         song = Song(
-            id = com.amolieres.setlistync.core.domain.song.model.SongId("1"),
+            id = SongId("1"),
             title = "Highway to Hell",
             durationSeconds = 208,
             originalArtist = "AC/DC",
-            key = "Am",
+            key = SongKey.A_MINOR,
             tempo = 116
         ),
+        noteNotation = NoteNotation.EN,
+        onEdit = {},
+        onDelete = {}
+    )
+}
+
+@Preview
+@Composable
+private fun SongItemFrenchPreview() {
+    SongItem(
+        song = Song(
+            id = SongId("2"),
+            title = "Summer Rain",
+            durationSeconds = 213,
+            originalArtist = "The Rocketeers",
+            key = SongKey.A_MINOR,
+            tempo = 120
+        ),
+        noteNotation = NoteNotation.FR,
         onEdit = {},
         onDelete = {}
     )
@@ -108,11 +131,12 @@ private fun SongItemFullPreview() {
 @Composable
 private fun SongItemMinimalPreview() {
     SongItem(
-        song = com.amolieres.setlistync.core.domain.song.model.Song(
-            id = com.amolieres.setlistync.core.domain.song.model.SongId("2"),
+        song = Song(
+            id = SongId("3"),
             title = "Electric Nights",
             durationSeconds = 187
         ),
+        noteNotation = NoteNotation.EN,
         onEdit = {},
         onDelete = {}
     )

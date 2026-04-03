@@ -3,8 +3,11 @@ package com.amolieres.setlistync.feature.band.songDetail.presentation
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.amolieres.setlistync.core.data.preferences.NoteNotation
+import com.amolieres.setlistync.core.domain.preferences.ObserveNotationUseCase
 import com.amolieres.setlistync.core.domain.song.model.Song
 import com.amolieres.setlistync.core.domain.song.model.SongId
+import com.amolieres.setlistync.core.domain.song.model.SongKey
 import com.amolieres.setlistync.core.domain.song.model.SongSearchResult
 import com.amolieres.setlistync.core.domain.song.usecase.AddSongUseCase
 import com.amolieres.setlistync.core.domain.song.usecase.GetSongAudioFeaturesUseCase
@@ -28,7 +31,8 @@ class BandSongDetailViewModel(
     private val addSong: AddSongUseCase,
     private val updateSong: UpdateSongUseCase,
     private val searchSongs: SearchSongsUseCase,
-    private val getAudioFeatures: GetSongAudioFeaturesUseCase
+    private val getAudioFeatures: GetSongAudioFeaturesUseCase,
+    observeNotation: ObserveNotationUseCase
 ) : ViewModel() {
 
     val bandId: String = checkNotNull(savedStateHandle.get<String>("bandId"))
@@ -43,7 +47,7 @@ class BandSongDetailViewModel(
         val title: String = "",
         val minutes: String = "",
         val seconds: String = "",
-        val key: String = "",
+        val key: SongKey? = null,
         val tempo: String = "",
         val originalArtist: String = "",
         val isSaving: Boolean = false,
@@ -51,7 +55,8 @@ class BandSongDetailViewModel(
         val searchQuery: String = "",
         val isSearching: Boolean = false,
         val searchResults: List<SongSearchResult> = emptyList(),
-        val isLoadingFeatures: Boolean = false
+        val isLoadingFeatures: Boolean = false,
+        val noteNotation: NoteNotation = NoteNotation.EN
     )
 
     private val _viewState = MutableStateFlow(ViewState())
@@ -71,7 +76,8 @@ class BandSongDetailViewModel(
                 searchQuery = view.searchQuery,
                 isSearching = view.isSearching,
                 searchResults = view.searchResults,
-                isLoadingFeatures = view.isLoadingFeatures
+                isLoadingFeatures = view.isLoadingFeatures,
+                noteNotation = view.noteNotation
             )
         }
         .stateIn(
@@ -81,6 +87,11 @@ class BandSongDetailViewModel(
         )
 
     init {
+        viewModelScope.launch {
+            observeNotation().collect { notation ->
+                _viewState.update { it.copy(noteNotation = notation) }
+            }
+        }
         if (songId != null) {
             _viewState.update { it.copy(isLoading = true) }
             viewModelScope.launch {
@@ -94,7 +105,7 @@ class BandSongDetailViewModel(
                             title = song.title,
                             minutes = if (mins > 0) mins.toString() else "",
                             seconds = if (secs > 0) secs.toString() else "",
-                            key = song.key ?: "",
+                            key = song.key,
                             tempo = song.tempo?.toString() ?: "",
                             originalArtist = song.originalArtist ?: "",
                             originalSong = song
@@ -173,12 +184,13 @@ class BandSongDetailViewModel(
         }
         viewModelScope.launch {
             getAudioFeatures(result.title, result.artist)
-                .onSuccess { (bpm, key) ->
+                .onSuccess { (bpm, keyString) ->
+                    val songKey = keyString?.let { SongKey.fromEnglishName(it) }
                     _viewState.update {
                         it.copy(
                             isLoadingFeatures = false,
                             tempo = bpm?.toString() ?: it.tempo,
-                            key = key ?: it.key
+                            key = songKey ?: it.key
                         )
                     }
                 }
@@ -195,7 +207,7 @@ class BandSongDetailViewModel(
         val minutes = view.minutes.toIntOrNull() ?: 0
         val seconds = view.seconds.toIntOrNull() ?: 0
         val durationSeconds = minutes * 60 + seconds
-        val key = view.key.trim().takeIf { it.isNotBlank() }
+        val key = view.key
         val tempo = view.tempo.toIntOrNull()
         val originalArtist = view.originalArtist.trim().takeIf { it.isNotBlank() }
 

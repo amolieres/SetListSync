@@ -15,6 +15,7 @@ import com.amolieres.setlistync.app.designsystem.components.AppCenteredLoader
 import com.amolieres.setlistync.app.designsystem.components.AppCenteredMessage
 import com.amolieres.setlistync.core.domain.song.model.Song
 import com.amolieres.setlistync.core.domain.song.model.SongId
+import com.amolieres.setlistync.core.domain.song.model.SongKey
 import com.amolieres.setlistync.feature.band.songs.presentation.BandSongsEvent
 import com.amolieres.setlistync.feature.band.songs.presentation.BandSongsUiEvent
 import com.amolieres.setlistync.feature.band.songs.presentation.BandSongsUiState
@@ -85,6 +86,7 @@ fun BandSongsScreen(
                 items(uiState.songs) { song ->
                     SongItem(
                         song = song,
+                        noteNotation = uiState.noteNotation,
                         onEdit = { onScreenEvent(BandSongsUiEvent.OnEditSongClicked(song.id)) },
                         onDelete = { onScreenEvent(BandSongsUiEvent.OnDeleteSongClicked(song.id)) }
                     )
@@ -132,8 +134,8 @@ fun BandSongsScreenContentPreview() {
             isLoading = false,
             bandName = "The Rocketeers",
             songs = listOf(
-                Song(id = SongId("1"), title = "Highway to Hell", durationSeconds = 208, originalArtist = "AC/DC", key = "Am", tempo = 116),
-                Song(id = SongId("2"), title = "Summer Rain", durationSeconds = 213, originalArtist = "The Rocketeers", key = "Am", tempo = 120),
+                Song(id = SongId("1"), title = "Highway to Hell", durationSeconds = 208, originalArtist = "AC/DC", key = SongKey.A_MINOR, tempo = 116),
+                Song(id = SongId("2"), title = "Summer Rain", durationSeconds = 213, originalArtist = "The Rocketeers", key = SongKey.A_MINOR, tempo = 120),
                 Song(id = SongId("3"), title = "Electric Nights", durationSeconds = 187)
             )
         ),
