@@ -6,5 +6,6 @@ data class BandDetailUiState(
     val isLoading: Boolean = true,
     val band: Band? = null,
     val error: String? = null,
-    val showDeleteBandConfirm: Boolean = false
+    val showDeleteBandConfirm: Boolean = false,
+    val songCount: Int = 0
 )

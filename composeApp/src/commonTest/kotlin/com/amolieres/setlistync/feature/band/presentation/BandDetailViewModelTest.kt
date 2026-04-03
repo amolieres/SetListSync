@@ -4,7 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import com.amolieres.setlistync.core.domain.band.model.Band
 import com.amolieres.setlistync.core.domain.band.usecase.DeleteBandUseCase
 import com.amolieres.setlistync.core.domain.band.usecase.ObserveBandUseCase
+import com.amolieres.setlistync.core.domain.song.usecase.ObserveSongsUseCase
 import com.amolieres.setlistync.fake.FakeBandRepository
+import com.amolieres.setlistync.fake.FakeSongRepository
 import com.amolieres.setlistync.feature.band.detail.presentation.BandDetailEvent
 import com.amolieres.setlistync.feature.band.detail.presentation.BandDetailUiEvent
 import com.amolieres.setlistync.feature.band.detail.presentation.BandDetailViewModel
@@ -33,13 +35,15 @@ class BandDetailViewModelTest {
     private val testDispatcher = StandardTestDispatcher(testScheduler)
 
     private val fakeRepo = FakeBandRepository()
+    private val fakeSongRepo = FakeSongRepository()
     private val bandId = "band-1"
 
     private val viewModel by lazy {
         BandDetailViewModel(
             savedStateHandle = SavedStateHandle(mapOf("bandId" to bandId)),
             observeBand = ObserveBandUseCase(fakeRepo),
-            deleteBand = DeleteBandUseCase(fakeRepo)
+            deleteBand = DeleteBandUseCase(fakeRepo),
+            observeSongs = ObserveSongsUseCase(fakeSongRepo)
         )
     }
 

@@ -26,20 +26,25 @@ Managing setlists in a band often means juggling spreadsheets, PDFs, chat messag
   - Dedicated edit screen (`BandEditScreen`) separate from detail view
 - 🟢 Manage **band members** (add, edit, delete — with roles: bass, guitar, vocals, drums…)
 - 🟢 Manage **settings** (DataStore session wired, settings screen UI in progress)
-- 🟠 Manage **songs**
-  - title, duration, key/tone, external links, etc.
-  - stored in a **global song library**
-- ⚪️ Add **member-specific song notes**
-  - e.g. lyrics for singer, pedal settings for guitarist, first note for bassist
+- 🟢 Manage **songs** (per band)
+  - Fields: title, original artist, duration (min/sec), key/tonality, BPM
+  - `SongKey` enum — 30 standard keys (15 major + 15 minor, circle of fifths)
+  - Tonality display respects the user's **notation preference** (French: Do/Ré/Mi… or English: C/D/E…)
+  - **Deezer search** — search by title/artist and pre-fill all fields
+  - **GetSongBPM auto-fill** — BPM and key enriched automatically after selection
+  - Song count shown live on each band card (reactive flow)
 - ⚪️ Manage **gigs & setlists**
   - song order
   - compute total duration
+- ⚪️ Add **member-specific song notes**
+  - e.g. lyrics for singer, pedal settings for guitarist, first note for bassist
 - ⚪️ **Export setlists** as PDF or image for sharing
 
 #### Technical Stack
 - 🟢 Local database — Room (Android, iOS, Desktop) — v3 (migration v2→v3 applied)
 - 🟢 User session — DataStore (current user ID, password hash, notation preference FR/EN)
 - 🟢 Reactive architecture — Kotlin Flows throughout (Room → Repository → UseCase → ViewModel → UI)
+- 🟢 HTTP client — Ktor (OkHttp/Android, Darwin/iOS, Java/Desktop) with ContentNegotiation + Kotlinx Serialization
 - 🟢 ViewModel unit tests — `BandDetailViewModelTest`, `BandEditViewModelTest` (commonTest)
 - 🟢 Internationalization (FR/EN) — all strings centralized in `composeResources/values/strings.xml`, French translation in `values-fr/strings.xml`
 - 🟢 App theme — custom Material 3 color scheme & typography + extractable design system (`app/designsystem/`)
@@ -121,7 +126,7 @@ Make planning smarter:
 | Settings feature | 🟢 Done | DataStore wired, screen UI pending |
 | App theme (Material 3) | 🟢 Done | Custom color scheme & typography + design system in `app/designsystem/` (dimensions, reusable components) |
 | App icon | 🟢 Done | Launcher icon for Android, iOS, Desktop |
-| Song feature | 🟠 In progress  | Domain + data layer scaffolded, no UI yet |
+| Song feature | 🟢 Done | Full CRUD per band — `BandSongsScreen` (list with `SongItem` cards), `BandSongDetailScreen` (add/edit), Deezer search, GetSongBPM auto-fill, `SongKey` enum (30 keys, FR/EN display via `NoteNotation`), song count in band list |
 | Gig & SetList feature | ⚪️ Not started | Domain + data layer scaffolded, no UI yet |
 | PDF export | ⚪️ Not started | — |
 

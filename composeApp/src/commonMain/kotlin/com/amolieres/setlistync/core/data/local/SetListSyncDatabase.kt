@@ -22,7 +22,7 @@ import com.amolieres.setlistync.core.data.local.entity.*
         SetListEntity::class,
         GigEntity::class,
     ],
-    version = 3,
+    version = 4,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -44,6 +44,11 @@ abstract class SetListSyncDatabase : RoomDatabase() {
                 connection.execSQL("ALTER TABLE bands ADD COLUMN facebookUrl TEXT")
                 connection.execSQL("ALTER TABLE bands ADD COLUMN tiktokUrl TEXT")
                 connection.execSQL("ALTER TABLE bands ADD COLUMN genres TEXT NOT NULL DEFAULT '[]'")
+            }
+        }
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(connection: SQLiteConnection) {
+                connection.execSQL("ALTER TABLE songs ADD COLUMN originalArtist TEXT")
             }
         }
     }

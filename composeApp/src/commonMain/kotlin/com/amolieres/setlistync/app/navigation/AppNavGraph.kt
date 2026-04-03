@@ -7,13 +7,20 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.amolieres.setlistync.core.domain.song.model.SongId
 import com.amolieres.setlistync.feature.band.creation.presentation.BandCreationViewModel
 import com.amolieres.setlistync.feature.band.creation.ui.BandCreationScreen
 import com.amolieres.setlistync.feature.band.detail.presentation.BandDetailViewModel
 import com.amolieres.setlistync.feature.band.edit.presentation.BandEditViewModel
 import com.amolieres.setlistync.feature.band.members.presentation.BandMembersViewModel
+import com.amolieres.setlistync.feature.band.songDetail.presentation.BandSongDetailViewModel
+import com.amolieres.setlistync.feature.band.songDetail.ui.BandSongDetailScreen
+import com.amolieres.setlistync.feature.band.songs.presentation.BandSongsViewModel
+import com.amolieres.setlistync.feature.band.songs.ui.BandSongsScreen
 import com.amolieres.setlistync.feature.band.detail.ui.BandDetailScreen
 import com.amolieres.setlistync.feature.band.edit.ui.BandEditScreen
 import com.amolieres.setlistync.feature.band.members.ui.BandMembersScreen
@@ -117,7 +124,38 @@ fun AppNavGraph(
                 onScreenEvent = viewModel::onScreenEvent,
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToMembers = { navController.navigate(Destinations.bandMembers(viewModel.bandId)) },
+                onNavigateToSongs = { navController.navigate(Destinations.bandSongs(viewModel.bandId)) },
                 onNavigateToEdit = { navController.navigate(Destinations.bandEdit(viewModel.bandId)) }
+            )
+        }
+
+        composable(Destinations.BandSongs) {
+            val viewModel: BandSongsViewModel = koinViewModel()
+            val uiState by viewModel.uiState.collectAsState()
+            BandSongsScreen(
+                uiState = uiState,
+                eventFlow = viewModel.event,
+                onScreenEvent = viewModel::onScreenEvent,
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToNewSong = { navController.navigate(Destinations.newSong(viewModel.bandId)) },
+                onNavigateToEditSong = { songId -> navController.navigate(Destinations.editSong(viewModel.bandId, songId.value)) }
+            )
+        }
+
+        composable(
+            route = Destinations.BandSongDetail,
+            arguments = listOf(
+                navArgument("bandId") { type = NavType.StringType },
+                navArgument("songId") { type = NavType.StringType; nullable = true; defaultValue = null }
+            )
+        ) {
+            val viewModel: BandSongDetailViewModel = koinViewModel()
+            val uiState by viewModel.uiState.collectAsState()
+            BandSongDetailScreen(
+                uiState = uiState,
+                eventFlow = viewModel.event,
+                onScreenEvent = viewModel::onScreenEvent,
+                onNavigateBack = { navController.popBackStack() }
             )
         }
 

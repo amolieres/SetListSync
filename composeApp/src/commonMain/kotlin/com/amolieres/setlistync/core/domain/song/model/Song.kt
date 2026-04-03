@@ -7,7 +7,8 @@ data class Song(
     val id: SongId,
     val title: String,
     val durationSeconds: Int,
-    val key: String? = null,
+    val key: SongKey? = null,
     val tempo: Int? = null,
-    val externalLinks: List<String> = emptyList()
+    val externalLinks: List<String> = emptyList(),
+    val originalArtist: String? = null
 )

@@ -4,9 +4,10 @@ import com.amolieres.setlistync.core.data.local.dao.SongDao
 import com.amolieres.setlistync.core.data.local.entity.SongEntity
 import com.amolieres.setlistync.core.domain.song.model.Song
 import com.amolieres.setlistync.core.domain.song.model.SongId
+import com.amolieres.setlistync.core.domain.song.model.SongKey
 import com.amolieres.setlistync.core.domain.song.repository.SongRepository
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
 
 class SongRepositoryImpl(
@@ -15,6 +16,9 @@ class SongRepositoryImpl(
 
     override suspend fun getAllSongs(bandId: String): List<Song> =
         songDao.getSongsByBandId(bandId).map { it.toDomain() }
+
+    override fun observeAllSongs(bandId: String): Flow<List<Song>> =
+        songDao.observeSongsByBandId(bandId).map { entities -> entities.map { it.toDomain() } }
 
     override suspend fun getSong(id: SongId): Song? =
         songDao.getSongById(id.value)?.toDomain()
@@ -38,17 +42,19 @@ class SongRepositoryImpl(
         bandId = bandId,
         title = title,
         durationSeconds = durationSeconds,
-        key = key,
+        key = key?.englishName,       // stored as English notation string (e.g. "Am", "F#")
         tempo = tempo,
-        externalLinks = Json.encodeToString(externalLinks)
+        externalLinks = Json.encodeToString(externalLinks),
+        originalArtist = originalArtist
     )
 
     private fun SongEntity.toDomain() = Song(
         id = SongId(id),
         title = title,
         durationSeconds = durationSeconds,
-        key = key,
+        key = key?.let { SongKey.fromEnglishName(it) },  // null if stored value is unknown
         tempo = tempo,
-        externalLinks = Json.decodeFromString(externalLinks)
+        externalLinks = Json.decodeFromString(externalLinks),
+        originalArtist = originalArtist
     )
 }
