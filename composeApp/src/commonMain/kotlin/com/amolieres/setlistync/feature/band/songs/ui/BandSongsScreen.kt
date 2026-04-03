@@ -1,13 +1,11 @@
 package com.amolieres.setlistync.feature.band.songs.ui
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -52,7 +50,10 @@ fun BandSongsScreen(
                 title = { Text(uiState.bandName) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.action_back))
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(Res.string.action_back)
+                        )
                     }
                 }
             )
@@ -72,64 +73,27 @@ fun BandSongsScreen(
             )
 
             else -> LazyColumn(
-                Modifier.fillMaxSize().padding(padding),
-                contentPadding = PaddingValues(bottom = AppDimens.FabSpacing)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                contentPadding = PaddingValues(
+                    horizontal = AppDimens.SpacingL,
+                    vertical = AppDimens.SpacingM
+                ),
+                verticalArrangement = Arrangement.spacedBy(AppDimens.SpacingS)
             ) {
                 items(uiState.songs) { song ->
-                    SongListItem(
+                    SongItem(
                         song = song,
                         onEdit = { onScreenEvent(BandSongsUiEvent.OnEditSongClicked(song.id)) },
                         onDelete = { onScreenEvent(BandSongsUiEvent.OnDeleteSongClicked(song.id)) }
                     )
-                    HorizontalDivider()
                 }
+                // Extra bottom padding to clear the FAB
+                item { Spacer(Modifier.height(AppDimens.FabSpacing)) }
             }
         }
     }
-}
-
-// ── Song list item ────────────────────────────────────────────────────────────
-
-@Composable
-private fun SongListItem(song: Song, onEdit: () -> Unit, onDelete: () -> Unit) {
-    ListItem(
-        modifier = Modifier.clickable(onClick = onEdit),
-        headlineContent = { Text(song.title) },
-        supportingContent = {
-            Column {
-                song.originalArtist?.let {
-                    Text(it, style = MaterialTheme.typography.bodyMedium)
-                }
-                val parts = buildList {
-                    add(song.durationSeconds.formatDuration())
-                    song.key?.let { add(it) }
-                    song.tempo?.let { add("$it BPM") }
-                }
-                Text(
-                    parts.joinToString("  ·  "),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        },
-        trailingContent = {
-            IconButton(onClick = onDelete) {
-                Icon(
-                    Icons.Default.Delete,
-                    contentDescription = stringResource(Res.string.song_cd_delete),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
-    )
-}
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-private fun Int.formatDuration(): String {
-    val m = this / 60
-    val s = this % 60
-    return "$m:${s.toString().padStart(2, '0')}"
 }
 
 // ── Previews ─────────────────────────────────────────────────────────────────
@@ -168,8 +132,9 @@ fun BandSongsScreenContentPreview() {
             isLoading = false,
             bandName = "The Rocketeers",
             songs = listOf(
-                Song(id = SongId("1"), title = "Summer Rain", durationSeconds = 213, key = "Am", tempo = 120),
-                Song(id = SongId("2"), title = "Electric Nights", durationSeconds = 187, key = "E")
+                Song(id = SongId("1"), title = "Highway to Hell", durationSeconds = 208, originalArtist = "AC/DC", key = "Am", tempo = 116),
+                Song(id = SongId("2"), title = "Summer Rain", durationSeconds = 213, originalArtist = "The Rocketeers", key = "Am", tempo = 120),
+                Song(id = SongId("3"), title = "Electric Nights", durationSeconds = 187)
             )
         ),
         eventFlow = emptyFlow(),

@@ -32,7 +32,7 @@ val useCaseModule = module {
     factory { CreateBandUseCase(get()) }
     factory { GetBandUseCase(get()) }
     factory { GetAllBandsUseCase(get()) }
-    factory { ObserveAllBandsUseCase(get()) }
+    factory { ObserveAllBandsUseCase(get(), get()) }   // BandRepository, SongRepository
     factory { ObserveBandUseCase(get()) }
     factory { GetBandsForUserUseCase(get()) }
     factory { DeleteBandUseCase(get()) }
@@ -55,6 +55,8 @@ val useCaseModule = module {
     factory { GetSongUseCase(get()) }
     factory { UpdateSongUseCase(get()) }
     factory { DeleteSongUseCase(get(), get()) }
+    factory { SearchSongsUseCase(get()) }
+    factory { GetSongAudioFeaturesUseCase(get()) }
 
     // SongNote
     factory { AddSongNoteUseCase(get()) }

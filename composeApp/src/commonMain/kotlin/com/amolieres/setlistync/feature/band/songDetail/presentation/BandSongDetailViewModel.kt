@@ -5,8 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.amolieres.setlistync.core.domain.song.model.Song
 import com.amolieres.setlistync.core.domain.song.model.SongId
+import com.amolieres.setlistync.core.domain.song.model.SongSearchResult
 import com.amolieres.setlistync.core.domain.song.usecase.AddSongUseCase
+import com.amolieres.setlistync.core.domain.song.usecase.GetSongAudioFeaturesUseCase
 import com.amolieres.setlistync.core.domain.song.usecase.GetSongUseCase
+import com.amolieres.setlistync.core.domain.song.usecase.SearchSongsUseCase
 import com.amolieres.setlistync.core.domain.song.usecase.UpdateSongUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +26,9 @@ class BandSongDetailViewModel(
     savedStateHandle: SavedStateHandle,
     private val getSong: GetSongUseCase,
     private val addSong: AddSongUseCase,
-    private val updateSong: UpdateSongUseCase
+    private val updateSong: UpdateSongUseCase,
+    private val searchSongs: SearchSongsUseCase,
+    private val getAudioFeatures: GetSongAudioFeaturesUseCase
 ) : ViewModel() {
 
     val bandId: String = checkNotNull(savedStateHandle.get<String>("bandId"))
@@ -42,7 +47,11 @@ class BandSongDetailViewModel(
         val tempo: String = "",
         val originalArtist: String = "",
         val isSaving: Boolean = false,
-        val originalSong: Song? = null
+        val originalSong: Song? = null,
+        val searchQuery: String = "",
+        val isSearching: Boolean = false,
+        val searchResults: List<SongSearchResult> = emptyList(),
+        val isLoadingFeatures: Boolean = false
     )
 
     private val _viewState = MutableStateFlow(ViewState())
@@ -58,7 +67,11 @@ class BandSongDetailViewModel(
                 key = view.key,
                 tempo = view.tempo,
                 originalArtist = view.originalArtist,
-                isSaving = view.isSaving
+                isSaving = view.isSaving,
+                searchQuery = view.searchQuery,
+                isSearching = view.isSearching,
+                searchResults = view.searchResults,
+                isLoadingFeatures = view.isLoadingFeatures
             )
         }
         .stateIn(
@@ -111,6 +124,67 @@ class BandSongDetailViewModel(
             BandSongDetailUiEvent.OnSaveClicked -> save()
             BandSongDetailUiEvent.OnBackClicked ->
                 viewModelScope.launch { _event.emit(BandSongDetailEvent.NavigateBack) }
+            is BandSongDetailUiEvent.OnSearchQueryChanged -> {
+                println("[BandSongDetailVM] OnSearchQueryChanged — \"${event.query}\"")
+                _viewState.update { it.copy(searchQuery = event.query) }
+            }
+            BandSongDetailUiEvent.OnSearchSubmitted -> {
+                println("[BandSongDetailVM] OnSearchSubmitted")
+                submitSearch()
+            }
+            is BandSongDetailUiEvent.OnSearchResultSelected -> selectResult(event.result)
+            BandSongDetailUiEvent.OnSearchResultsDismissed ->
+                _viewState.update { it.copy(searchResults = emptyList()) }
+        }
+    }
+
+    private fun submitSearch() {
+        val query = _viewState.value.searchQuery.trim()
+        println("[BandSongDetailVM] submitSearch — query=\"$query\" (blank=${query.isBlank()})")
+        if (query.isBlank()) return
+        viewModelScope.launch {
+            _viewState.update { it.copy(isSearching = true, searchResults = emptyList()) }
+            searchSongs(query)
+                .onSuccess { results ->
+                    println("[BandSongDetailVM] submitSearch — success, ${results.size} result(s)")
+                    _viewState.update { it.copy(isSearching = false, searchResults = results) }
+                }
+                .onFailure { error ->
+                    println("[BandSongDetailVM] submitSearch — failure: ${error::class.simpleName}: ${error.message}")
+                    _viewState.update { it.copy(isSearching = false) }
+                }
+        }
+    }
+
+    private fun selectResult(result: SongSearchResult) {
+        println("[BandSongDetailVM] selectResult — \"${result.title}\" by ${result.artist}")
+        val mins = result.durationSeconds / 60
+        val secs = result.durationSeconds % 60
+        _viewState.update {
+            it.copy(
+                searchResults = emptyList(),
+                searchQuery = "",
+                title = result.title,
+                originalArtist = result.artist,
+                minutes = if (mins > 0) mins.toString() else "",
+                seconds = if (secs > 0) secs.toString() else "",
+                isLoadingFeatures = true
+            )
+        }
+        viewModelScope.launch {
+            getAudioFeatures(result.title, result.artist)
+                .onSuccess { (bpm, key) ->
+                    _viewState.update {
+                        it.copy(
+                            isLoadingFeatures = false,
+                            tempo = bpm?.toString() ?: it.tempo,
+                            key = key ?: it.key
+                        )
+                    }
+                }
+                .onFailure {
+                    _viewState.update { it.copy(isLoadingFeatures = false) }
+                }
         }
     }
 

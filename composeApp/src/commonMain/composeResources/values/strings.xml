@@ -84,6 +84,8 @@
     <!-- ── Song detail screen ───────────────────────────────────── -->
     <string name="song_detail_title_create">Add a song</string>
     <string name="song_detail_title_edit">Edit song</string>
+    <string name="song_search_label">Search a song (title, artist…)</string>
+    <string name="song_search_loading_features">Fetching BPM and key…</string>
 
     <!-- ── Song dialog ───────────────────────────────────────────── -->
     <string name="song_dialog_add_title">Add a song</string>

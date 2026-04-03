@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.amolieres.setlistync.app.navigation.AppNavGraph
 import com.amolieres.setlistync.app.theme.AppTheme
+import com.amolieres.setlistync.common.di.networkModule
 import com.amolieres.setlistync.common.di.platformModule
 import com.amolieres.setlistync.common.di.repositoryModule
 import com.amolieres.setlistync.common.di.useCaseModule
@@ -24,6 +25,7 @@ fun App(koinAppDeclaration: KoinAppDeclaration? = null) {
         koinAppDeclaration?.invoke(this)
         modules(
             platformModule,
+            networkModule,
             repositoryModule,
             useCaseModule,
             viewModelModule

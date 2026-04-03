@@ -87,6 +87,8 @@
     <!-- ── Écran détail morceau ──────────────────────────────────── -->
     <string name="song_detail_title_create">Ajouter un morceau</string>
     <string name="song_detail_title_edit">Modifier le morceau</string>
+    <string name="song_search_label">Rechercher un morceau (titre, artiste…)</string>
+    <string name="song_search_loading_features">Récupération du BPM et de la tonalité…</string>
 
     <!-- ── Dialogue morceau ───────────────────────────────────────── -->
     <string name="song_dialog_add_title">Ajouter un morceau</string>

@@ -1,0 +1,119 @@
+package com.amolieres.setlistync.feature.band.songs.ui
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.MusicNote
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
+import com.amolieres.setlistync.app.designsystem.AppDimens
+import com.amolieres.setlistync.core.domain.song.model.Song
+import com.amolieres.setlistync.core.util.formatDuration
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import setlistsync.composeapp.generated.resources.Res
+import setlistsync.composeapp.generated.resources.song_cd_delete
+
+@Composable
+fun SongItem(
+    song: Song,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    OutlinedCard(
+        onClick = onEdit,
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = AppDimens.SpacingL, vertical = AppDimens.SpacingM),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AppDimens.SpacingM)
+        ) {
+            Icon(
+                imageVector = Icons.Default.MusicNote,
+                contentDescription = null,
+                modifier = Modifier.size(AppDimens.IconSizeMedium),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = song.title,
+                    style = MaterialTheme.typography.bodyLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                val subtitleParts = buildList {
+                    song.originalArtist?.let { add(it) }
+                    add(song.durationSeconds.formatDuration())
+                    song.key?.let { add(it) }
+                    song.tempo?.let { add("$it BPM") }
+                }
+                Text(
+                    text = subtitleParts.joinToString(" • "),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+
+            IconButton(onClick = onDelete) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = stringResource(Res.string.song_cd_delete),
+                    tint = MaterialTheme.colorScheme.error
+                )
+            }
+        }
+    }
+}
+
+// ── Previews ─────────────────────────────────────────────────────────────────
+
+@Preview
+@Composable
+private fun SongItemFullPreview() {
+    SongItem(
+        song = Song(
+            id = com.amolieres.setlistync.core.domain.song.model.SongId("1"),
+            title = "Highway to Hell",
+            durationSeconds = 208,
+            originalArtist = "AC/DC",
+            key = "Am",
+            tempo = 116
+        ),
+        onEdit = {},
+        onDelete = {}
+    )
+}
+
+@Preview
+@Composable
+private fun SongItemMinimalPreview() {
+    SongItem(
+        song = com.amolieres.setlistync.core.domain.song.model.Song(
+            id = com.amolieres.setlistync.core.domain.song.model.SongId("2"),
+            title = "Electric Nights",
+            durationSeconds = 187
+        ),
+        onEdit = {},
+        onDelete = {}
+    )
+}

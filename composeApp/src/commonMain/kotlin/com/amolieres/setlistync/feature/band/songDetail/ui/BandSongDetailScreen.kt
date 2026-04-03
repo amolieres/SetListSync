@@ -1,20 +1,28 @@
 package com.amolieres.setlistync.feature.band.songDetail.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import com.amolieres.setlistync.app.designsystem.AppDimens
 import com.amolieres.setlistync.app.designsystem.components.AppCenteredLoader
 import com.amolieres.setlistync.app.designsystem.components.AppLoadingButton
+import com.amolieres.setlistync.core.util.formatDuration
 import com.amolieres.setlistync.feature.band.songDetail.presentation.BandSongDetailEvent
 import com.amolieres.setlistync.feature.band.songDetail.presentation.BandSongDetailUiEvent
 import com.amolieres.setlistync.feature.band.songDetail.presentation.BandSongDetailUiState
@@ -72,6 +80,66 @@ fun BandSongDetailScreen(
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(AppDimens.SpacingM)
             ) {
+                // Search bar
+                OutlinedTextField(
+                    value = uiState.searchQuery,
+                    onValueChange = { onScreenEvent(BandSongDetailUiEvent.OnSearchQueryChanged(it)) },
+                    label = { Text(stringResource(Res.string.song_search_label)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    trailingIcon = {
+                        if (uiState.isSearching) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                strokeWidth = 2.dp
+                            )
+                        } else {
+                            IconButton(onClick = { onScreenEvent(BandSongDetailUiEvent.OnSearchSubmitted) }) {
+                                Icon(Icons.Default.Search, contentDescription = null)
+                            }
+                        }
+                    },
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                    keyboardActions = KeyboardActions(
+                        onSearch = { onScreenEvent(BandSongDetailUiEvent.OnSearchSubmitted) }
+                    )
+                )
+
+                // Search results dropdown
+                if (uiState.searchResults.isNotEmpty()) {
+                    Card(Modifier.fillMaxWidth()) {
+                        LazyColumn(Modifier.heightIn(max = 240.dp)) {
+                            items(uiState.searchResults) { result ->
+                                ListItem(
+                                    modifier = Modifier.clickable {
+                                        onScreenEvent(BandSongDetailUiEvent.OnSearchResultSelected(result))
+                                    },
+                                    headlineContent = { Text(result.title) },
+                                    supportingContent = {
+                                        Text("${result.artist}  ·  ${result.durationSeconds.formatDuration()}")
+                                    }
+                                )
+                                HorizontalDivider()
+                            }
+                        }
+                    }
+                }
+
+                // BPM/key loading indicator
+                if (uiState.isLoadingFeatures) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(AppDimens.SpacingS)
+                    ) {
+                        CircularProgressIndicator(Modifier.size(16.dp), strokeWidth = 2.dp)
+                        Text(
+                            stringResource(Res.string.song_search_loading_features),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+
                 OutlinedTextField(
                     value = uiState.title,
                     onValueChange = { onScreenEvent(BandSongDetailUiEvent.OnTitleChanged(it)) },

@@ -79,10 +79,10 @@ fun MainScreen(
                 ),
                 verticalArrangement = Arrangement.spacedBy(AppDimens.SpacingM)
             ) {
-                items(uiState.bands) { band ->
+                items(uiState.bands) { bandPresenter ->
                     BandItem(
-                        band = band,
-                        onClick = { onScreenEvent(MainUiEvent.OnBandClicked(band.id)) }
+                        bandPresenter = bandPresenter,
+                        onClick = { onScreenEvent(MainUiEvent.OnBandClicked(bandPresenter.bandId)) }
                     )
                 }
             }
