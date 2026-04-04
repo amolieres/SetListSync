@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 /**
  * [dateEpochMs] stores [kotlin.time.Instant.epochMilliseconds], or null if no date set.
- * [setListIds] is stored as a JSON-encoded List<String>, or null if none assigned.
+ * [orderedSongIds] is a JSON-encoded List<String> (SongId values). Order defines the setlist.
  */
 @Entity(tableName = "gigs")
 data class GigEntity(
@@ -14,5 +14,5 @@ data class GigEntity(
     val venue: String?,
     val dateEpochMs: Long?,
     val expectedDurationMinutes: Int?,
-    val setListIds: String?  // JSON-encoded List<String>, nullable
+    val orderedSongIds: String  // JSON-encoded List<String>
 )

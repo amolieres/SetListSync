@@ -40,6 +40,7 @@ fun BandDetailScreen(
     onNavigateBack: () -> Unit,
     onNavigateToMembers: () -> Unit,
     onNavigateToSongs: () -> Unit,
+    onNavigateToGigs: () -> Unit = {},
     onNavigateToEdit: () -> Unit = {}
 ) {
     LaunchedEffect(eventFlow) {
@@ -48,6 +49,7 @@ fun BandDetailScreen(
                 BandDetailEvent.NavigateBack -> onNavigateBack()
                 BandDetailEvent.NavigateToMembers -> onNavigateToMembers()
                 BandDetailEvent.NavigateToSongs -> onNavigateToSongs()
+                BandDetailEvent.NavigateToGigs -> onNavigateToGigs()
                 BandDetailEvent.NavigateToEdit -> onNavigateToEdit()
             }
         }
@@ -117,19 +119,13 @@ fun BandDetailScreen(
                 )
                 HorizontalDivider()
 
-                // ── SetLists (not yet available) ──────────────────────────
+                // ── Concerts (Gigs) ───────────────────────────────────────
                 ListItem(
-                    headlineContent = { Text(stringResource(Res.string.band_detail_section_setlists)) },
+                    headlineContent = { Text(stringResource(Res.string.band_detail_section_gigs)) },
                     trailingContent = {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
-                        )
+                        Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null)
                     },
-                    colors = ListItemDefaults.colors(
-                        headlineColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
-                    )
+                    modifier = Modifier.clickable { onScreenEvent(BandDetailUiEvent.OnGigsSectionClicked) }
                 )
                 HorizontalDivider()
             }

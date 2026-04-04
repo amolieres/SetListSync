@@ -2,6 +2,7 @@ package com.amolieres.setlistync.core.data.local.dao
 
 import androidx.room.*
 import com.amolieres.setlistync.core.data.local.entity.GigEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface GigDao {
@@ -12,8 +13,11 @@ interface GigDao {
     @Query("SELECT * FROM gigs WHERE id = :id")
     suspend fun getGigById(id: String): GigEntity?
 
-    @Query("SELECT * FROM gigs WHERE bandId = :bandId")
+    @Query("SELECT * FROM gigs WHERE bandId = :bandId ORDER BY dateEpochMs ASC")
     suspend fun getGigsByBandId(bandId: String): List<GigEntity>
+
+    @Query("SELECT * FROM gigs WHERE bandId = :bandId ORDER BY dateEpochMs ASC")
+    fun observeGigsByBandId(bandId: String): Flow<List<GigEntity>>
 
     @Query("SELECT * FROM gigs")
     suspend fun getAllGigs(): List<GigEntity>

@@ -12,5 +12,9 @@ fun getDatabaseBuilder(context: Context): RoomDatabase.Builder<SetListSyncDataba
     return Room.databaseBuilder<SetListSyncDatabase>(
         context = appContext,
         name = dbFile.absolutePath
-    ).addMigrations(SetListSyncDatabase.MIGRATION_2_3, SetListSyncDatabase.MIGRATION_3_4)
+    ).addMigrations(
+        SetListSyncDatabase.MIGRATION_2_3,
+        SetListSyncDatabase.MIGRATION_3_4,
+        SetListSyncDatabase.MIGRATION_4_5
+    )
 }

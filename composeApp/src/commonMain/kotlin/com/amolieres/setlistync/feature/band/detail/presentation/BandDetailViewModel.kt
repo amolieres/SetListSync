@@ -56,6 +56,8 @@ class BandDetailViewModel(
                 viewModelScope.launch { _event.emit(BandDetailEvent.NavigateToMembers) }
             BandDetailUiEvent.OnSongsSectionClicked ->
                 viewModelScope.launch { _event.emit(BandDetailEvent.NavigateToSongs) }
+            BandDetailUiEvent.OnGigsSectionClicked ->
+                viewModelScope.launch { _event.emit(BandDetailEvent.NavigateToGigs) }
             BandDetailUiEvent.OnDeleteBandClicked ->
                 _viewState.update { it.copy(showDeleteBandConfirm = true) }
             BandDetailUiEvent.OnDeleteBandConfirmed -> doDeleteBand()

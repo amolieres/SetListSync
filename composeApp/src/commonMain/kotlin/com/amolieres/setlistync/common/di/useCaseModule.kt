@@ -3,7 +3,6 @@ package com.amolieres.setlistync.common.di
 import com.amolieres.setlistync.core.domain.band.usecase.*
 import com.amolieres.setlistync.core.domain.preferences.ObserveNotationUseCase
 import com.amolieres.setlistync.core.domain.preferences.SetNotationUseCase
-import com.amolieres.setlistync.core.domain.setList.usecase.*
 import com.amolieres.setlistync.core.domain.song.usecase.*
 import com.amolieres.setlistync.core.domain.user.usecase.AutoLoginUseCase
 import com.amolieres.setlistync.core.domain.user.usecase.CreateUserUseCase
@@ -32,7 +31,7 @@ val useCaseModule = module {
     factory { CreateBandUseCase(get()) }
     factory { GetBandUseCase(get()) }
     factory { GetAllBandsUseCase(get()) }
-    factory { ObserveAllBandsUseCase(get(), get()) }   // BandRepository, SongRepository
+    factory { ObserveAllBandsUseCase(get(), get()) }
     factory { ObserveBandUseCase(get()) }
     factory { GetBandsForUserUseCase(get()) }
     factory { DeleteBandUseCase(get()) }
@@ -42,11 +41,19 @@ val useCaseModule = module {
     factory { RemoveMemberFromBandUseCase(get()) }
     factory { UpdateMemberInBandUseCase(get()) }
 
-    // Gig
+    // Gig — CRUD
     factory { CreateGigUseCase(get()) }
+    factory { GetGigUseCase(get()) }
     factory { GetGigsForBandUseCase(get()) }
+    factory { ObserveGigsForBandUseCase(get()) }
     factory { UpdateGigUseCase(get()) }
     factory { DeleteGigUseCase(get()) }
+
+    // Gig — Setlist management
+    factory { AddSongToGigUseCase(get()) }
+    factory { RemoveSongFromGigUseCase(get()) }
+    factory { ReorderGigUseCase(get()) }
+    factory { ComputeGigDurationUseCase(get(), get()) }
 
     // Song
     factory { AddSongUseCase(get()) }
@@ -64,13 +71,4 @@ val useCaseModule = module {
     factory { GetNoteForMemberAndSongUseCase(get()) }
     factory { UpdateSongNoteUseCase(get()) }
     factory { DeleteSongNoteUseCase(get()) }
-
-    // SetList
-    factory { CreateSetListUseCase(get()) }
-    factory { GetSetListsUseCase(get()) }
-    factory { AddSongToSetListUseCase(get()) }
-    factory { RemoveSongFromSetListUseCase(get()) }
-    factory { ReorderSetListUseCase(get()) }
-    factory { ComputeSetListDurationUseCase(get()) }
-    factory { DeleteSetListUseCase(get()) }
 }

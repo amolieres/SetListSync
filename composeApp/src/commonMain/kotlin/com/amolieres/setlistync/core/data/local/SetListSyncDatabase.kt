@@ -19,10 +19,9 @@ import com.amolieres.setlistync.core.data.local.entity.*
         BandMemberEntity::class,
         SongEntity::class,
         SongNoteEntity::class,
-        SetListEntity::class,
         GigEntity::class,
     ],
-    version = 4,
+    version = 5,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -33,7 +32,6 @@ abstract class SetListSyncDatabase : RoomDatabase() {
     abstract fun bandMemberDao(): BandMemberDao
     abstract fun songDao(): SongDao
     abstract fun songNoteDao(): SongNoteDao
-    abstract fun setListDao(): SetListDao
     abstract fun gigDao(): GigDao
 
     companion object {
@@ -49,6 +47,28 @@ abstract class SetListSyncDatabase : RoomDatabase() {
         val MIGRATION_3_4 = object : Migration(3, 4) {
             override fun migrate(connection: SQLiteConnection) {
                 connection.execSQL("ALTER TABLE songs ADD COLUMN originalArtist TEXT")
+            }
+        }
+        val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(connection: SQLiteConnection) {
+                // Drop the separate set_lists table — setlist is now embedded in Gig
+                connection.execSQL("DROP TABLE IF EXISTS set_lists")
+                // Recreate gigs replacing setListIds with orderedSongIds
+                connection.execSQL(
+                    "CREATE TABLE gigs_new (" +
+                    "id TEXT NOT NULL PRIMARY KEY, " +
+                    "bandId TEXT NOT NULL, " +
+                    "venue TEXT, " +
+                    "dateEpochMs INTEGER, " +
+                    "expectedDurationMinutes INTEGER, " +
+                    "orderedSongIds TEXT NOT NULL DEFAULT '[]')"
+                )
+                connection.execSQL(
+                    "INSERT INTO gigs_new (id, bandId, venue, dateEpochMs, expectedDurationMinutes, orderedSongIds) " +
+                    "SELECT id, bandId, venue, dateEpochMs, expectedDurationMinutes, '[]' FROM gigs"
+                )
+                connection.execSQL("DROP TABLE gigs")
+                connection.execSQL("ALTER TABLE gigs_new RENAME TO gigs")
             }
         }
     }
