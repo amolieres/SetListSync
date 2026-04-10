@@ -25,5 +25,5 @@ val viewModelModule = module {
     viewModel { BandSongsViewModel(get(), get(), get(), get(), get()) }
     viewModel { BandSongDetailViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModel { BandGigsViewModel(get(), get(), get(), get()) }      // SavedStateHandle, ObserveBandUseCase, ObserveGigsForBandUseCase, DeleteGigUseCase
-    viewModel { GigDetailViewModel(get(), get(), get(), get(), get()) } // SavedStateHandle, GetGigUseCase, CreateGigUseCase, UpdateGigUseCase, ObserveSongsUseCase
+    viewModel { GigDetailViewModel(get(), get(), get(), get(), get(), get()) } // SavedStateHandle, GetGigUseCase, CreateGigUseCase, UpdateGigUseCase, ObserveSongsUseCase, ObserveNotationUseCase
 }

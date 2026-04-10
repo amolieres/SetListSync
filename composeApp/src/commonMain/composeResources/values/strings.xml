@@ -89,6 +89,7 @@
     <string name="gig_setlist_section">Setlist</string>
     <string name="gig_setlist_empty">No songs in setlist yet.</string>
     <string name="gig_add_songs">Add songs</string>
+    <string name="gig_action_edit">Edit concert</string>
     <string name="band_detail_section_info">Information</string>
     <string name="band_detail_cd_edit_info">Edit information</string>
     <string name="band_detail_no_info">No information provided.</string>

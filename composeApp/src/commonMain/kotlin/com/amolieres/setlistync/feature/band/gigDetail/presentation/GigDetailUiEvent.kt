@@ -18,4 +18,6 @@ sealed interface GigDetailUiEvent {
     data class OnSetlistReordered(val newOrder: List<SongId>) : GigDetailUiEvent
     // Save
     data object OnSaveClicked : GigDetailUiEvent
+    // Edit mode toggle
+    data object OnToggleEditing : GigDetailUiEvent
 }

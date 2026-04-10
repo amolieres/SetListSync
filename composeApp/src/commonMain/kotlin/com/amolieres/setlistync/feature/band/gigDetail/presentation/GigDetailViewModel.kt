@@ -7,6 +7,7 @@ import com.amolieres.setlistync.core.domain.band.model.Gig
 import com.amolieres.setlistync.core.domain.band.usecase.CreateGigUseCase
 import com.amolieres.setlistync.core.domain.band.usecase.GetGigUseCase
 import com.amolieres.setlistync.core.domain.band.usecase.UpdateGigUseCase
+import com.amolieres.setlistync.core.domain.preferences.ObserveNotationUseCase
 import com.amolieres.setlistync.core.domain.song.model.Song
 import com.amolieres.setlistync.core.domain.song.model.SongId
 import com.amolieres.setlistync.core.domain.song.usecase.ObserveSongsUseCase
@@ -25,7 +26,8 @@ class GigDetailViewModel(
     private val getGig: GetGigUseCase,
     private val createGig: CreateGigUseCase,
     private val updateGig: UpdateGigUseCase,
-    observeSongs: ObserveSongsUseCase
+    observeSongs: ObserveSongsUseCase,
+    observeNotation: ObserveNotationUseCase
 ) : ViewModel() {
 
     private val bandId: String = checkNotNull(savedStateHandle.get<String>("bandId"))
@@ -35,7 +37,12 @@ class GigDetailViewModel(
     private val _event = MutableSharedFlow<GigDetailEvent>()
     val event: SharedFlow<GigDetailEvent> = _event.asSharedFlow()
 
-    private val _uiState = MutableStateFlow(GigDetailUiState(isLoading = gigId != null))
+    private val _uiState = MutableStateFlow(
+        GigDetailUiState(
+            isLoading = gigId != null,
+            isEditing = gigId == null   // create mode → editing by default
+        )
+    )
     val uiState: StateFlow<GigDetailUiState> = _uiState
 
     // Keep a snapshot of all band songs for catalog / setlist resolution
@@ -49,11 +56,21 @@ class GigDetailViewModel(
                 refreshDerivedSongLists()
             }
         }
+        viewModelScope.launch {
+            observeNotation().collect { notation ->
+                _uiState.update { it.copy(noteNotation = notation) }
+            }
+        }
         // Load existing gig in edit mode
         if (gigId != null) {
             viewModelScope.launch {
                 val gig = getGig(gigId)
-                if (gig != null) populateFrom(gig)
+                if (gig != null) {
+                    populateFrom(gig)
+                    // If songs were already emitted before the gig loaded, apply the
+                    // pending ordered IDs immediately instead of waiting for a new emission.
+                    if (allSongs.isNotEmpty()) refreshDerivedSongLists()
+                }
                 _uiState.update { it.copy(isLoading = false) }
             }
         }
@@ -121,6 +138,11 @@ class GigDetailViewModel(
             is GigDetailUiEvent.OnSongRemovedFromSetlist -> removeSongFromSetlist(event.songId)
             is GigDetailUiEvent.OnSetlistReordered -> reorderSetlist(event.newOrder)
             GigDetailUiEvent.OnSaveClicked -> doSave()
+            GigDetailUiEvent.OnToggleEditing -> {
+                val wasEditing = _uiState.value.isEditing
+                _uiState.update { it.copy(isEditing = !it.isEditing) }
+                if (wasEditing && gigId != null) persistGig()
+            }
         }
     }
 
@@ -133,6 +155,7 @@ class GigDetailViewModel(
                 catalogSongs = state.catalogSongs.filter { it.id != songId }
             )
         }
+        if (gigId != null) persistGig()
     }
 
     private fun removeSongFromSetlist(songId: SongId) {
@@ -144,12 +167,33 @@ class GigDetailViewModel(
                 catalogSongs = (state.catalogSongs + song).sortedBy { it.title }
             )
         }
+        if (gigId != null) persistGig()
     }
 
     private fun reorderSetlist(newOrder: List<SongId>) {
         val songMap = allSongs.associateBy { it.id }
         val reordered = newOrder.mapNotNull { songMap[it] }
         _uiState.update { it.copy(setlistSongs = reordered) }
+        if (gigId != null) persistGig()
+    }
+
+    @OptIn(ExperimentalTime::class)
+    private fun persistGig() {
+        if (gigId == null) return
+        val state = _uiState.value
+        viewModelScope.launch {
+            val existing = getGig(gigId) ?: return@launch
+            val date = state.dateMillis?.let { Instant.fromEpochMilliseconds(it) }
+            val expectedDuration = state.expectedDurationInput.trim().toIntOrNull()
+            updateGig(
+                existing.copy(
+                    venue = state.venueInput.trim().ifEmpty { null },
+                    date = date,
+                    expectedDurationMinutes = expectedDuration,
+                    orderedSongIds = state.setlistSongs.map { it.id }
+                )
+            )
+        }
     }
 
     @OptIn(ExperimentalTime::class)
