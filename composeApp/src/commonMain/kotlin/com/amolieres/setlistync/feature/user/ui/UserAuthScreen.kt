@@ -1,11 +1,16 @@
 package com.amolieres.setlistync.feature.user.ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import com.amolieres.setlistync.app.designsystem.AppDimens
 import com.amolieres.setlistync.app.designsystem.components.AppCenteredLoader
@@ -40,13 +45,25 @@ fun UserAuthScreen(
         return
     }
 
-    Column(
+    val focusManager = LocalFocusManager.current
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(AppDimens.SpacingXl),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .imePadding()
+            .clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ) { focusManager.clearFocus() }
     ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(AppDimens.SpacingXl),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
         Text(
             text = if (uiState.isLoginMode) stringResource(Res.string.auth_title_login) else stringResource(Res.string.auth_title_create_account),
             style = MaterialTheme.typography.headlineSmall
@@ -120,7 +137,8 @@ fun UserAuthScreen(
             Spacer(Modifier.height(AppDimens.SpacingM))
             Text(text = it, color = MaterialTheme.colorScheme.error)
         }
-    }
+        } // Column
+    } // Box
 }
 
 @Preview(showBackground = true)
