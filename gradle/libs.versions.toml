@@ -6,11 +6,11 @@ android-minSdk          = "24"
 android-targetSdk       = "36"
 
 # ── Kotlin ────────────────────────────────────────────────────────────────────
-kotlin                  = "2.2.21"
+kotlin                  = "2.3.20"
 ksp                     = "2.3.2"
 kotlinx-coroutines      = "1.10.2"
 kotlinx-datetime        = "0.7.1"
-kotlinx-serialization   = "1.8.1"
+kotlinx-serialization   = "1.11.0"
 
 # ── Compose Multiplatform ─────────────────────────────────────────────────────
 composeMultiplatform    = "1.10.3"
