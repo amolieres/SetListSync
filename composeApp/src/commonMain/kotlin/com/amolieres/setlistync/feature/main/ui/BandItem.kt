@@ -15,7 +15,7 @@ import com.amolieres.setlistync.core.domain.band.model.BandPresenter
 import setlistsync.composeapp.generated.resources.Res
 import setlistsync.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.pluralStringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Preview
 
 /**
  * Card representing a [BandPresenter] in the main list.

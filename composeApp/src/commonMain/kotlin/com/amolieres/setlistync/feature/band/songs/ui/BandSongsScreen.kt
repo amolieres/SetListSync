@@ -22,7 +22,7 @@ import com.amolieres.setlistync.feature.band.songs.presentation.BandSongsUiState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Preview
 import setlistsync.composeapp.generated.resources.*
 
 @OptIn(ExperimentalMaterial3Api::class)

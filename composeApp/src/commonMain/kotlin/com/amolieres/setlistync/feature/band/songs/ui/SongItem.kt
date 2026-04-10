@@ -25,7 +25,7 @@ import com.amolieres.setlistync.core.domain.song.model.SongId
 import com.amolieres.setlistync.core.domain.song.model.SongKey
 import com.amolieres.setlistync.core.util.formatDuration
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Preview
 import setlistsync.composeapp.generated.resources.Res
 import setlistsync.composeapp.generated.resources.song_cd_delete
 

@@ -26,7 +26,7 @@ import com.amolieres.setlistync.core.domain.band.model.BandMember
 import com.amolieres.setlistync.core.domain.band.model.Role
 import kotlinx.coroutines.flow.emptyFlow
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
