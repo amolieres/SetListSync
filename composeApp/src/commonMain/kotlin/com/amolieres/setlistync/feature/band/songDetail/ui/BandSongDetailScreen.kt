@@ -29,7 +29,7 @@ import com.amolieres.setlistync.feature.band.songDetail.presentation.BandSongDet
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Preview
 import setlistsync.composeapp.generated.resources.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -195,7 +195,7 @@ fun BandSongDetailScreen(
                         label = { Text(stringResource(Res.string.song_dialog_label_key)) },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .menuAnchor(MenuAnchorType.PrimaryNotEditable),
+                            .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
                         trailingIcon = {
                             ExposedDropdownMenuDefaults.TrailingIcon(expanded = keyMenuExpanded)
                         }

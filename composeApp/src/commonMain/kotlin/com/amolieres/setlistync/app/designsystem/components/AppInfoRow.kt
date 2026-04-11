@@ -14,8 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.tooling.preview.Preview
 import com.amolieres.setlistync.app.designsystem.AppDimens
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 /**
  * A row displaying a leading [icon] alongside a [text] value.
