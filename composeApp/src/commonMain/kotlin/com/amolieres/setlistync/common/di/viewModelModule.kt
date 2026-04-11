@@ -4,6 +4,7 @@ import com.amolieres.setlistync.feature.band.creation.presentation.BandCreationV
 import com.amolieres.setlistync.feature.band.detail.presentation.BandDetailViewModel
 import com.amolieres.setlistync.feature.band.edit.presentation.BandEditViewModel
 import com.amolieres.setlistync.feature.band.gig.detail.presentation.GigDetailViewModel
+import com.amolieres.setlistync.feature.band.gig.edit.presentation.GigEditViewModel
 import com.amolieres.setlistync.feature.band.members.presentation.BandMembersViewModel
 import com.amolieres.setlistync.feature.band.songDetail.presentation.BandSongDetailViewModel
 import com.amolieres.setlistync.feature.band.songs.presentation.BandSongsViewModel
@@ -23,5 +24,6 @@ val viewModelModule = module {
     viewModel { BandMembersViewModel(get(), get(), get(), get(), get()) }
     viewModel { BandSongsViewModel(get(), get(), get(), get(), get()) }
     viewModel { BandSongDetailViewModel(get(), get(), get(), get(), get(), get(), get()) }
-    viewModel { GigDetailViewModel(get(), get(), get(), get(), get(), get()) }
+    viewModel { GigDetailViewModel(get(), get(), get(), get(), get()) }
+    viewModel { GigEditViewModel(get(), get(), get(), get(), get()) }
 }

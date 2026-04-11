@@ -19,6 +19,8 @@ import com.amolieres.setlistync.feature.band.edit.presentation.BandEditViewModel
 import com.amolieres.setlistync.feature.band.edit.ui.BandEditScreen
 import com.amolieres.setlistync.feature.band.gig.detail.presentation.GigDetailViewModel
 import com.amolieres.setlistync.feature.band.gig.detail.ui.GigDetailScreen
+import com.amolieres.setlistync.feature.band.gig.edit.presentation.GigEditViewModel
+import com.amolieres.setlistync.feature.band.gig.edit.ui.GigEditScreen
 import com.amolieres.setlistync.feature.band.members.presentation.BandMembersViewModel
 import com.amolieres.setlistync.feature.band.members.ui.BandMembersScreen
 import com.amolieres.setlistync.feature.band.songDetail.presentation.BandSongDetailViewModel
@@ -127,7 +129,9 @@ fun AppNavGraph(
                 onNavigateToMembers = { navController.navigate(Destinations.bandMembers(viewModel.bandId)) },
                 onNavigateToSongs = { navController.navigate(Destinations.bandSongs(viewModel.bandId)) },
                 onNavigateToNewGig = { navController.navigate(Destinations.newGig(viewModel.bandId)) },
-                onNavigateToGigDetail = { gigId -> navController.navigate(Destinations.editGig(viewModel.bandId, gigId)) },
+                onNavigateToGigDetail = { gigId ->
+                    navController.navigate(Destinations.gigDetail(viewModel.bandId, gigId))
+                },
                 onNavigateToEdit = { navController.navigate(Destinations.bandEdit(viewModel.bandId)) }
             )
         }
@@ -141,15 +145,47 @@ fun AppNavGraph(
                 onScreenEvent = viewModel::onScreenEvent,
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToNewSong = { navController.navigate(Destinations.newSong(viewModel.bandId)) },
-                onNavigateToEditSong = { songId -> navController.navigate(Destinations.editSong(viewModel.bandId, songId.value)) }
+                onNavigateToEditSong = { songId ->
+                    navController.navigate(Destinations.editSong(viewModel.bandId, songId.value))
+                }
             )
         }
 
+        // ── GigEdit (create or edit gig info) ─────────────────────────────
+        composable(
+            route = Destinations.GigEdit,
+            arguments = listOf(
+                navArgument("bandId") { type = NavType.StringType },
+                navArgument("gigId") { type = NavType.StringType; nullable = true; defaultValue = null }
+            )
+        ) {
+            val viewModel: GigEditViewModel = koinViewModel()
+            val uiState by viewModel.uiState.collectAsState()
+            GigEditScreen(
+                uiState = uiState,
+                eventFlow = viewModel.event,
+                onScreenEvent = viewModel::onScreenEvent,
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToGigDetail = { gigId ->
+                    navController.navigate(Destinations.gigDetail(viewModel.bandId, gigId)) {
+                        popUpTo(Destinations.GigEdit) { inclusive = true }
+                    }
+                },
+                onNavigateBackToBandDetail = {
+                    navController.navigate(Destinations.bandDetail(viewModel.bandId)) {
+                        popUpTo(Destinations.BandDetail) { inclusive = true }
+                    }
+                },
+                isEditMode = viewModel.isEditMode
+            )
+        }
+
+        // ── GigDetail (setlist manager) ────────────────────────────────────
         composable(
             route = Destinations.GigDetail,
             arguments = listOf(
                 navArgument("bandId") { type = NavType.StringType },
-                navArgument("gigId") { type = NavType.StringType; nullable = true; defaultValue = null }
+                navArgument("gigId") { type = NavType.StringType }
             )
         ) {
             val viewModel: GigDetailViewModel = koinViewModel()
@@ -159,7 +195,11 @@ fun AppNavGraph(
                 eventFlow = viewModel.event,
                 onScreenEvent = viewModel::onScreenEvent,
                 onNavigateBack = { navController.popBackStack() },
-                isEditMode = viewModel.isEditMode
+                onNavigateToEditGig = {
+                    navController.navigate(
+                        Destinations.editGigInfo(viewModel.bandId, viewModel.gigId)
+                    )
+                }
             )
         }
 

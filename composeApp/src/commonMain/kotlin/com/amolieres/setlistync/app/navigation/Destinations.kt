@@ -13,10 +13,14 @@ object Destinations {
     const val BandCreation = "band_creation"
     const val BandEdit = "band_edit/{bandId}"
     fun bandEdit(bandId: String) = "band_edit/$bandId"
-const val BandSongDetail = "band_songs/{bandId}/song?songId={songId}"
+    const val BandSongDetail = "band_songs/{bandId}/song?songId={songId}"
     fun newSong(bandId: String) = "band_songs/$bandId/song"
     fun editSong(bandId: String, songId: String) = "band_songs/$bandId/song?songId=$songId"
-    const val GigDetail = "band_gigs/{bandId}/gig?gigId={gigId}"
-    fun newGig(bandId: String) = "band_gigs/$bandId/gig"
-    fun editGig(bandId: String, gigId: String) = "band_gigs/$bandId/gig?gigId=$gigId"
+    // Gig edit/create form (gigId nullable — null = create mode)
+    const val GigEdit = "band_gigs/{bandId}/gig_edit?gigId={gigId}"
+    fun newGig(bandId: String) = "band_gigs/$bandId/gig_edit"
+    fun editGigInfo(bandId: String, gigId: String) = "band_gigs/$bandId/gig_edit?gigId=$gigId"
+    // Gig detail / setlist manager (gigId required path param)
+    const val GigDetail = "band_gigs/{bandId}/gig/{gigId}"
+    fun gigDetail(bandId: String, gigId: String) = "band_gigs/$bandId/gig/$gigId"
 }
