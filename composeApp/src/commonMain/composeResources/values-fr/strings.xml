@@ -38,10 +38,10 @@
         <item quantity="one">%1$d membre</item>
         <item quantity="other">%1$d membres</item>
     </plurals>
-    <plurals name="band_item_setlists">
-        <item quantity="zero">%1$d setlist</item>
-        <item quantity="one">%1$d setlist</item>
-        <item quantity="other">%1$d setlists</item>
+    <plurals name="band_item_gigs">
+        <item quantity="zero">%1$d concert</item>
+        <item quantity="one">%1$d concert</item>
+        <item quantity="other">%1$d concerts</item>
     </plurals>
 
     <!-- ── Détail du groupe — compteur de morceaux ────────────────── -->

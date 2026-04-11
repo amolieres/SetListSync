@@ -50,7 +50,7 @@ fun BandItem(
                 )
                 BandStat(
                     icon = Icons.AutoMirrored.Filled.QueueMusic,
-                    label = pluralStringResource(Res.plurals.band_item_setlists, bandPresenter.setListCount, bandPresenter.setListCount)
+                    label = pluralStringResource(Res.plurals.band_item_gigs, bandPresenter.gigCount, bandPresenter.gigCount)
                 )
             }
         }
@@ -82,7 +82,7 @@ private val previewBandFull = BandPresenter(
     bandName = "The Rocketeers",
     memberCount = 3,
     songCount = 12,
-    setListCount = 2
+    gigCount = 2
 )
 
 private val previewBandMinimal = BandPresenter(
