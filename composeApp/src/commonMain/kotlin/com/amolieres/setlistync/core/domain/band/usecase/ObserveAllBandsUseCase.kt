@@ -3,6 +3,7 @@ package com.amolieres.setlistync.core.domain.band.usecase
 import com.amolieres.setlistync.core.domain.band.model.BandPresenter
 import com.amolieres.setlistync.core.domain.band.repository.BandRepository
 import com.amolieres.setlistync.core.domain.song.repository.SongRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
@@ -13,6 +14,7 @@ class ObserveAllBandsUseCase(
     private val bandRepo: BandRepository,
     private val songRepo: SongRepository
 ) {
+    @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(): Flow<List<BandPresenter>> =
         bandRepo.observeAllBands()
             .flatMapLatest { bands ->

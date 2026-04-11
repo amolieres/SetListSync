@@ -195,7 +195,7 @@ fun BandSongDetailScreen(
                         label = { Text(stringResource(Res.string.song_dialog_label_key)) },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .menuAnchor(MenuAnchorType.PrimaryNotEditable),
+                            .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
                         trailingIcon = {
                             ExposedDropdownMenuDefaults.TrailingIcon(expanded = keyMenuExpanded)
                         }

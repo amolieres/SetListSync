@@ -15,13 +15,15 @@ import com.amolieres.setlistync.common.di.repositoryModule
 import com.amolieres.setlistync.common.di.useCaseModule
 import com.amolieres.setlistync.common.di.viewModelModule
 import org.koin.compose.KoinApplication
+import org.koin.core.KoinApplication
 import org.koin.dsl.KoinAppDeclaration
+import org.koin.dsl.koinConfiguration
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Preview
 fun App(koinAppDeclaration: KoinAppDeclaration? = null) {
-    KoinApplication(application = {
+    KoinApplication(configuration = koinConfiguration(declaration = {
         koinAppDeclaration?.invoke(this)
         modules(
             platformModule,
@@ -30,7 +32,7 @@ fun App(koinAppDeclaration: KoinAppDeclaration? = null) {
             useCaseModule,
             viewModelModule
         )
-    }) {
+    }), content = {
         AppTheme {
             val navController = rememberNavController()
 
@@ -41,5 +43,5 @@ fun App(koinAppDeclaration: KoinAppDeclaration? = null) {
                 )
             }
         }
-    }
+    })
 }
