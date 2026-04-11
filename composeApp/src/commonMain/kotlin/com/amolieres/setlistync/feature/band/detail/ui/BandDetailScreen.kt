@@ -40,7 +40,8 @@ fun BandDetailScreen(
     onNavigateBack: () -> Unit,
     onNavigateToMembers: () -> Unit,
     onNavigateToSongs: () -> Unit,
-    onNavigateToGigs: () -> Unit = {},
+    onNavigateToNewGig: () -> Unit = {},
+    onNavigateToGigDetail: (String) -> Unit = {},
     onNavigateToEdit: () -> Unit = {}
 ) {
     LaunchedEffect(eventFlow) {
@@ -49,7 +50,8 @@ fun BandDetailScreen(
                 BandDetailEvent.NavigateBack -> onNavigateBack()
                 BandDetailEvent.NavigateToMembers -> onNavigateToMembers()
                 BandDetailEvent.NavigateToSongs -> onNavigateToSongs()
-                BandDetailEvent.NavigateToGigs -> onNavigateToGigs()
+                BandDetailEvent.NavigateToNewGig -> onNavigateToNewGig()
+                is BandDetailEvent.NavigateToGigDetail -> onNavigateToGigDetail(event.gigId)
                 BandDetailEvent.NavigateToEdit -> onNavigateToEdit()
             }
         }
@@ -70,6 +72,11 @@ fun BandDetailScreen(
                     }
                 }
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(onClick = { onScreenEvent(BandDetailUiEvent.OnAddGigClicked) }) {
+                Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.band_gigs_fab_add))
+            }
         }
     ) { padding ->
         when {
@@ -120,14 +127,41 @@ fun BandDetailScreen(
                 HorizontalDivider()
 
                 // ── Concerts (Gigs) ───────────────────────────────────────
-                ListItem(
-                    headlineContent = { Text(stringResource(Res.string.band_detail_section_gigs)) },
-                    trailingContent = {
-                        Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null)
-                    },
-                    modifier = Modifier.clickable { onScreenEvent(BandDetailUiEvent.OnGigsSectionClicked) }
-                )
-                HorizontalDivider()
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = AppDimens.SpacingL, end = AppDimens.SpacingS),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        stringResource(Res.string.band_detail_section_gigs),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+
+                if (uiState.gigs.isEmpty()) {
+                    Text(
+                        text = stringResource(Res.string.band_gigs_empty),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = AppDimens.SpacingL, vertical = AppDimens.SpacingS)
+                    )
+                } else {
+                    Column(
+                        modifier = Modifier.padding(horizontal = AppDimens.SpacingL),
+                        verticalArrangement = Arrangement.spacedBy(AppDimens.SpacingS)
+                    ) {
+                        uiState.gigs.forEach { gig ->
+                            GigItem(
+                                gig = gig,
+                                onEdit = { onScreenEvent(BandDetailUiEvent.OnGigClicked(gig.id)) },
+                                onDelete = { onScreenEvent(BandDetailUiEvent.OnDeleteGigClicked(gig.id)) }
+                            )
+                        }
+                        Spacer(Modifier.height(AppDimens.SpacingM))
+                    }
+                }
             }
         }
     }

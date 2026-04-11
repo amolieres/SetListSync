@@ -4,7 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.amolieres.setlistync.core.domain.band.usecase.DeleteBandUseCase
+import com.amolieres.setlistync.core.domain.band.usecase.DeleteGigUseCase
 import com.amolieres.setlistync.core.domain.band.usecase.ObserveBandUseCase
+import com.amolieres.setlistync.core.domain.band.usecase.ObserveGigsForBandUseCase
 import com.amolieres.setlistync.core.domain.song.usecase.ObserveSongsUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +23,9 @@ class BandDetailViewModel(
     savedStateHandle: SavedStateHandle,
     observeBand: ObserveBandUseCase,
     private val deleteBand: DeleteBandUseCase,
-    observeSongs: ObserveSongsUseCase
+    observeSongs: ObserveSongsUseCase,
+    observeGigs: ObserveGigsForBandUseCase,
+    private val deleteGig: DeleteGigUseCase
 ) : ViewModel() {
 
     val bandId: String = checkNotNull(savedStateHandle.get<String>("bandId"))
@@ -38,13 +42,15 @@ class BandDetailViewModel(
     val uiState: StateFlow<BandDetailUiState> = combine(
         observeBand(bandId),
         observeSongs(bandId),
+        observeGigs(bandId),
         _viewState
-    ) { band, songs, view ->
+    ) { band, songs, gigs, view ->
         BandDetailUiState(
             isLoading = false,
             band = band,
             showDeleteBandConfirm = view.showDeleteBandConfirm,
-            songCount = songs.size
+            songCount = songs.size,
+            gigs = gigs
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), BandDetailUiState())
 
@@ -56,8 +62,11 @@ class BandDetailViewModel(
                 viewModelScope.launch { _event.emit(BandDetailEvent.NavigateToMembers) }
             BandDetailUiEvent.OnSongsSectionClicked ->
                 viewModelScope.launch { _event.emit(BandDetailEvent.NavigateToSongs) }
-            BandDetailUiEvent.OnGigsSectionClicked ->
-                viewModelScope.launch { _event.emit(BandDetailEvent.NavigateToGigs) }
+            BandDetailUiEvent.OnAddGigClicked ->
+                viewModelScope.launch { _event.emit(BandDetailEvent.NavigateToNewGig) }
+            is BandDetailUiEvent.OnGigClicked ->
+                viewModelScope.launch { _event.emit(BandDetailEvent.NavigateToGigDetail(event.gigId)) }
+            is BandDetailUiEvent.OnDeleteGigClicked -> doDeleteGig(event.gigId)
             BandDetailUiEvent.OnDeleteBandClicked ->
                 _viewState.update { it.copy(showDeleteBandConfirm = true) }
             BandDetailUiEvent.OnDeleteBandConfirmed -> doDeleteBand()
@@ -71,5 +80,9 @@ class BandDetailViewModel(
             deleteBand(bandId)
             _event.emit(BandDetailEvent.NavigateBack)
         }
+    }
+
+    private fun doDeleteGig(gigId: String) {
+        viewModelScope.launch { deleteGig(gigId) }
     }
 }

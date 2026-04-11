@@ -4,6 +4,7 @@ sealed interface BandDetailEvent {
     object NavigateBack : BandDetailEvent
     object NavigateToMembers : BandDetailEvent
     object NavigateToSongs : BandDetailEvent
-    object NavigateToGigs : BandDetailEvent
+    object NavigateToNewGig : BandDetailEvent
+    data class NavigateToGigDetail(val gigId: String) : BandDetailEvent
     object NavigateToEdit : BandDetailEvent
 }

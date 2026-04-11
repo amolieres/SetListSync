@@ -11,7 +11,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.amolieres.setlistync.core.domain.song.model.SongId
 import com.amolieres.setlistync.feature.band.creation.presentation.BandCreationViewModel
 import com.amolieres.setlistync.feature.band.creation.ui.BandCreationScreen
 import com.amolieres.setlistync.feature.band.detail.presentation.BandDetailViewModel
@@ -20,8 +19,6 @@ import com.amolieres.setlistync.feature.band.edit.presentation.BandEditViewModel
 import com.amolieres.setlistync.feature.band.edit.ui.BandEditScreen
 import com.amolieres.setlistync.feature.band.gigDetail.presentation.GigDetailViewModel
 import com.amolieres.setlistync.feature.band.gigDetail.ui.GigDetailScreen
-import com.amolieres.setlistync.feature.band.gigs.presentation.BandGigsViewModel
-import com.amolieres.setlistync.feature.band.gigs.ui.BandGigsScreen
 import com.amolieres.setlistync.feature.band.members.presentation.BandMembersViewModel
 import com.amolieres.setlistync.feature.band.members.ui.BandMembersScreen
 import com.amolieres.setlistync.feature.band.songDetail.presentation.BandSongDetailViewModel
@@ -129,7 +126,8 @@ fun AppNavGraph(
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToMembers = { navController.navigate(Destinations.bandMembers(viewModel.bandId)) },
                 onNavigateToSongs = { navController.navigate(Destinations.bandSongs(viewModel.bandId)) },
-                onNavigateToGigs = { navController.navigate(Destinations.bandGigs(viewModel.bandId)) },
+                onNavigateToNewGig = { navController.navigate(Destinations.newGig(viewModel.bandId)) },
+                onNavigateToGigDetail = { gigId -> navController.navigate(Destinations.editGig(viewModel.bandId, gigId)) },
                 onNavigateToEdit = { navController.navigate(Destinations.bandEdit(viewModel.bandId)) }
             )
         }
@@ -144,19 +142,6 @@ fun AppNavGraph(
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToNewSong = { navController.navigate(Destinations.newSong(viewModel.bandId)) },
                 onNavigateToEditSong = { songId -> navController.navigate(Destinations.editSong(viewModel.bandId, songId.value)) }
-            )
-        }
-
-        composable(Destinations.BandGigs) {
-            val viewModel: BandGigsViewModel = koinViewModel()
-            val uiState by viewModel.uiState.collectAsState()
-            BandGigsScreen(
-                uiState = uiState,
-                eventFlow = viewModel.event,
-                onScreenEvent = viewModel::onScreenEvent,
-                onNavigateBack = { navController.popBackStack() },
-                onNavigateToNewGig = { navController.navigate(Destinations.newGig(viewModel.bandId)) },
-                onNavigateToGigDetail = { gigId -> navController.navigate(Destinations.editGig(viewModel.bandId, gigId)) }
             )
         }
 

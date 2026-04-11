@@ -3,7 +3,9 @@
     "allow": [
       "Bash(find:*)",
       "Bash(tree:*)",
-      "Bash(./gradlew :composeApp:compileTestKotlinJvm)"
+      "Bash(./gradlew :composeApp:compileTestKotlinJvm)",
+      "Bash(ls:*)",
+      "Bash(./gradlew :composeApp:compileKotlinJvm:*)"
     ]
   }
 }
