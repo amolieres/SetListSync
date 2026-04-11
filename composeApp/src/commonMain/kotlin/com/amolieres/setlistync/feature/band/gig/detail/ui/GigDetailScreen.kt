@@ -1,4 +1,4 @@
-package com.amolieres.setlistync.feature.band.gigDetail.ui
+package com.amolieres.setlistync.feature.band.gig.detail.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -48,9 +48,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.amolieres.setlistync.app.designsystem.AppDimens
 import com.amolieres.setlistync.app.designsystem.components.AppCenteredLoader
 import com.amolieres.setlistync.core.domain.song.model.Song
-import com.amolieres.setlistync.feature.band.gigDetail.presentation.GigDetailEvent
-import com.amolieres.setlistync.feature.band.gigDetail.presentation.GigDetailUiEvent
-import com.amolieres.setlistync.feature.band.gigDetail.presentation.GigDetailUiState
+import com.amolieres.setlistync.feature.band.gig.detail.presentation.GigDetailEvent
+import com.amolieres.setlistync.feature.band.gig.detail.presentation.GigDetailUiEvent
+import com.amolieres.setlistync.feature.band.gig.detail.presentation.GigDetailUiState
 import com.amolieres.setlistync.feature.band.songs.ui.SongItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -69,6 +69,7 @@ import setlistsync.composeapp.generated.resources.gig_setlist_section
 import kotlin.time.ExperimentalTime
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
+import kotlin.time.Instant
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalTime::class)
 @Composable
@@ -242,7 +243,7 @@ fun GigDetailScreen(
                     Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                     Text(
                         uiState.dateMillis?.let { ms ->
-                            kotlin.time.Instant.fromEpochMilliseconds(ms).toString().take(10)
+                            Instant.fromEpochMilliseconds(ms).toString().take(10)
                         } ?: stringResource(Res.string.gig_field_date_none)
                     )
                 }

@@ -17,8 +17,8 @@ import com.amolieres.setlistync.feature.band.detail.presentation.BandDetailViewM
 import com.amolieres.setlistync.feature.band.detail.ui.BandDetailScreen
 import com.amolieres.setlistync.feature.band.edit.presentation.BandEditViewModel
 import com.amolieres.setlistync.feature.band.edit.ui.BandEditScreen
-import com.amolieres.setlistync.feature.band.gigDetail.presentation.GigDetailViewModel
-import com.amolieres.setlistync.feature.band.gigDetail.ui.GigDetailScreen
+import com.amolieres.setlistync.feature.band.gig.detail.presentation.GigDetailViewModel
+import com.amolieres.setlistync.feature.band.gig.detail.ui.GigDetailScreen
 import com.amolieres.setlistync.feature.band.members.presentation.BandMembersViewModel
 import com.amolieres.setlistync.feature.band.members.ui.BandMembersScreen
 import com.amolieres.setlistync.feature.band.songDetail.presentation.BandSongDetailViewModel

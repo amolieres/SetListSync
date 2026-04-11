@@ -3,7 +3,7 @@ package com.amolieres.setlistync.common.di
 import com.amolieres.setlistync.feature.band.creation.presentation.BandCreationViewModel
 import com.amolieres.setlistync.feature.band.detail.presentation.BandDetailViewModel
 import com.amolieres.setlistync.feature.band.edit.presentation.BandEditViewModel
-import com.amolieres.setlistync.feature.band.gigDetail.presentation.GigDetailViewModel
+import com.amolieres.setlistync.feature.band.gig.detail.presentation.GigDetailViewModel
 import com.amolieres.setlistync.feature.band.members.presentation.BandMembersViewModel
 import com.amolieres.setlistync.feature.band.songDetail.presentation.BandSongDetailViewModel
 import com.amolieres.setlistync.feature.band.songs.presentation.BandSongsViewModel

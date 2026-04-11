@@ -1,4 +1,4 @@
-package com.amolieres.setlistync.feature.band.gigDetail.presentation
+package com.amolieres.setlistync.feature.band.gig.detail.presentation
 
 import com.amolieres.setlistync.core.domain.song.model.SongId
 

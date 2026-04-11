@@ -1,4 +1,4 @@
-package com.amolieres.setlistync.feature.band.gigDetail.presentation
+package com.amolieres.setlistync.feature.band.gig.detail.presentation
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
