@@ -20,7 +20,8 @@ object Destinations {
     const val GigEdit = "band_gigs/{bandId}/gig_edit?gigId={gigId}"
     fun newGig(bandId: String) = "band_gigs/$bandId/gig_edit"
     fun editGigInfo(bandId: String, gigId: String) = "band_gigs/$bandId/gig_edit?gigId=$gigId"
-    // Gig detail / setlist manager (gigId required path param)
-    const val GigDetail = "band_gigs/{bandId}/gig/{gigId}"
-    fun gigDetail(bandId: String, gigId: String) = "band_gigs/$bandId/gig/$gigId"
+    // Gig detail / setlist manager (gigId required path param, isEditing optional query param)
+    const val GigDetail = "band_gigs/{bandId}/gig/{gigId}?isEditing={isEditing}"
+    fun gigDetail(bandId: String, gigId: String, isEditing: Boolean = false) =
+        "band_gigs/$bandId/gig/$gigId?isEditing=$isEditing"
 }

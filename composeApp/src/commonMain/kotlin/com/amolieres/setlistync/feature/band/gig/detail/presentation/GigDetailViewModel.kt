@@ -28,11 +28,12 @@ class GigDetailViewModel(
 
     val bandId: String = checkNotNull(savedStateHandle.get<String>("bandId"))
     val gigId: String = checkNotNull(savedStateHandle.get<String>("gigId"))
+    private val initialIsEditing: Boolean = savedStateHandle.get<Boolean>("isEditing") ?: false
 
     private val _event = MutableSharedFlow<GigDetailEvent>()
     val event: SharedFlow<GigDetailEvent> = _event.asSharedFlow()
 
-    private val _uiState = MutableStateFlow(GigDetailUiState())
+    private val _uiState = MutableStateFlow(GigDetailUiState(isEditing = initialIsEditing))
     val uiState: StateFlow<GigDetailUiState> = _uiState
 
     // Latest snapshot of band songs and current gig — used for setlist persistence
@@ -94,7 +95,9 @@ class GigDetailViewModel(
 
     fun onScreenEvent(event: GigDetailUiEvent) {
         when (event) {
-            GigDetailUiEvent.OnEditGigClicked ->
+            GigDetailUiEvent.OnToggleEditing ->
+                _uiState.update { it.copy(isEditing = !it.isEditing) }
+            GigDetailUiEvent.OnEditGigInfoClicked ->
                 viewModelScope.launch { _event.emit(GigDetailEvent.NavigateToEditGig) }
             GigDetailUiEvent.OnAddSongsClicked ->
                 _uiState.update { it.copy(showAddSongsSheet = true) }

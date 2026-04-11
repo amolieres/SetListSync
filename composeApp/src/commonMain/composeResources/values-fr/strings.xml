@@ -9,6 +9,7 @@
     <string name="action_yes">Oui</string>
     <string name="action_delete">Supprimer</string>
     <string name="action_close">Fermer</string>
+    <string name="action_done">Terminer</string>
 
     <!-- ── Étiquettes / placeholders ─────────────────────────────── -->
     <string name="label_band_name_required">Nom du groupe *</string>

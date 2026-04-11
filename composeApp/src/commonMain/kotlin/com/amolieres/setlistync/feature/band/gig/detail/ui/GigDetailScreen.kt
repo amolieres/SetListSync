@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -45,6 +46,7 @@ import kotlinx.coroutines.flow.emptyFlow
 import org.jetbrains.compose.resources.stringResource
 import setlistsync.composeapp.generated.resources.Res
 import setlistsync.composeapp.generated.resources.action_back
+import setlistsync.composeapp.generated.resources.action_done
 import setlistsync.composeapp.generated.resources.gig_action_edit
 import setlistsync.composeapp.generated.resources.gig_add_songs
 import setlistsync.composeapp.generated.resources.gig_detail_title_edit
@@ -141,11 +143,18 @@ fun GigDetailScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { onScreenEvent(GigDetailUiEvent.OnEditGigClicked) }) {
-                        Icon(
-                            Icons.Default.Edit,
-                            contentDescription = stringResource(Res.string.gig_action_edit)
-                        )
+                    IconButton(onClick = { onScreenEvent(GigDetailUiEvent.OnToggleEditing) }) {
+                        if (uiState.isEditing) {
+                            Icon(
+                                Icons.Default.Done,
+                                contentDescription = stringResource(Res.string.action_done)
+                            )
+                        } else {
+                            Icon(
+                                Icons.Default.Edit,
+                                contentDescription = stringResource(Res.string.gig_action_edit)
+                            )
+                        }
                     }
                 }
             )
@@ -164,10 +173,28 @@ fun GigDetailScreen(
             contentPadding = PaddingValues(AppDimens.SpacingL),
             verticalArrangement = Arrangement.spacedBy(AppDimens.SpacingM)
         ) {
-            // ── Summary card ───────────────────────────────────────────────
+            // ── Summary card (with optional edit button) ───────────────────
             item {
                 uiState.gig?.let { gig ->
-                    GigSummaryCard(gig = gig)
+                    if (uiState.isEditing) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(AppDimens.SpacingS)
+                        ) {
+                            GigSummaryCard(gig = gig, modifier = Modifier.weight(1f))
+                            IconButton(
+                                onClick = { onScreenEvent(GigDetailUiEvent.OnEditGigInfoClicked) }
+                            ) {
+                                Icon(
+                                    Icons.Default.Edit,
+                                    contentDescription = stringResource(Res.string.gig_action_edit)
+                                )
+                            }
+                        }
+                    } else {
+                        GigSummaryCard(gig = gig)
+                    }
                 }
             }
 
@@ -183,11 +210,13 @@ fun GigDetailScreen(
                         stringResource(Res.string.gig_setlist_section),
                         style = MaterialTheme.typography.titleSmall
                     )
-                    IconButton(onClick = { onScreenEvent(GigDetailUiEvent.OnAddSongsClicked) }) {
-                        Icon(
-                            Icons.Default.Add,
-                            contentDescription = stringResource(Res.string.gig_add_songs)
-                        )
+                    if (uiState.isEditing) {
+                        IconButton(onClick = { onScreenEvent(GigDetailUiEvent.OnAddSongsClicked) }) {
+                            Icon(
+                                Icons.Default.Add,
+                                contentDescription = stringResource(Res.string.gig_add_songs)
+                            )
+                        }
                     }
                 }
             }
@@ -204,19 +233,23 @@ fun GigDetailScreen(
             } else {
                 itemsIndexed(songs, key = { _, song -> song.id.value }) { index, song ->
                     ReorderableItem(reorderState, key = song.id.value) {
-                        val handleModifier = Modifier.draggableHandle(
-                            onDragStopped = {
-                                onScreenEvent(
-                                    GigDetailUiEvent.OnSetlistReordered(songs.map { it.id })
-                                )
-                            }
-                        )
+                        val handleModifier = if (uiState.isEditing) {
+                            Modifier.draggableHandle(
+                                onDragStopped = {
+                                    onScreenEvent(
+                                        GigDetailUiEvent.OnSetlistReordered(songs.map { it.id })
+                                    )
+                                }
+                            )
+                        } else null
                         SongItem(
                             song = song,
                             noteNotation = uiState.noteNotation,
                             position = index + 1,
                             onEdit = {},
-                            onDelete = { onScreenEvent(GigDetailUiEvent.OnSongRemovedFromSetlist(song.id)) },
+                            onDelete = if (uiState.isEditing) {
+                                { onScreenEvent(GigDetailUiEvent.OnSongRemovedFromSetlist(song.id)) }
+                            } else null,
                             dragHandleModifier = handleModifier
                         )
                     }

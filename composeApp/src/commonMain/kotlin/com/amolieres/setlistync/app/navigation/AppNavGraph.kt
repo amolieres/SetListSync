@@ -167,7 +167,9 @@ fun AppNavGraph(
                 onScreenEvent = viewModel::onScreenEvent,
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToGigDetail = { gigId ->
-                    navController.navigate(Destinations.gigDetail(viewModel.bandId, gigId)) {
+                    navController.navigate(
+                        Destinations.gigDetail(viewModel.bandId, gigId, isEditing = true)
+                    ) {
                         popUpTo(Destinations.GigEdit) { inclusive = true }
                     }
                 },
@@ -185,7 +187,8 @@ fun AppNavGraph(
             route = Destinations.GigDetail,
             arguments = listOf(
                 navArgument("bandId") { type = NavType.StringType },
-                navArgument("gigId") { type = NavType.StringType }
+                navArgument("gigId") { type = NavType.StringType },
+                navArgument("isEditing") { type = NavType.BoolType; defaultValue = false }
             )
         ) {
             val viewModel: GigDetailViewModel = koinViewModel()

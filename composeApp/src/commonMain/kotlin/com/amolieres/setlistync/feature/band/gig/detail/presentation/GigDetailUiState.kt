@@ -6,6 +6,7 @@ import com.amolieres.setlistync.core.domain.song.model.Song
 
 data class GigDetailUiState(
     val isLoading: Boolean = true,
+    val isEditing: Boolean = false,
     val gig: Gig? = null,
     // Setlist
     val setlistSongs: List<Song> = emptyList(),

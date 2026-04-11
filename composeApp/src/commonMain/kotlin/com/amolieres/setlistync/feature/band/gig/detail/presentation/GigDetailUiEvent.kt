@@ -3,7 +3,8 @@ package com.amolieres.setlistync.feature.band.gig.detail.presentation
 import com.amolieres.setlistync.core.domain.song.model.SongId
 
 sealed interface GigDetailUiEvent {
-    data object OnEditGigClicked : GigDetailUiEvent
+    data object OnToggleEditing : GigDetailUiEvent
+    data object OnEditGigInfoClicked : GigDetailUiEvent
     // Setlist
     data object OnAddSongsClicked : GigDetailUiEvent
     data object OnAddSongsDismissed : GigDetailUiEvent
