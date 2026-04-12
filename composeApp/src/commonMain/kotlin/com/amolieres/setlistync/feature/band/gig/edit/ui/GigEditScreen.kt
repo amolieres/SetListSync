@@ -64,7 +64,6 @@ fun GigEditScreen(
     onScreenEvent: (GigEditUiEvent) -> Unit,
     onNavigateBack: () -> Unit,
     onNavigateToGigDetail: (String) -> Unit = {},
-    onNavigateBackToBandDetail: () -> Unit = {},
     isEditMode: Boolean = false
 ) {
     LaunchedEffect(eventFlow) {
@@ -72,7 +71,6 @@ fun GigEditScreen(
             when (event) {
                 GigEditEvent.NavigateBack -> onNavigateBack()
                 is GigEditEvent.NavigateToGigDetail -> onNavigateToGigDetail(event.gigId)
-                GigEditEvent.NavigateBackToBandDetail -> onNavigateBackToBandDetail()
             }
         }
     }
@@ -117,17 +115,6 @@ fun GigEditScreen(
                         )
                     }
                 },
-                actions = {
-                    if (isEditMode) {
-                        IconButton(onClick = { onScreenEvent(GigEditUiEvent.OnDeleteClicked) }) {
-                            Icon(
-                                Icons.Default.Delete,
-                                contentDescription = stringResource(Res.string.gig_edit_cd_delete),
-                                tint = MaterialTheme.colorScheme.error
-                            )
-                        }
-                    }
-                }
             )
         }
     ) { padding ->

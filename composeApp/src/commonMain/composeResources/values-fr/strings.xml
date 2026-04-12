@@ -10,6 +10,8 @@
     <string name="action_delete">Supprimer</string>
     <string name="action_close">Fermer</string>
     <string name="action_done">Terminer</string>
+    <string name="action_confirm">Valider</string>
+    <string name="action_edit">Modifier</string>
 
     <!-- ── Étiquettes / placeholders ─────────────────────────────── -->
     <string name="label_band_name_required">Nom du groupe *</string>
@@ -96,6 +98,7 @@
     <string name="gig_action_edit">Modifier les infos du concert</string>
     <string name="gig_summary_no_venue">Pas de lieu</string>
     <string name="gig_edit_cd_delete">Supprimer le concert</string>
+    <string name="gig_delete_confirm_message">Voulez-vous supprimer ce concert ?</string>
     <string name="band_detail_section_info">Informations</string>
     <string name="band_detail_cd_edit_info">Modifier les informations</string>
     <string name="band_detail_no_info">Aucune information renseignée.</string>
@@ -130,7 +133,6 @@
     <string name="band_members_cd_add">Ajouter un membre</string>
     <string name="band_members_empty">Aucun membre. Appuyez sur + pour en ajouter un.</string>
     <string name="band_members_default_name">Membre</string>
-    <string name="band_members_cd_edit">Modifier</string>
     <string name="band_members_cd_delete">Supprimer</string>
 
     <!-- ── Dialogue membre ────────────────────────────────────────── -->

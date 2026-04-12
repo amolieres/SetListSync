@@ -173,11 +173,6 @@ fun AppNavGraph(
                         popUpTo(Destinations.GigEdit) { inclusive = true }
                     }
                 },
-                onNavigateBackToBandDetail = {
-                    navController.navigate(Destinations.bandDetail(viewModel.bandId)) {
-                        popUpTo(Destinations.BandDetail) { inclusive = true }
-                    }
-                },
                 isEditMode = viewModel.isEditMode
             )
         }

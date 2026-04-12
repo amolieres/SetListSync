@@ -5,6 +5,7 @@ import com.amolieres.setlistync.core.domain.song.model.SongId
 sealed interface GigDetailUiEvent {
     data object OnToggleEditing : GigDetailUiEvent
     data object OnEditGigInfoClicked : GigDetailUiEvent
+    data object OnDeleteGigClicked : GigDetailUiEvent
     // Setlist
     data object OnAddSongsClicked : GigDetailUiEvent
     data object OnAddSongsDismissed : GigDetailUiEvent

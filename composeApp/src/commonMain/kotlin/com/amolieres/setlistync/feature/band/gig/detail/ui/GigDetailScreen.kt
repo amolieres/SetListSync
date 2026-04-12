@@ -9,14 +9,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -24,36 +28,47 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.amolieres.setlistync.app.designsystem.AppDimens
 import com.amolieres.setlistync.app.designsystem.components.AppCenteredLoader
 import com.amolieres.setlistync.core.domain.song.model.Song
+import com.amolieres.setlistync.core.util.formatSetlistDuration
 import com.amolieres.setlistync.feature.band.gig.detail.presentation.GigDetailEvent
 import com.amolieres.setlistync.feature.band.gig.detail.presentation.GigDetailUiEvent
 import com.amolieres.setlistync.feature.band.gig.detail.presentation.GigDetailUiState
 import com.amolieres.setlistync.feature.band.songs.ui.SongItem
-import com.amolieres.setlistync.core.util.formatSetlistDuration
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import org.jetbrains.compose.resources.stringResource
 import setlistsync.composeapp.generated.resources.Res
 import setlistsync.composeapp.generated.resources.action_back
+import setlistsync.composeapp.generated.resources.action_cancel
+import setlistsync.composeapp.generated.resources.action_confirm
+import setlistsync.composeapp.generated.resources.action_delete
 import setlistsync.composeapp.generated.resources.action_done
+import setlistsync.composeapp.generated.resources.action_edit
 import setlistsync.composeapp.generated.resources.gig_action_edit
 import setlistsync.composeapp.generated.resources.gig_add_songs
-import setlistsync.composeapp.generated.resources.gig_detail_title_edit
+import setlistsync.composeapp.generated.resources.gig_delete_confirm_message
+import setlistsync.composeapp.generated.resources.gig_edit_cd_delete
+import setlistsync.composeapp.generated.resources.gig_field_date_none
 import setlistsync.composeapp.generated.resources.gig_setlist_empty
 import setlistsync.composeapp.generated.resources.gig_setlist_section
+import setlistsync.composeapp.generated.resources.gig_summary_no_venue
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 import kotlin.time.ExperimentalTime
@@ -76,6 +91,8 @@ fun GigDetailScreen(
         }
     }
 
+    val showDeleteConfirmDialog = remember { mutableStateOf(false) }
+
     // Local list for optimistic drag-to-reorder visual feedback.
     val songs = remember { mutableStateListOf<Song>() }
     LaunchedEffect(uiState.setlistSongs) {
@@ -90,6 +107,27 @@ fun GigDetailScreen(
         if (fromIndex != -1 && toIndex != -1) {
             songs.apply { add(toIndex, removeAt(fromIndex)) }
         }
+    }
+
+    if (showDeleteConfirmDialog.value) {
+        AlertDialog(
+            onDismissRequest = { showDeleteConfirmDialog.value = false },
+            title = { Text(stringResource(Res.string.gig_edit_cd_delete)) },
+            text = { Text(stringResource(Res.string.gig_delete_confirm_message)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    showDeleteConfirmDialog.value = false
+                    onScreenEvent(GigDetailUiEvent.OnDeleteGigClicked)
+                }) {
+                    Text(stringResource(Res.string.action_confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteConfirmDialog.value = false }) {
+                    Text(stringResource(Res.string.action_cancel))
+                }
+            }
+        )
     }
 
     if (uiState.showAddSongsSheet) {
@@ -135,7 +173,27 @@ fun GigDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(Res.string.gig_detail_title_edit)) },
+                title = {
+                    Column {
+                        Text(
+                            text = uiState.gig?.venue
+                                ?: stringResource(Res.string.gig_summary_no_venue),
+                            style = MaterialTheme.typography.titleMedium,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            color = if (uiState.gig?.venue == null)
+                                MaterialTheme.colorScheme.onSurfaceVariant
+                            else
+                                MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = uiState.gig?.date?.toString()?.take(10)
+                                ?: stringResource(Res.string.gig_field_date_none),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
@@ -175,30 +233,40 @@ fun GigDetailScreen(
             contentPadding = PaddingValues(AppDimens.SpacingL),
             verticalArrangement = Arrangement.spacedBy(AppDimens.SpacingM)
         ) {
-            // ── Summary card (with optional edit button) ───────────────────
-            item {
-                uiState.gig?.let { gig ->
-                    if (uiState.isEditing) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(AppDimens.SpacingS)
+            // ── Editing actions (replaces summary card when isEditing) ──────
+            if (uiState.isEditing) {
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(AppDimens.SpacingM)
+                    ) {
+                        OutlinedButton(
+                            onClick = { onScreenEvent(GigDetailUiEvent.OnEditGigInfoClicked) },
+                            modifier = Modifier.weight(1f)
                         ) {
-                            GigSummaryCard(
-                                gig = gig,
-                                modifier = Modifier.weight(1f)
+                            Icon(
+                                Icons.Default.Edit,
+                                contentDescription = null,
+                                modifier = Modifier.size(ButtonDefaults.IconSize)
                             )
-                            IconButton(
-                                onClick = { onScreenEvent(GigDetailUiEvent.OnEditGigInfoClicked) }
-                            ) {
-                                Icon(
-                                    Icons.Default.Edit,
-                                    contentDescription = stringResource(Res.string.gig_action_edit)
-                                )
-                            }
+                            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                            Text(stringResource(Res.string.action_edit))
                         }
-                    } else {
-                        GigSummaryCard(gig = gig)
+                        OutlinedButton(
+                            onClick = { showDeleteConfirmDialog.value = true },
+                            modifier = Modifier.weight(1f),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = MaterialTheme.colorScheme.error
+                            )
+                        ) {
+                            Icon(
+                                Icons.Default.Delete,
+                                contentDescription = null,
+                                modifier = Modifier.size(ButtonDefaults.IconSize)
+                            )
+                            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                            Text(stringResource(Res.string.action_delete))
+                        }
                     }
                 }
             }
@@ -278,6 +346,17 @@ fun GigDetailScreen(
 private fun GigDetailScreenPreview() {
     GigDetailScreen(
         uiState = GigDetailUiState(isLoading = false),
+        eventFlow = emptyFlow(),
+        onScreenEvent = {},
+        onNavigateBack = {}
+    )
+}
+
+@Preview
+@Composable
+private fun GigDetailScreenEditingPreview() {
+    GigDetailScreen(
+        uiState = GigDetailUiState(isLoading = false, isEditing = true),
         eventFlow = emptyFlow(),
         onScreenEvent = {},
         onNavigateBack = {}

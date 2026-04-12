@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.amolieres.setlistync.core.domain.band.model.Gig
 import com.amolieres.setlistync.core.domain.band.usecase.ComputeSetlistDurationUseCase
+import com.amolieres.setlistync.core.domain.band.usecase.DeleteGigUseCase
 import com.amolieres.setlistync.core.domain.band.usecase.ObserveGigsForBandUseCase
 import com.amolieres.setlistync.core.domain.band.usecase.UpdateGigUseCase
 import com.amolieres.setlistync.core.domain.preferences.ObserveNotationUseCase
@@ -25,7 +26,8 @@ class GigDetailViewModel(
     private val updateGig: UpdateGigUseCase,
     observeSongs: ObserveSongsUseCase,
     observeNotation: ObserveNotationUseCase,
-    private val computeSetlistDuration: ComputeSetlistDurationUseCase
+    private val computeSetlistDuration: ComputeSetlistDurationUseCase,
+    private val deleteGig: DeleteGigUseCase
 ) : ViewModel() {
 
     val bandId: String = checkNotNull(savedStateHandle.get<String>("bandId"))
@@ -109,6 +111,10 @@ class GigDetailViewModel(
                 _uiState.update { it.copy(isEditing = !it.isEditing) }
             GigDetailUiEvent.OnEditGigInfoClicked ->
                 viewModelScope.launch { _event.emit(GigDetailEvent.NavigateToEditGig) }
+            GigDetailUiEvent.OnDeleteGigClicked -> viewModelScope.launch {
+                deleteGig(gigId)
+                _event.emit(GigDetailEvent.NavigateBack)
+            }
             GigDetailUiEvent.OnAddSongsClicked ->
                 _uiState.update { it.copy(showAddSongsSheet = true) }
             GigDetailUiEvent.OnAddSongsDismissed ->

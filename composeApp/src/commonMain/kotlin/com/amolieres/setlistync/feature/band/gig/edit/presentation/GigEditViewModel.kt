@@ -21,8 +21,7 @@ class GigEditViewModel(
     savedStateHandle: SavedStateHandle,
     private val getGig: GetGigUseCase,
     private val createGig: CreateGigUseCase,
-    private val updateGig: UpdateGigUseCase,
-    private val deleteGig: DeleteGigUseCase
+    private val updateGig: UpdateGigUseCase
 ) : ViewModel() {
 
     val bandId: String = checkNotNull(savedStateHandle.get<String>("bandId"))
@@ -71,7 +70,6 @@ class GigEditViewModel(
             is GigEditUiEvent.OnDateSelected ->
                 _uiState.update { it.copy(dateMillis = event.epochMillis, showDatePicker = false) }
             GigEditUiEvent.OnSaveClicked -> doSave()
-            GigEditUiEvent.OnDeleteClicked -> doDelete()
         }
     }
 
@@ -111,13 +109,6 @@ class GigEditViewModel(
                 }
                 _event.emit(GigEditEvent.NavigateBack)
             }
-        }
-    }
-
-    private fun doDelete() {
-        viewModelScope.launch {
-            gigId?.let { deleteGig(it) }
-            _event.emit(GigEditEvent.NavigateBackToBandDetail)
         }
     }
 }
