@@ -1,6 +1,7 @@
 package com.amolieres.setlistync.feature.band.gig.detail.ui
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -41,6 +42,7 @@ import com.amolieres.setlistync.feature.band.gig.detail.presentation.GigDetailEv
 import com.amolieres.setlistync.feature.band.gig.detail.presentation.GigDetailUiEvent
 import com.amolieres.setlistync.feature.band.gig.detail.presentation.GigDetailUiState
 import com.amolieres.setlistync.feature.band.songs.ui.SongItem
+import com.amolieres.setlistync.core.util.formatSetlistDuration
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import org.jetbrains.compose.resources.stringResource
@@ -182,7 +184,10 @@ fun GigDetailScreen(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(AppDimens.SpacingS)
                         ) {
-                            GigSummaryCard(gig = gig, modifier = Modifier.weight(1f))
+                            GigSummaryCard(
+                                gig = gig,
+                                modifier = Modifier.weight(1f)
+                            )
                             IconButton(
                                 onClick = { onScreenEvent(GigDetailUiEvent.OnEditGigInfoClicked) }
                             ) {
@@ -206,10 +211,19 @@ fun GigDetailScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        stringResource(Res.string.gig_setlist_section),
-                        style = MaterialTheme.typography.titleSmall
-                    )
+                    Column {
+                        Text(
+                            stringResource(Res.string.gig_setlist_section),
+                            style = MaterialTheme.typography.titleSmall
+                        )
+                        if (uiState.setlistDurationSeconds > 0) {
+                            Text(
+                                text = uiState.setlistDurationSeconds.formatSetlistDuration(),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
                     if (uiState.isEditing) {
                         IconButton(onClick = { onScreenEvent(GigDetailUiEvent.OnAddSongsClicked) }) {
                             Icon(

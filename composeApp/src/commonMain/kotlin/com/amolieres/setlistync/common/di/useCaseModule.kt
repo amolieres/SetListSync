@@ -49,6 +49,8 @@ val useCaseModule = module {
     factory { UpdateGigUseCase(get()) }
     factory { DeleteGigUseCase(get()) }
 
+    factory { ComputeSetlistDurationUseCase() }
+
     // Gig — Setlist management
     factory { AddSongToGigUseCase(get()) }
     factory { RemoveSongFromGigUseCase(get()) }

@@ -8,6 +8,7 @@ data class GigDetailUiState(
     val isLoading: Boolean = true,
     val isEditing: Boolean = false,
     val gig: Gig? = null,
+    val setlistDurationSeconds: Int = 0,
     // Setlist
     val setlistSongs: List<Song> = emptyList(),
     val catalogSongs: List<Song> = emptyList(),
