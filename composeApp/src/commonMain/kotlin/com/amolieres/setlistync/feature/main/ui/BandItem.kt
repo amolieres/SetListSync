@@ -94,12 +94,12 @@ private val previewBandMinimal = BandPresenter(
 
 @Preview
 @Composable
-private fun BandItemFullPreview() {
+fun BandItemFullPreview() {
     BandItem(bandPresenter = previewBandFull, onClick = {})
 }
 
 @Preview
 @Composable
-private fun BandItemMinimalPreview() {
+fun BandItemMinimalPreview() {
     BandItem(bandPresenter = previewBandMinimal, onClick = {})
 }

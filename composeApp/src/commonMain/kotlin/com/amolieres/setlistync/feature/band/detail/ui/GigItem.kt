@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import com.amolieres.setlistync.app.designsystem.AppDimens
 import com.amolieres.setlistync.core.domain.band.model.Gig
 import org.jetbrains.compose.resources.stringResource
@@ -87,4 +88,22 @@ fun GigItem(
             }
         }
     }
+}
+
+
+@Preview
+@Composable
+fun PreviewGigItem() {
+    GigItem(
+        Gig(
+            id = "",
+            bandId = "",
+            venue = "venue",
+            date = null,
+            expectedDurationMinutes = null,
+            orderedSongIds = emptyList()
+        ),
+        onEdit = {},
+        onDelete = {}
+    )
 }

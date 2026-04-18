@@ -343,7 +343,7 @@ fun GigDetailScreen(
 
 @Preview
 @Composable
-private fun GigDetailScreenPreview() {
+fun GigDetailScreenPreview() {
     GigDetailScreen(
         uiState = GigDetailUiState(isLoading = false),
         eventFlow = emptyFlow(),
@@ -354,7 +354,7 @@ private fun GigDetailScreenPreview() {
 
 @Preview
 @Composable
-private fun GigDetailScreenEditingPreview() {
+fun GigDetailScreenEditingPreview() {
     GigDetailScreen(
         uiState = GigDetailUiState(isLoading = false, isEditing = true),
         eventFlow = emptyFlow(),

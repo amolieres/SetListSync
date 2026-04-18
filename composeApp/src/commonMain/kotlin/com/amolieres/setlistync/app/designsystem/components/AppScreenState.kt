@@ -41,12 +41,12 @@ fun AppCenteredMessage(text: String, modifier: Modifier = Modifier) {
 
 @Preview
 @Composable
-private fun AppCenteredLoaderPreview() {
+fun AppCenteredLoaderPreview() {
     AppCenteredLoader()
 }
 
 @Preview
 @Composable
-private fun AppCenteredMessagePreview() {
+fun AppCenteredMessagePreview() {
     AppCenteredMessage(text = "Aucun groupe pour l'instant")
 }

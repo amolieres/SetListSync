@@ -100,12 +100,12 @@ private val previewGigEmpty = Gig(
 
 @Preview
 @Composable
-private fun GigSummaryCardFullPreview() {
+fun GigSummaryCardFullPreview() {
     GigSummaryCard(gig = previewGigFull)
 }
 
 @Preview
 @Composable
-private fun GigSummaryCardEmptyPreview() {
+fun GigSummaryCardEmptyPreview() {
     GigSummaryCard(gig = previewGigEmpty)
 }

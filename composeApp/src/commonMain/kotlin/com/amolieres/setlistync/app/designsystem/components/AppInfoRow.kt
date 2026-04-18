@@ -54,13 +54,13 @@ fun AppInfoRow(
 
 @Preview
 @Composable
-private fun AppInfoRowSimplePreview() {
+fun AppInfoRowSimplePreview() {
     AppInfoRow(icon = Icons.Default.Email, text = "contact@band.com")
 }
 
 @Preview
 @Composable
-private fun AppInfoRowWithLabelPreview() {
+fun AppInfoRowWithLabelPreview() {
     Column(verticalArrangement = Arrangement.spacedBy(AppDimens.SpacingXs)) {
         AppInfoRow(icon = Icons.Default.Share, text = "instagram.com/myband", label = "Instagram")
         AppInfoRow(icon = Icons.Default.Share, text = "facebook.com/myband", label = "Facebook")

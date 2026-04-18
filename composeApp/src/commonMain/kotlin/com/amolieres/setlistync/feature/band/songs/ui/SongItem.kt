@@ -120,7 +120,7 @@ fun SongItem(
 
 @Preview
 @Composable
-private fun SongItemFullPreview() {
+fun SongItemFullPreview() {
     SongItem(
         song = Song(
             id = SongId("1"),
@@ -138,7 +138,7 @@ private fun SongItemFullPreview() {
 
 @Preview
 @Composable
-private fun SongItemFrenchPreview() {
+fun SongItemFrenchPreview() {
     SongItem(
         song = Song(
             id = SongId("2"),
@@ -156,7 +156,7 @@ private fun SongItemFrenchPreview() {
 
 @Preview
 @Composable
-private fun SongItemMinimalPreview() {
+fun SongItemMinimalPreview() {
     SongItem(
         song = Song(
             id = SongId("3"),

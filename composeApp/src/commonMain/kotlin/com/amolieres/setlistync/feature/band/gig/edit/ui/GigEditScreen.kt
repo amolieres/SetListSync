@@ -13,7 +13,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -49,7 +48,6 @@ import setlistsync.composeapp.generated.resources.action_cancel
 import setlistsync.composeapp.generated.resources.action_save
 import setlistsync.composeapp.generated.resources.gig_detail_title_create
 import setlistsync.composeapp.generated.resources.gig_detail_title_edit
-import setlistsync.composeapp.generated.resources.gig_edit_cd_delete
 import setlistsync.composeapp.generated.resources.gig_field_date_none
 import setlistsync.composeapp.generated.resources.gig_field_expected_duration
 import setlistsync.composeapp.generated.resources.gig_field_venue
@@ -192,7 +190,7 @@ fun GigEditScreen(
 
 @Preview
 @Composable
-private fun GigEditScreenCreatePreview() {
+fun GigEditScreenCreatePreview() {
     GigEditScreen(
         uiState = GigEditUiState(),
         eventFlow = emptyFlow(),
@@ -204,7 +202,7 @@ private fun GigEditScreenCreatePreview() {
 
 @Preview
 @Composable
-private fun GigEditScreenEditPreview() {
+fun GigEditScreenEditPreview() {
     GigEditScreen(
         uiState = GigEditUiState(venueInput = "Zénith Paris", expectedDurationInput = "90"),
         eventFlow = emptyFlow(),
