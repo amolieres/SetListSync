@@ -9,18 +9,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -28,7 +25,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -45,6 +41,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.amolieres.setlistync.app.designsystem.AppDimens
 import com.amolieres.setlistync.app.designsystem.components.AppCenteredLoader
+import com.amolieres.setlistync.app.designsystem.components.AppEditModeActionRow
 import com.amolieres.setlistync.core.domain.song.model.Song
 import com.amolieres.setlistync.core.util.formatSetlistDuration
 import com.amolieres.setlistync.feature.band.gig.detail.presentation.GigDetailEvent
@@ -58,9 +55,7 @@ import setlistsync.composeapp.generated.resources.Res
 import setlistsync.composeapp.generated.resources.action_back
 import setlistsync.composeapp.generated.resources.action_cancel
 import setlistsync.composeapp.generated.resources.action_confirm
-import setlistsync.composeapp.generated.resources.action_delete
 import setlistsync.composeapp.generated.resources.action_done
-import setlistsync.composeapp.generated.resources.action_edit
 import setlistsync.composeapp.generated.resources.gig_action_edit
 import setlistsync.composeapp.generated.resources.gig_add_songs
 import setlistsync.composeapp.generated.resources.gig_delete_confirm_message
@@ -236,38 +231,10 @@ fun GigDetailScreen(
             // ── Editing actions (replaces summary card when isEditing) ──────
             if (uiState.isEditing) {
                 item {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(AppDimens.SpacingM)
-                    ) {
-                        OutlinedButton(
-                            onClick = { onScreenEvent(GigDetailUiEvent.OnEditGigInfoClicked) },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Icon(
-                                Icons.Default.Edit,
-                                contentDescription = null,
-                                modifier = Modifier.size(ButtonDefaults.IconSize)
-                            )
-                            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                            Text(stringResource(Res.string.action_edit))
-                        }
-                        OutlinedButton(
-                            onClick = { showDeleteConfirmDialog.value = true },
-                            modifier = Modifier.weight(1f),
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = MaterialTheme.colorScheme.error
-                            )
-                        ) {
-                            Icon(
-                                Icons.Default.Delete,
-                                contentDescription = null,
-                                modifier = Modifier.size(ButtonDefaults.IconSize)
-                            )
-                            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                            Text(stringResource(Res.string.action_delete))
-                        }
-                    }
+                    AppEditModeActionRow(
+                        onEditClick = { onScreenEvent(GigDetailUiEvent.OnEditGigInfoClicked) },
+                        onDeleteClick = { showDeleteConfirmDialog.value = true }
+                    )
                 }
             }
 

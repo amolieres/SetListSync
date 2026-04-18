@@ -34,6 +34,7 @@ class BandDetailViewModel(
     val event: SharedFlow<BandDetailEvent> = _event.asSharedFlow()
 
     private data class ViewState(
+        val isEditing: Boolean = false,
         val showDeleteBandConfirm: Boolean = false
     )
 
@@ -48,6 +49,7 @@ class BandDetailViewModel(
         BandDetailUiState(
             isLoading = false,
             band = band,
+            isEditing = view.isEditing,
             showDeleteBandConfirm = view.showDeleteBandConfirm,
             songCount = songs.size,
             gigs = gigs
@@ -56,6 +58,8 @@ class BandDetailViewModel(
 
     fun onScreenEvent(event: BandDetailUiEvent) {
         when (event) {
+            BandDetailUiEvent.OnToggleEditing ->
+                _viewState.update { it.copy(isEditing = !it.isEditing) }
             BandDetailUiEvent.OnEditInfoClicked ->
                 viewModelScope.launch { _event.emit(BandDetailEvent.NavigateToEdit) }
             BandDetailUiEvent.OnMembersSectionClicked ->

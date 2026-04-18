@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.amolieres.setlistync.app.designsystem.AppDimens
 import com.amolieres.setlistync.app.designsystem.components.AppCenteredLoader
+import com.amolieres.setlistync.app.designsystem.components.AppEditModeActionRow
 import com.amolieres.setlistync.app.designsystem.components.AppCenteredMessage
 import com.amolieres.setlistync.app.designsystem.components.AppInfoRow
 import com.amolieres.setlistync.core.domain.band.model.Band
@@ -67,15 +68,21 @@ fun BandDetailScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { onScreenEvent(BandDetailUiEvent.OnDeleteBandClicked) }) {
-                        Icon(Icons.Default.Delete, contentDescription = stringResource(Res.string.band_detail_cd_delete))
+                    IconButton(onClick = { onScreenEvent(BandDetailUiEvent.OnToggleEditing) }) {
+                        if (uiState.isEditing) {
+                            Icon(Icons.Default.Done, contentDescription = stringResource(Res.string.action_done))
+                        } else {
+                            Icon(Icons.Default.Edit, contentDescription = stringResource(Res.string.band_detail_cd_edit_info))
+                        }
                     }
                 }
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { onScreenEvent(BandDetailUiEvent.OnAddGigClicked) }) {
-                Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.band_gigs_fab_add))
+            if (!uiState.isEditing) {
+                FloatingActionButton(onClick = { onScreenEvent(BandDetailUiEvent.OnAddGigClicked) }) {
+                    Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.band_gigs_fab_add))
+                }
             }
         }
     ) { padding ->
@@ -93,10 +100,16 @@ fun BandDetailScreen(
                     .padding(padding)
                     .verticalScroll(rememberScrollState())
             ) {
-                BandInfoSection(
-                    band = uiState.band,
-                    onEditClicked = { onScreenEvent(BandDetailUiEvent.OnEditInfoClicked) }
-                )
+                // ── Edit-mode action row ──────────────────────────────────
+                if (uiState.isEditing) {
+                    AppEditModeActionRow(
+                        onEditClick = { onScreenEvent(BandDetailUiEvent.OnEditInfoClicked) },
+                        onDeleteClick = { onScreenEvent(BandDetailUiEvent.OnDeleteBandClicked) },
+                        modifier = Modifier.padding(horizontal = AppDimens.SpacingL, vertical = AppDimens.SpacingS)
+                    )
+                }
+
+                BandInfoSection(band = uiState.band)
                 HorizontalDivider()
 
                 // ── Members ───────────────────────────────────────────────
@@ -106,10 +119,14 @@ fun BandDetailScreen(
                     trailingContent = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text("$memberCount ${stringResource(if (memberCount == 1) Res.string.member_singular else Res.string.member_plural)}")
-                            Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null)
+                            if (!uiState.isEditing) {
+                                Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null)
+                            }
                         }
                     },
-                    modifier = Modifier.clickable { onScreenEvent(BandDetailUiEvent.OnMembersSectionClicked) }
+                    modifier = if (!uiState.isEditing) {
+                        Modifier.clickable { onScreenEvent(BandDetailUiEvent.OnMembersSectionClicked) }
+                    } else Modifier
                 )
                 HorizontalDivider()
 
@@ -119,10 +136,14 @@ fun BandDetailScreen(
                     trailingContent = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(pluralStringResource(Res.plurals.band_detail_songs, uiState.songCount, uiState.songCount))
-                            Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null)
+                            if (!uiState.isEditing) {
+                                Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null)
+                            }
                         }
                     },
-                    modifier = Modifier.clickable { onScreenEvent(BandDetailUiEvent.OnSongsSectionClicked) }
+                    modifier = if (!uiState.isEditing) {
+                        Modifier.clickable { onScreenEvent(BandDetailUiEvent.OnSongsSectionClicked) }
+                    } else Modifier
                 )
                 HorizontalDivider()
 
@@ -155,8 +176,14 @@ fun BandDetailScreen(
                         uiState.gigs.forEach { gig ->
                             GigItem(
                                 gig = gig,
-                                onEdit = { onScreenEvent(BandDetailUiEvent.OnGigClicked(gig.id)) },
-                                onDelete = { onScreenEvent(BandDetailUiEvent.OnDeleteGigClicked(gig.id)) }
+                                onEdit = if (!uiState.isEditing) {
+                                    { onScreenEvent(BandDetailUiEvent.OnGigClicked(gig.id)) }
+                                } else {
+                                    {}
+                                },
+                                onDelete = if (uiState.isEditing) {
+                                    { onScreenEvent(BandDetailUiEvent.OnDeleteGigClicked(gig.id)) }
+                                } else null
                             )
                         }
                         Spacer(Modifier.height(AppDimens.SpacingM))
@@ -178,22 +205,13 @@ fun BandDetailScreen(
 // ── Info section ─────────────────────────────────────────────────────────────
 
 @Composable
-private fun BandInfoSection(band: Band, onEditClicked: () -> Unit) {
+private fun BandInfoSection(band: Band) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = AppDimens.SpacingL, vertical = AppDimens.SpacingM)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(stringResource(Res.string.band_detail_section_info), style = MaterialTheme.typography.titleSmall)
-            IconButton(onClick = onEditClicked) {
-                Icon(Icons.Default.Edit, contentDescription = stringResource(Res.string.band_detail_cd_edit_info))
-            }
-        }
+        Text(stringResource(Res.string.band_detail_section_info), style = MaterialTheme.typography.titleSmall)
 
         Spacer(Modifier.height(AppDimens.SpacingS))
 
@@ -271,6 +289,19 @@ fun BandDetailScreenLoadingPreview() {
 fun BandDetailScreenContentPreview() {
     BandDetailScreen(
         uiState = BandDetailUiState(isLoading = false, band = previewBandDetail, songCount = 5),
+        eventFlow = emptyFlow(),
+        onScreenEvent = {},
+        onNavigateBack = {},
+        onNavigateToMembers = {},
+        onNavigateToSongs = {}
+    )
+}
+
+@Preview
+@Composable
+fun BandDetailScreenEditingPreview() {
+    BandDetailScreen(
+        uiState = BandDetailUiState(isLoading = false, band = previewBandDetail, songCount = 5, isEditing = true),
         eventFlow = emptyFlow(),
         onScreenEvent = {},
         onNavigateBack = {},
