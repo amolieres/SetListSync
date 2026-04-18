@@ -120,6 +120,12 @@
     <string name="song_dialog_label_original_artist">Artiste original (optionnel)</string>
     <string name="song_cd_delete">Supprimer le morceau</string>
 
+    <!-- ── Importation d'un concert ──────────────────────────────── -->
+    <string name="gig_import_btn">Importer depuis un précédent concert</string>
+    <string name="gig_import_sheet_title">Sélectionner un concert</string>
+    <string name="gig_import_no_previous">Aucun concert précédent disponible.</string>
+    <string name="gig_import_songs_count">%1$d morceaux importés</string>
+
     <!-- ── Dialogue de suppression du groupe ─────────────────────── -->
     <string name="delete_band_title">Supprimer le groupe</string>
     <string name="delete_band_message">Voulez-vous vraiment supprimer \"%1$s\" et tous ses membres ?</string>

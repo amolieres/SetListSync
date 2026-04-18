@@ -117,6 +117,12 @@
     <string name="song_dialog_label_original_artist">Original artist (optional)</string>
     <string name="song_cd_delete">Delete song</string>
 
+    <!-- ── Gig import ────────────────────────────────────────────── -->
+    <string name="gig_import_btn">Import from a previous concert</string>
+    <string name="gig_import_sheet_title">Select a concert</string>
+    <string name="gig_import_no_previous">No previous concerts available.</string>
+    <string name="gig_import_songs_count">%1$d songs imported</string>
+
     <!-- ── Delete band dialog ────────────────────────────────────── -->
     <string name="delete_band_title">Delete band</string>
     <string name="delete_band_message">Are you sure you want to delete \"%1$s\" and all its members?</string>

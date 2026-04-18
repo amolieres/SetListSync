@@ -7,4 +7,7 @@ sealed interface GigEditUiEvent {
     data object OnDatePickerDismissed : GigEditUiEvent
     data class OnDateSelected(val epochMillis: Long?) : GigEditUiEvent
     data object OnSaveClicked : GigEditUiEvent
+    data object OnImportClicked : GigEditUiEvent
+    data object OnImportDismissed : GigEditUiEvent
+    data class OnImportGigSelected(val gigId: String) : GigEditUiEvent
 }

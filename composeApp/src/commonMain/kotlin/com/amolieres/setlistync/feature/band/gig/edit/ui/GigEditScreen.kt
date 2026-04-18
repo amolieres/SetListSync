@@ -1,10 +1,12 @@
 package com.amolieres.setlistync.feature.band.gig.edit.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -13,15 +15,19 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -29,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -51,6 +58,10 @@ import setlistsync.composeapp.generated.resources.gig_detail_title_edit
 import setlistsync.composeapp.generated.resources.gig_field_date_none
 import setlistsync.composeapp.generated.resources.gig_field_expected_duration
 import setlistsync.composeapp.generated.resources.gig_field_venue
+import setlistsync.composeapp.generated.resources.gig_import_btn
+import setlistsync.composeapp.generated.resources.gig_import_no_previous
+import setlistsync.composeapp.generated.resources.gig_import_sheet_title
+import setlistsync.composeapp.generated.resources.gig_import_songs_count
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
@@ -94,6 +105,51 @@ fun GigEditScreen(
         }
     }
 
+    if (uiState.showImportSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { onScreenEvent(GigEditUiEvent.OnImportDismissed) },
+            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        ) {
+            Text(
+                text = stringResource(Res.string.gig_import_sheet_title),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(
+                    horizontal = AppDimens.SpacingL,
+                    vertical = AppDimens.SpacingM
+                )
+            )
+            if (uiState.gigsForImport.isEmpty()) {
+                Text(
+                    text = stringResource(Res.string.gig_import_no_previous),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(AppDimens.SpacingL)
+                )
+            } else {
+                uiState.gigsForImport.forEach { gig ->
+                    ListItem(
+                        headlineContent = { Text(gig.venue ?: "—") },
+                        supportingContent = {
+                            val subtitleParts = buildList {
+                                gig.date?.let { add(it.toString().take(10)) }
+                                val count = gig.orderedSongIds.size
+                                if (count > 0) add("$count songs")
+                            }
+                            if (subtitleParts.isNotEmpty()) {
+                                Text(subtitleParts.joinToString(" · "))
+                            }
+                        },
+                        modifier = Modifier.clickable {
+                            onScreenEvent(GigEditUiEvent.OnImportGigSelected(gig.id))
+                        }
+                    )
+                    HorizontalDivider()
+                }
+            }
+            Spacer(Modifier.height(AppDimens.SpacingL))
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -129,6 +185,39 @@ fun GigEditScreen(
                 .padding(AppDimens.SpacingL),
             verticalArrangement = Arrangement.spacedBy(AppDimens.SpacingM)
         ) {
+            // ── Import (creation mode only) ────────────────────────────
+            if (!isEditMode) {
+                Column(verticalArrangement = Arrangement.spacedBy(AppDimens.SpacingXs)) {
+                    OutlinedButton(
+                        onClick = { onScreenEvent(GigEditUiEvent.OnImportClicked) },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(
+                            Icons.Default.ContentCopy,
+                            contentDescription = null,
+                            modifier = Modifier.size(AppDimens.IconSizeSmall)
+                        )
+                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                        Text(stringResource(Res.string.gig_import_btn))
+                    }
+
+                    if (!uiState.importedSongIds.isEmpty()) {
+                        Text(
+                            text =
+                                stringResource(
+                                    Res.string.gig_import_songs_count,
+                                    uiState.importedSongIds.size
+                                ),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = if (uiState.importedSongIds.isEmpty())
+                                MaterialTheme.colorScheme.onSurfaceVariant
+                            else
+                                MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            }
+
             // ── Venue ──────────────────────────────────────────────────────
             OutlinedTextField(
                 value = uiState.venueInput,

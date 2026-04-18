@@ -25,5 +25,5 @@ val viewModelModule = module {
     viewModel { BandSongsViewModel(get(), get(), get(), get(), get()) }
     viewModel { BandSongDetailViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModel { GigDetailViewModel(get(), get(), get(), get(), get(), get(), get()) }
-    viewModel { GigEditViewModel(get(), get(), get(), get()) }
+    viewModel { GigEditViewModel(get(), get(), get(), get(), get()) }
 }

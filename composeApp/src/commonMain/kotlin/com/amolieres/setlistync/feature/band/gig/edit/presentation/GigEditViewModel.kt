@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.amolieres.setlistync.core.domain.band.usecase.CreateGigUseCase
 import com.amolieres.setlistync.core.domain.band.usecase.DeleteGigUseCase
 import com.amolieres.setlistync.core.domain.band.usecase.GetGigUseCase
+import com.amolieres.setlistync.core.domain.band.usecase.ObserveGigsForBandUseCase
 import com.amolieres.setlistync.core.domain.band.usecase.UpdateGigUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +22,8 @@ class GigEditViewModel(
     savedStateHandle: SavedStateHandle,
     private val getGig: GetGigUseCase,
     private val createGig: CreateGigUseCase,
-    private val updateGig: UpdateGigUseCase
+    private val updateGig: UpdateGigUseCase,
+    private val observeGigsForBand: ObserveGigsForBandUseCase
 ) : ViewModel() {
 
     val bandId: String = checkNotNull(savedStateHandle.get<String>("bandId"))
@@ -54,6 +56,12 @@ class GigEditViewModel(
                     }
                 }
             }
+        } else {
+            viewModelScope.launch {
+                observeGigsForBand(bandId).collect { gigs ->
+                    _uiState.update { it.copy(gigsForImport = gigs) }
+                }
+            }
         }
     }
 
@@ -70,6 +78,28 @@ class GigEditViewModel(
             is GigEditUiEvent.OnDateSelected ->
                 _uiState.update { it.copy(dateMillis = event.epochMillis, showDatePicker = false) }
             GigEditUiEvent.OnSaveClicked -> doSave()
+            GigEditUiEvent.OnImportClicked ->
+                _uiState.update { it.copy(showImportSheet = true) }
+            GigEditUiEvent.OnImportDismissed ->
+                _uiState.update { it.copy(showImportSheet = false) }
+            is GigEditUiEvent.OnImportGigSelected -> doImportGig(event.gigId)
+        }
+    }
+
+    @OptIn(ExperimentalTime::class)
+    private fun doImportGig(gigId: String) {
+        val gig = _uiState.value.gigsForImport.find { it.id == gigId } ?: return
+        _uiState.update { state ->
+            state.copy(
+                showImportSheet = false,
+                venueInput = gig.venue ?: state.venueInput,
+                dateMillis = gig.date?.let { d ->
+                    d.epochSeconds * 1_000L + d.nanosecondsOfSecond / 1_000_000
+                } ?: state.dateMillis,
+                expectedDurationInput = gig.expectedDurationMinutes?.toString()
+                    ?: state.expectedDurationInput,
+                importedSongIds = gig.orderedSongIds
+            )
         }
     }
 
@@ -89,7 +119,8 @@ class GigEditViewModel(
                     bandId = bandId,
                     venue = venue,
                     date = date,
-                    expectedDurationMinutes = expectedDuration
+                    expectedDurationMinutes = expectedDuration,
+                    orderedSongIds = state.importedSongIds
                 ).onSuccess { gig ->
                     _event.emit(GigEditEvent.NavigateToGigDetail(gig.id))
                 }.onFailure {
