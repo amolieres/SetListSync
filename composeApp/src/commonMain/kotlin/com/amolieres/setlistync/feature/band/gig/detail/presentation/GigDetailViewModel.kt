@@ -4,9 +4,13 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.amolieres.setlistync.core.domain.band.model.Gig
+import com.amolieres.setlistync.core.domain.band.model.GigSet
+import com.amolieres.setlistync.core.domain.band.usecase.AddSetToGigUseCase
 import com.amolieres.setlistync.core.domain.band.usecase.ComputeSetlistDurationUseCase
 import com.amolieres.setlistync.core.domain.band.usecase.DeleteGigUseCase
 import com.amolieres.setlistync.core.domain.band.usecase.ObserveGigsForBandUseCase
+import com.amolieres.setlistync.core.domain.band.usecase.RemoveSetFromGigUseCase
+import com.amolieres.setlistync.core.domain.band.usecase.RenameGigSetUseCase
 import com.amolieres.setlistync.core.domain.band.usecase.UpdateGigUseCase
 import com.amolieres.setlistync.core.domain.preferences.ObserveNotationUseCase
 import com.amolieres.setlistync.core.domain.song.model.Song
@@ -27,7 +31,10 @@ class GigDetailViewModel(
     observeSongs: ObserveSongsUseCase,
     observeNotation: ObserveNotationUseCase,
     private val computeSetlistDuration: ComputeSetlistDurationUseCase,
-    private val deleteGig: DeleteGigUseCase
+    private val deleteGig: DeleteGigUseCase,
+    private val addSetToGig: AddSetToGigUseCase,
+    private val removeSetFromGig: RemoveSetFromGigUseCase,
+    private val renameGigSet: RenameGigSetUseCase
 ) : ViewModel() {
 
     val bandId: String = checkNotNull(savedStateHandle.get<String>("bandId"))
@@ -40,24 +47,24 @@ class GigDetailViewModel(
     private val _uiState = MutableStateFlow(GigDetailUiState(isEditing = initialIsEditing))
     val uiState: StateFlow<GigDetailUiState> = _uiState
 
-    // Latest snapshot of all band songs — needed by refreshDerivedSongLists
+    // Latest snapshot of all band songs and current gig
     private var allSongs: List<Song> = emptyList()
     private var currentGig: Gig? = null
 
-    // Ordered IDs received from the gig before songs have loaded
-    private var pendingOrderedIds: List<SongId> = emptyList()
+    // Gig sets received before songs have loaded
+    private var gigSetsBeforeSongsLoaded: List<GigSet>? = null
 
     init {
-        // Observe the specific gig — every DB change flows through here and drives state updates
+        // Observe the specific gig
         viewModelScope.launch {
             observeGigsForBand(bandId).collect { gigs ->
                 val gig = gigs.find { it.id == gigId }
                 currentGig = gig
                 if (gig != null) {
                     if (allSongs.isEmpty()) {
-                        pendingOrderedIds = gig.orderedSongIds
+                        gigSetsBeforeSongsLoaded = gig.sets
                     } else {
-                        refreshDerivedSongLists(gig.orderedSongIds)
+                        refreshDerivedSetsState(gig.sets)
                     }
                 }
                 _uiState.update { it.copy(isLoading = false, gig = gig) }
@@ -68,14 +75,11 @@ class GigDetailViewModel(
         viewModelScope.launch {
             observeSongs(bandId).collect { songs ->
                 allSongs = songs
-                val orderedIds = if (pendingOrderedIds.isNotEmpty()) {
-                    val ids = pendingOrderedIds
-                    pendingOrderedIds = emptyList()
-                    ids
-                } else {
-                    _uiState.value.setlistSongs.map { it.id }
-                }
-                refreshDerivedSongLists(orderedIds)
+                val setsToRefresh = gigSetsBeforeSongsLoaded
+                    ?: currentGig?.sets
+                    ?: emptyList()
+                gigSetsBeforeSongsLoaded = null
+                refreshDerivedSetsState(setsToRefresh)
             }
         }
 
@@ -88,19 +92,35 @@ class GigDetailViewModel(
     }
 
     /**
-     * Sole entry point for rebuilding setlist-related state.
-     * Called exclusively by the observables above — never directly by user actions.
+     * Rebuilds the sets UI state from the domain [sets] and [allSongs].
+     * Also refreshes catalog if a song-add sheet is open.
      */
-    private fun refreshDerivedSongLists(orderedIds: List<SongId>) {
+    private fun refreshDerivedSetsState(sets: List<GigSet>) {
         val songMap = allSongs.associateBy { it.id }
-        val setlist = orderedIds.mapNotNull { songMap[it] }
-        val setlistIds = setlist.map { it.id }.toSet()
-        val catalog = allSongs.filter { it.id !in setlistIds }
+        val gigSetUiStates = sets.map { set ->
+            val songs = set.orderedSongIds.mapNotNull { songMap[it] }
+            GigDetailUiState.GigSetUiState(
+                setId = set.id,
+                title = set.title,
+                songs = songs,
+                durationSeconds = computeSetlistDuration(songs)
+            )
+        }
+        val totalDuration = gigSetUiStates.sumOf { it.durationSeconds }
+        // Refresh catalog if the add-song sheet is open
+        val addingSongsToSetId = _uiState.value.addingSongsToSetId
+        val catalog = if (addingSongsToSetId != null) {
+            val idsInSet = sets.find { it.id == addingSongsToSetId }
+                ?.orderedSongIds?.toSet() ?: emptySet()
+            allSongs.filter { it.id !in idsInSet }
+        } else {
+            _uiState.value.catalogSongs
+        }
         _uiState.update {
             it.copy(
-                setlistSongs = setlist,
-                catalogSongs = catalog,
-                setlistDurationSeconds = computeSetlistDuration(setlist)
+                sets = gigSetUiStates,
+                totalDurationSeconds = totalDuration,
+                catalogSongs = catalog
             )
         }
     }
@@ -115,35 +135,83 @@ class GigDetailViewModel(
                 deleteGig(gigId)
                 _event.emit(GigDetailEvent.NavigateBack)
             }
-            GigDetailUiEvent.OnAddSongsClicked ->
-                _uiState.update { it.copy(showAddSongsSheet = true) }
+            is GigDetailUiEvent.OnAddSongsClicked -> openAddSongsSheet(event.setId)
             GigDetailUiEvent.OnAddSongsDismissed ->
-                _uiState.update { it.copy(showAddSongsSheet = false) }
-            is GigDetailUiEvent.OnSongAddedToSetlist -> addSongToSetlist(event.songId)
-            is GigDetailUiEvent.OnSongRemovedFromSetlist -> removeSongFromSetlist(event.songId)
-            is GigDetailUiEvent.OnSetlistReordered -> persistSetlist(event.newOrder)
+                _uiState.update { it.copy(addingSongsToSetId = null) }
+            is GigDetailUiEvent.OnSongAddedToSetlist -> addSongToSet(event.setId, event.songId)
+            is GigDetailUiEvent.OnSongRemovedFromSetlist -> removeSongFromSet(event.setId, event.songId)
+            is GigDetailUiEvent.OnSetlistReordered -> reorderSet(event.setId, event.newOrder)
+            GigDetailUiEvent.OnAddSetClicked -> viewModelScope.launch { addSetToGig(gigId) }
+            is GigDetailUiEvent.OnRemoveSetClicked -> viewModelScope.launch { removeSetFromGig(gigId, event.setId) }
+            is GigDetailUiEvent.OnEditSetTitleClicked -> openEditSetTitleDialog(event.setId)
+            is GigDetailUiEvent.OnSetTitleChanged ->
+                _uiState.update { it.copy(editingSetTitleInput = event.title) }
+            GigDetailUiEvent.OnSetTitleConfirmed -> confirmSetTitle()
+            GigDetailUiEvent.OnSetTitleDismissed ->
+                _uiState.update { it.copy(editingSetTitleSetId = null) }
         }
     }
 
-    // ── Setlist mutations — write to DB only; state is driven by the observable ──
+    // ── Catalog / sheet ───────────────────────────────────────────────────────
 
-    private fun addSongToSetlist(songId: SongId) {
-        val currentIds = _uiState.value.setlistSongs.map { it.id }
-        if (songId in currentIds) return
-        persistSetlist(currentIds + songId)
+    private fun openAddSongsSheet(setId: String) {
+        val idsInSet = currentGig?.sets?.find { it.id == setId }
+            ?.orderedSongIds?.toSet() ?: emptySet()
+        val catalog = allSongs.filter { it.id !in idsInSet }
+        _uiState.update { it.copy(addingSongsToSetId = setId, catalogSongs = catalog) }
     }
 
-    private fun removeSongFromSetlist(songId: SongId) {
-        val currentIds = _uiState.value.setlistSongs.map { it.id }
-        persistSetlist(currentIds.filter { it != songId })
-    }
+    // ── Setlist mutations — write to DB; state driven by observable ────────
 
-    /** Persists [orderedSongIds] to the DB. The gig observable picks up the change and
-     *  calls [refreshDerivedSongLists], which is the only place that updates setlist state. */
-    private fun persistSetlist(orderedSongIds: List<SongId>) {
+    private fun addSongToSet(setId: String, songId: SongId) {
         val gig = currentGig ?: return
+        val updatedSets = gig.sets.map { set ->
+            if (set.id == setId && songId !in set.orderedSongIds) {
+                set.copy(orderedSongIds = set.orderedSongIds + songId)
+            } else set
+        }
+        persistSets(gig, updatedSets)
+        // Optimistically refresh catalog so just-added song disappears from sheet
+        val updatedSet = updatedSets.find { it.id == setId }
+        val idsInSet = updatedSet?.orderedSongIds?.toSet() ?: emptySet()
+        _uiState.update { it.copy(catalogSongs = allSongs.filter { s -> s.id !in idsInSet }) }
+    }
+
+    private fun removeSongFromSet(setId: String, songId: SongId) {
+        val gig = currentGig ?: return
+        val updatedSets = gig.sets.map { set ->
+            if (set.id == setId) set.copy(orderedSongIds = set.orderedSongIds - songId) else set
+        }
+        persistSets(gig, updatedSets)
+    }
+
+    private fun reorderSet(setId: String, newOrder: List<SongId>) {
+        val gig = currentGig ?: return
+        val updatedSets = gig.sets.map { set ->
+            if (set.id == setId) set.copy(orderedSongIds = newOrder) else set
+        }
+        persistSets(gig, updatedSets)
+    }
+
+    private fun persistSets(gig: Gig, sets: List<GigSet>) {
+        viewModelScope.launch { updateGig(gig.copy(sets = sets)) }
+    }
+
+    // ── Set title dialog ──────────────────────────────────────────────────────
+
+    private fun openEditSetTitleDialog(setId: String) {
+        val currentTitle = currentGig?.sets?.find { it.id == setId }?.title ?: ""
+        _uiState.update {
+            it.copy(editingSetTitleSetId = setId, editingSetTitleInput = currentTitle)
+        }
+    }
+
+    private fun confirmSetTitle() {
+        val state = _uiState.value
+        val setId = state.editingSetTitleSetId ?: return
+        _uiState.update { it.copy(editingSetTitleSetId = null) }
         viewModelScope.launch {
-            updateGig(gig.copy(orderedSongIds = orderedSongIds))
+            renameGigSet(gigId, setId, state.editingSetTitleInput.trim().ifEmpty { null })
         }
     }
 }

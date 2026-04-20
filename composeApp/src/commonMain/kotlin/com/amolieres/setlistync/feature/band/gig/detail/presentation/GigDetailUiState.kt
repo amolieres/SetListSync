@@ -8,12 +8,22 @@ data class GigDetailUiState(
     val isLoading: Boolean = true,
     val isEditing: Boolean = false,
     val gig: Gig? = null,
-    val setlistDurationSeconds: Int = 0,
-    // Setlist
-    val setlistSongs: List<Song> = emptyList(),
+    val totalDurationSeconds: Int = 0,
+    // Multi-set state
+    val sets: List<GigSetUiState> = emptyList(),
     val catalogSongs: List<Song> = emptyList(),
-    // UI dialogs
-    val showAddSongsSheet: Boolean = false,
+    // Which set's add-song sheet is open (null = closed)
+    val addingSongsToSetId: String? = null,
+    // Set title editing dialog
+    val editingSetTitleSetId: String? = null,
+    val editingSetTitleInput: String = "",
     // Preferences
     val noteNotation: NoteNotation = NoteNotation.FR
-)
+) {
+    data class GigSetUiState(
+        val setId: String,
+        val title: String?,
+        val songs: List<Song>,
+        val durationSeconds: Int
+    )
+}

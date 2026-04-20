@@ -3,8 +3,8 @@ package com.amolieres.setlistync.core.data.band
 import com.amolieres.setlistync.core.data.local.dao.GigDao
 import com.amolieres.setlistync.core.data.local.entity.GigEntity
 import com.amolieres.setlistync.core.domain.band.model.Gig
+import com.amolieres.setlistync.core.domain.band.model.GigSet
 import com.amolieres.setlistync.core.domain.band.repository.GigRepository
-import com.amolieres.setlistync.core.domain.song.model.SongId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
@@ -49,7 +49,7 @@ class GigRepositoryImpl(
         venue = venue,
         dateEpochMs = date?.let { it.epochSeconds * 1000L + it.nanosecondsOfSecond / 1_000_000 },
         expectedDurationMinutes = expectedDurationMinutes,
-        orderedSongIds = Json.encodeToString(orderedSongIds.map { it.value })
+        sets = Json.encodeToString(sets)
     )
 
     @OptIn(ExperimentalTime::class)
@@ -59,6 +59,6 @@ class GigRepositoryImpl(
         venue = venue,
         date = dateEpochMs?.let { Instant.fromEpochMilliseconds(it) },
         expectedDurationMinutes = expectedDurationMinutes,
-        orderedSongIds = Json.decodeFromString<List<String>>(orderedSongIds).map { SongId(it) }
+        sets = Json.decodeFromString<List<GigSet>>(sets)
     )
 }

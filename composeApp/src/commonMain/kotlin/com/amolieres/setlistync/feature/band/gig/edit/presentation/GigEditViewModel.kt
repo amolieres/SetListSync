@@ -98,7 +98,7 @@ class GigEditViewModel(
                 } ?: state.dateMillis,
                 expectedDurationInput = gig.expectedDurationMinutes?.toString()
                     ?: state.expectedDurationInput,
-                importedSongIds = gig.orderedSongIds
+                importedSets = gig.sets
             )
         }
     }
@@ -120,7 +120,7 @@ class GigEditViewModel(
                     venue = venue,
                     date = date,
                     expectedDurationMinutes = expectedDuration,
-                    orderedSongIds = state.importedSongIds
+                    sets = state.importedSets
                 ).onSuccess { gig ->
                     _event.emit(GigEditEvent.NavigateToGigDetail(gig.id))
                 }.onFailure {

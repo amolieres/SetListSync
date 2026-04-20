@@ -61,7 +61,7 @@ import setlistsync.composeapp.generated.resources.gig_field_venue
 import setlistsync.composeapp.generated.resources.gig_import_btn
 import setlistsync.composeapp.generated.resources.gig_import_no_previous
 import setlistsync.composeapp.generated.resources.gig_import_sheet_title
-import setlistsync.composeapp.generated.resources.gig_import_songs_count
+import setlistsync.composeapp.generated.resources.gig_import_sets_count
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
@@ -132,8 +132,8 @@ fun GigEditScreen(
                         supportingContent = {
                             val subtitleParts = buildList {
                                 gig.date?.let { add(it.toString().take(10)) }
-                                val count = gig.orderedSongIds.size
-                                if (count > 0) add("$count songs")
+                                val setCount = gig.sets.size
+                                if (setCount > 0) add("$setCount sets")
                             }
                             if (subtitleParts.isNotEmpty()) {
                                 Text(subtitleParts.joinToString(" · "))
@@ -201,18 +201,14 @@ fun GigEditScreen(
                         Text(stringResource(Res.string.gig_import_btn))
                     }
 
-                    if (!uiState.importedSongIds.isEmpty()) {
+                    if (uiState.importedSets.isNotEmpty()) {
                         Text(
-                            text =
-                                stringResource(
-                                    Res.string.gig_import_songs_count,
-                                    uiState.importedSongIds.size
-                                ),
+                            text = stringResource(
+                                Res.string.gig_import_sets_count,
+                                uiState.importedSets.size
+                            ),
                             style = MaterialTheme.typography.bodySmall,
-                            color = if (uiState.importedSongIds.isEmpty())
-                                MaterialTheme.colorScheme.onSurfaceVariant
-                            else
-                                MaterialTheme.colorScheme.primary
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
                 }

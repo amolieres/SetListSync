@@ -57,6 +57,11 @@ val useCaseModule = module {
     factory { ReorderGigUseCase(get()) }
     factory { ComputeGigDurationUseCase(get(), get()) }
 
+    // Gig — Set management
+    factory { AddSetToGigUseCase(get()) }
+    factory { RemoveSetFromGigUseCase(get()) }
+    factory { RenameGigSetUseCase(get()) }
+
     // Song
     factory { AddSongUseCase(get()) }
     factory { GetAllSongsUseCase(get()) }

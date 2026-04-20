@@ -1,8 +1,8 @@
 package com.amolieres.setlistync.core.domain.band.usecase
 
 import com.amolieres.setlistync.core.domain.band.model.Gig
+import com.amolieres.setlistync.core.domain.band.model.GigSet
 import com.amolieres.setlistync.core.domain.band.repository.GigRepository
-import com.amolieres.setlistync.core.domain.song.model.SongId
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 import kotlin.uuid.ExperimentalUuidApi
@@ -15,7 +15,7 @@ class CreateGigUseCase(private val repo: GigRepository) {
         venue: String? = null,
         date: Instant? = null,
         expectedDurationMinutes: Int? = null,
-        orderedSongIds: List<SongId> = emptyList()
+        sets: List<GigSet> = emptyList()
     ): Result<Gig> = runCatching {
         val gig = Gig(
             id = Uuid.random().toString(),
@@ -23,7 +23,7 @@ class CreateGigUseCase(private val repo: GigRepository) {
             venue = venue?.trim(),
             date = date,
             expectedDurationMinutes = expectedDurationMinutes,
-            orderedSongIds = orderedSongIds
+            sets = sets
         )
         repo.addGig(gig)
         gig

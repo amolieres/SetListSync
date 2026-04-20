@@ -122,6 +122,17 @@
     <string name="gig_import_sheet_title">Select a concert</string>
     <string name="gig_import_no_previous">No previous concerts available.</string>
     <string name="gig_import_songs_count">%1$d songs imported</string>
+    <string name="gig_import_sets_count">%1$d sets imported</string>
+
+    <!-- ── Gig detail stats ──────────────────────────────────────── -->
+    <string name="gig_stats_songs">Songs</string>
+    <string name="gig_stats_duration">Duration</string>
+
+    <!-- ── Gig multi-set ─────────────────────────────────────────── -->
+    <string name="gig_set_default_title">Set %1$d</string>
+    <string name="gig_add_set">Add a set</string>
+    <string name="gig_remove_set">Remove set</string>
+    <string name="gig_set_title_dialog_hint">Set title (optional)</string>
 
     <!-- ── Delete band dialog ────────────────────────────────────── -->
     <string name="delete_band_title">Delete band</string>

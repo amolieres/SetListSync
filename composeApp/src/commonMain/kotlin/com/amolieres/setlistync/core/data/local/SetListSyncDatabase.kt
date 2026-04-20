@@ -21,7 +21,7 @@ import com.amolieres.setlistync.core.data.local.entity.*
         SongNoteEntity::class,
         GigEntity::class,
     ],
-    version = 5,
+    version = 6,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -66,6 +66,31 @@ abstract class SetListSyncDatabase : RoomDatabase() {
                 connection.execSQL(
                     "INSERT INTO gigs_new (id, bandId, venue, dateEpochMs, expectedDurationMinutes, orderedSongIds) " +
                     "SELECT id, bandId, venue, dateEpochMs, expectedDurationMinutes, '[]' FROM gigs"
+                )
+                connection.execSQL("DROP TABLE gigs")
+                connection.execSQL("ALTER TABLE gigs_new RENAME TO gigs")
+            }
+        }
+        val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(connection: SQLiteConnection) {
+                // Replace orderedSongIds column with sets column.
+                // Each existing gig is migrated to a single default set containing its songs.
+                connection.execSQL(
+                    "CREATE TABLE gigs_new (" +
+                    "id TEXT NOT NULL PRIMARY KEY, " +
+                    "bandId TEXT NOT NULL, " +
+                    "venue TEXT, " +
+                    "dateEpochMs INTEGER, " +
+                    "expectedDurationMinutes INTEGER, " +
+                    "sets TEXT NOT NULL DEFAULT '[]')"
+                )
+                // Migrate data: wrap each gig's orderedSongIds in a default GigSet JSON structure.
+                // Each set gets id="set_"||gig.id, title=null, orderedSongIds=<existing song ids>.
+                connection.execSQL(
+                    "INSERT INTO gigs_new (id, bandId, venue, dateEpochMs, expectedDurationMinutes, sets) " +
+                    "SELECT id, bandId, venue, dateEpochMs, expectedDurationMinutes, " +
+                    "'[{\"id\":\"set_'||id||'\",\"title\":null,\"orderedSongIds\":'||orderedSongIds||'}]' " +
+                    "FROM gigs"
                 )
                 connection.execSQL("DROP TABLE gigs")
                 connection.execSQL("ALTER TABLE gigs_new RENAME TO gigs")

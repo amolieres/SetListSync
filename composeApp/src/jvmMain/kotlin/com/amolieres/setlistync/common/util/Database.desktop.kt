@@ -12,6 +12,7 @@ fun getDatabaseBuilder(): RoomDatabase.Builder<SetListSyncDatabase> {
     ).addMigrations(
         SetListSyncDatabase.MIGRATION_2_3,
         SetListSyncDatabase.MIGRATION_3_4,
-        SetListSyncDatabase.MIGRATION_4_5
+        SetListSyncDatabase.MIGRATION_4_5,
+        SetListSyncDatabase.MIGRATION_5_6
     )
 }

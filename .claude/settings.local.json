@@ -5,7 +5,10 @@
       "Bash(tree:*)",
       "Bash(./gradlew :composeApp:compileTestKotlinJvm)",
       "Bash(ls:*)",
-      "Bash(./gradlew :composeApp:compileKotlinJvm:*)"
+      "Bash(./gradlew :composeApp:compileKotlinJvm:*)",
+      "Bash(./gradlew :composeApp:tasks:*)",
+      "Bash(./gradlew:*)",
+      "Bash(grep:*)"
     ]
   }
 }

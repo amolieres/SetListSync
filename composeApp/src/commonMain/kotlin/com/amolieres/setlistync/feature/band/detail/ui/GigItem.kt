@@ -64,7 +64,7 @@ fun GigItem(
                 // Date + song count subtitle
                 val subtitleParts = buildList {
                     gig.date?.let { add(it.toString().take(10)) }
-                    val count = gig.orderedSongIds.size
+                    val count = gig.sets.sumOf { it.orderedSongIds.size }
                     if (count > 0) add("$count songs")
                     gig.expectedDurationMinutes?.let { add("~${it}min") }
                 }
@@ -102,8 +102,7 @@ fun PreviewGigItem() {
             bandId = "",
             venue = "venue",
             date = null,
-            expectedDurationMinutes = null,
-            orderedSongIds = emptyList()
+            expectedDurationMinutes = null
         ),
         onEdit = {},
         onDelete = {}

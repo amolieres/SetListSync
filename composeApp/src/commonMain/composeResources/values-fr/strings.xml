@@ -125,6 +125,17 @@
     <string name="gig_import_sheet_title">Sélectionner un concert</string>
     <string name="gig_import_no_previous">Aucun concert précédent disponible.</string>
     <string name="gig_import_songs_count">%1$d morceaux importés</string>
+    <string name="gig_import_sets_count">%1$d sets importés</string>
+
+    <!-- ── Statistiques du concert ───────────────────────────────── -->
+    <string name="gig_stats_songs">Morceaux</string>
+    <string name="gig_stats_duration">Durée</string>
+
+    <!-- ── Multi-sets par concert ────────────────────────────────── -->
+    <string name="gig_set_default_title">Set %1$d</string>
+    <string name="gig_add_set">Ajouter un set</string>
+    <string name="gig_remove_set">Supprimer le set</string>
+    <string name="gig_set_title_dialog_hint">Titre du set (optionnel)</string>
 
     <!-- ── Dialogue de suppression du groupe ─────────────────────── -->
     <string name="delete_band_title">Supprimer le groupe</string>
