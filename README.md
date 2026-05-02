@@ -33,9 +33,16 @@ Managing setlists in a band often means juggling spreadsheets, PDFs, chat messag
   - **Deezer search** — search by title/artist and pre-fill all fields
   - **GetSongBPM auto-fill** — BPM and key enriched automatically after selection
   - Song count shown live on each band card (reactive flow)
-- ⚪️ Manage **gigs & setlists**
-  - song order
-  - compute total duration
+- 🟢 Manage **gigs & setlists**
+  - Create, edit, delete gigs (venue, date, expected duration)
+  - Multi-set architecture — each gig supports multiple sets (e.g. Set 1 / Set 2 / Encore)
+  - Add, rename, delete sets within a gig
+  - Add / remove songs from a set (bottom-sheet picker, filters out songs already in the set)
+  - Drag-and-drop song reordering within a set (`sh.calvin.reorderable`)
+  - Total duration computed per set and for the whole gig
+  - Gig statistics card (song count + total duration, reactive)
+  - Import sets from a previous gig on creation
+  - Edit / view toggle mode on `GigDetailScreen`
 - ⚪️ Add **member-specific song notes**
   - e.g. lyrics for singer, pedal settings for guitarist, first note for bassist
 - ⚪️ **Export setlists** as PDF or image for sharing
@@ -127,7 +134,7 @@ Make planning smarter:
 | App theme (Material 3) | 🟢 Done | Custom color scheme & typography + design system in `app/designsystem/` (dimensions, reusable components) |
 | App icon | 🟢 Done | Launcher icon for Android, iOS, Desktop |
 | Song feature | 🟢 Done | Full CRUD per band — `BandSongsScreen` (list with `SongItem` cards), `BandSongDetailScreen` (add/edit), Deezer search, GetSongBPM auto-fill, `SongKey` enum (30 keys, FR/EN display via `NoteNotation`), song count in band list |
-| Gig & SetList feature | ⚪️ Not started | Domain + data layer scaffolded, no UI yet |
+| Gig & SetList feature | 🟢 Done | Multi-set per gig, add/remove/reorder songs (drag-and-drop), duration computation, import sets from previous gig, edit/view toggle |
 | PDF export | ⚪️ Not started | — |
 
 ---
