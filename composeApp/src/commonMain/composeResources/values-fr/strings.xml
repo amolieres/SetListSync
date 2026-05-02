@@ -9,6 +9,9 @@
     <string name="action_yes">Oui</string>
     <string name="action_delete">Supprimer</string>
     <string name="action_close">Fermer</string>
+    <string name="action_done">Terminer</string>
+    <string name="action_confirm">Valider</string>
+    <string name="action_edit">Modifier</string>
 
     <!-- ── Étiquettes / placeholders ─────────────────────────────── -->
     <string name="label_band_name_required">Nom du groupe *</string>
@@ -37,10 +40,10 @@
         <item quantity="one">%1$d membre</item>
         <item quantity="other">%1$d membres</item>
     </plurals>
-    <plurals name="band_item_setlists">
-        <item quantity="zero">%1$d setlist</item>
-        <item quantity="one">%1$d setlist</item>
-        <item quantity="other">%1$d setlists</item>
+    <plurals name="band_item_gigs">
+        <item quantity="zero">%1$d concert</item>
+        <item quantity="one">%1$d concert</item>
+        <item quantity="other">%1$d concerts</item>
     </plurals>
 
     <!-- ── Détail du groupe — compteur de morceaux ────────────────── -->
@@ -80,6 +83,22 @@
     <string name="band_detail_cd_add_song">Ajouter un morceau</string>
     <string name="band_detail_songs_empty">Aucun morceau. Appuyez sur + pour en ajouter un.</string>
     <string name="band_detail_section_setlists">Set Lists</string>
+    <string name="band_detail_section_gigs">Concerts</string>
+    <string name="band_gigs_empty">Pas encore de concert. Appuie sur + pour en créer un.</string>
+    <string name="band_gigs_fab_add">Ajouter un concert</string>
+    <string name="gig_cd_delete">Supprimer le concert</string>
+    <string name="gig_detail_title_create">Nouveau concert</string>
+    <string name="gig_detail_title_edit">Modifier le concert</string>
+    <string name="gig_field_venue">Salle / Lieu (optionnel)</string>
+    <string name="gig_field_date_none">Pas de date</string>
+    <string name="gig_field_expected_duration">Durée prévue (min)</string>
+    <string name="gig_setlist_section">Setlist</string>
+    <string name="gig_setlist_empty">Aucun morceau dans la setlist.</string>
+    <string name="gig_add_songs">Ajouter des morceaux</string>
+    <string name="gig_action_edit">Modifier les infos du concert</string>
+    <string name="gig_summary_no_venue">Pas de lieu</string>
+    <string name="gig_edit_cd_delete">Supprimer le concert</string>
+    <string name="gig_delete_confirm_message">Voulez-vous supprimer ce concert ?</string>
     <string name="band_detail_section_info">Informations</string>
     <string name="band_detail_cd_edit_info">Modifier les informations</string>
     <string name="band_detail_no_info">Aucune information renseignée.</string>
@@ -101,6 +120,23 @@
     <string name="song_dialog_label_original_artist">Artiste original (optionnel)</string>
     <string name="song_cd_delete">Supprimer le morceau</string>
 
+    <!-- ── Importation d'un concert ──────────────────────────────── -->
+    <string name="gig_import_btn">Importer depuis un précédent concert</string>
+    <string name="gig_import_sheet_title">Sélectionner un concert</string>
+    <string name="gig_import_no_previous">Aucun concert précédent disponible.</string>
+    <string name="gig_import_songs_count">%1$d morceaux importés</string>
+    <string name="gig_import_sets_count">%1$d sets importés</string>
+
+    <!-- ── Statistiques du concert ───────────────────────────────── -->
+    <string name="gig_stats_songs">Morceaux</string>
+    <string name="gig_stats_duration">Durée</string>
+
+    <!-- ── Multi-sets par concert ────────────────────────────────── -->
+    <string name="gig_set_default_title">Set %1$d</string>
+    <string name="gig_add_set">Ajouter un set</string>
+    <string name="gig_remove_set">Supprimer le set</string>
+    <string name="gig_set_title_dialog_hint">Titre du set (optionnel)</string>
+
     <!-- ── Dialogue de suppression du groupe ─────────────────────── -->
     <string name="delete_band_title">Supprimer le groupe</string>
     <string name="delete_band_message">Voulez-vous vraiment supprimer \"%1$s\" et tous ses membres ?</string>
@@ -114,7 +150,6 @@
     <string name="band_members_cd_add">Ajouter un membre</string>
     <string name="band_members_empty">Aucun membre. Appuyez sur + pour en ajouter un.</string>
     <string name="band_members_default_name">Membre</string>
-    <string name="band_members_cd_edit">Modifier</string>
     <string name="band_members_cd_delete">Supprimer</string>
 
     <!-- ── Dialogue membre ────────────────────────────────────────── -->

@@ -3,10 +3,16 @@ package com.amolieres.setlistync.feature.band.songDetail.presentation
 import androidx.lifecycle.SavedStateHandle
 import com.amolieres.setlistync.core.domain.song.model.Song
 import com.amolieres.setlistync.core.domain.song.model.SongId
+import com.amolieres.setlistync.core.domain.preferences.ObserveNotationUseCase
+import com.amolieres.setlistync.core.domain.song.model.SongKey
 import com.amolieres.setlistync.core.domain.song.usecase.AddSongUseCase
+import com.amolieres.setlistync.core.domain.song.usecase.GetSongAudioFeaturesUseCase
 import com.amolieres.setlistync.core.domain.song.usecase.GetSongUseCase
+import com.amolieres.setlistync.core.domain.song.usecase.SearchSongsUseCase
 import com.amolieres.setlistync.core.domain.song.usecase.UpdateSongUseCase
+import com.amolieres.setlistync.fake.FakeSongCatalogRepository
 import com.amolieres.setlistync.fake.FakeSongRepository
+import com.amolieres.setlistync.fake.FakeUserPreferencesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -32,6 +38,8 @@ class BandSongDetailViewModelTest {
     private val testDispatcher = StandardTestDispatcher(testScheduler)
 
     private val fakeSongRepo = FakeSongRepository()
+    private val fakeSongCatalogRepo = FakeSongCatalogRepository()
+    private val fakePrefsRepo = FakeUserPreferencesRepository()
     private val bandId = "band-1"
 
     // Song with 3 min 33 sec, key Am, tempo 120, one external link
@@ -39,7 +47,7 @@ class BandSongDetailViewModelTest {
         id = SongId("s1"),
         title = "Summer Rain",
         durationSeconds = 213,
-        key = "Am",
+        key = SongKey.A_MINOR,
         tempo = 120,
         externalLinks = listOf("https://youtube.com/abc")
     )
@@ -63,7 +71,10 @@ class BandSongDetailViewModelTest {
             savedStateHandle = SavedStateHandle(args),
             getSong = GetSongUseCase(fakeSongRepo),
             addSong = AddSongUseCase(fakeSongRepo),
-            updateSong = UpdateSongUseCase(fakeSongRepo)
+            updateSong = UpdateSongUseCase(fakeSongRepo),
+            searchSongs = SearchSongsUseCase(fakeSongCatalogRepo),
+            getAudioFeatures = GetSongAudioFeaturesUseCase(fakeSongCatalogRepo),
+            observeNotation = ObserveNotationUseCase(fakePrefsRepo)
         )
     }
 
@@ -96,7 +107,7 @@ class BandSongDetailViewModelTest {
         assertEquals("", state.title)
         assertEquals("", state.minutes)
         assertEquals("", state.seconds)
-        assertEquals("", state.key)
+        assertNull(state.key)
         assertEquals("", state.tempo)
     }
 
@@ -133,9 +144,9 @@ class BandSongDetailViewModelTest {
     fun `OnKeyChanged updates key in state`() = runTest(testDispatcher) {
         val vm = buildViewModel()
         collectUiState(vm)
-        vm.onScreenEvent(BandSongDetailUiEvent.OnKeyChanged("C#"))
+        vm.onScreenEvent(BandSongDetailUiEvent.OnKeyChanged(SongKey.C_SHARP_MAJOR))
         advanceUntilIdle()
-        assertEquals("C#", vm.uiState.value.key)
+        assertEquals(SongKey.C_SHARP_MAJOR, vm.uiState.value.key)
     }
 
     @Test
@@ -266,7 +277,7 @@ class BandSongDetailViewModelTest {
 
         val state = vm.uiState.value
         assertEquals(existingSong.title, state.title)
-        assertEquals("Am", state.key)
+        assertEquals(SongKey.A_MINOR, state.key)
         assertEquals("120", state.tempo)
         assertFalse(state.isLoading)
     }

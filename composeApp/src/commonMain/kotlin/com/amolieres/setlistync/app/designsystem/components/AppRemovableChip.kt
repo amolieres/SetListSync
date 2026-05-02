@@ -39,6 +39,6 @@ fun AppRemovableChip(
 
 @Preview
 @Composable
-private fun AppRemovableChipPreview() {
+fun AppRemovableChipPreview() {
     AppRemovableChip(label = "Rock", onRemove = {})
 }

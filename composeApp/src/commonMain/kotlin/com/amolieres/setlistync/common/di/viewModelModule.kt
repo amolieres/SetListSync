@@ -3,6 +3,8 @@ package com.amolieres.setlistync.common.di
 import com.amolieres.setlistync.feature.band.creation.presentation.BandCreationViewModel
 import com.amolieres.setlistync.feature.band.detail.presentation.BandDetailViewModel
 import com.amolieres.setlistync.feature.band.edit.presentation.BandEditViewModel
+import com.amolieres.setlistync.feature.band.gig.detail.presentation.GigDetailViewModel
+import com.amolieres.setlistync.feature.band.gig.edit.presentation.GigEditViewModel
 import com.amolieres.setlistync.feature.band.members.presentation.BandMembersViewModel
 import com.amolieres.setlistync.feature.band.songDetail.presentation.BandSongDetailViewModel
 import com.amolieres.setlistync.feature.band.songs.presentation.BandSongsViewModel
@@ -13,13 +15,15 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val viewModelModule = module {
-    viewModel { UserAuthViewModel(get(), get(), get()) }         // CreateUserUseCase, LoginUserUseCase, AutoLoginUseCase
+    viewModel { UserAuthViewModel(get(), get(), get()) }
     viewModel { SettingsViewModel(get(), get(), get(), get(), get()) }
-    viewModel { MainViewModel(get()) }                                            // ObserveAllBandsUseCase
-    viewModel { BandCreationViewModel(get(), get()) }                             // CreateBandUseCase, AddMemberToBandUseCase
-    viewModel { BandDetailViewModel(get(), get(), get(), get()) }                 // SavedStateHandle, ObserveBandUseCase, DeleteBandUseCase, ObserveSongsUseCase
-    viewModel { BandEditViewModel(get(), get(), get()) }                          // SavedStateHandle, GetBandUseCase, UpdateBandUseCase
-    viewModel { BandMembersViewModel(get(), get(), get(), get(), get()) }         // SavedStateHandle, ObserveBandUseCase, AddMember, RemoveMember, UpdateMember
-    viewModel { BandSongsViewModel(get(), get(), get(), get(), get()) }            // SavedStateHandle, ObserveBandUseCase, ObserveSongsUseCase, DeleteSongUseCase, ObserveNotationUseCase
-    viewModel { BandSongDetailViewModel(get(), get(), get(), get(), get(), get(), get()) } // SavedStateHandle, GetSongUseCase, AddSongUseCase, UpdateSongUseCase, SearchSongsUseCase, GetSongAudioFeaturesUseCase, ObserveNotationUseCase
+    viewModel { MainViewModel(get()) }
+    viewModel { BandCreationViewModel(get(), get()) }
+    viewModel { BandDetailViewModel(get(), get(), get(), get(), get(), get()) }
+    viewModel { BandEditViewModel(get(), get(), get()) }
+    viewModel { BandMembersViewModel(get(), get(), get(), get(), get()) }
+    viewModel { BandSongsViewModel(get(), get(), get(), get(), get()) }
+    viewModel { BandSongDetailViewModel(get(), get(), get(), get(), get(), get(), get()) }
+    viewModel { GigDetailViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
+    viewModel { GigEditViewModel(get(), get(), get(), get(), get()) }
 }

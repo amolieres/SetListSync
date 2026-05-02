@@ -3,6 +3,7 @@ package com.amolieres.setlistync.feature.band.songs.presentation
 import androidx.lifecycle.SavedStateHandle
 import com.amolieres.setlistync.core.domain.band.model.Band
 import com.amolieres.setlistync.core.domain.band.usecase.ObserveBandUseCase
+import com.amolieres.setlistync.core.domain.preferences.ObserveNotationUseCase
 import com.amolieres.setlistync.core.domain.song.model.Song
 import com.amolieres.setlistync.core.domain.song.model.SongId
 import com.amolieres.setlistync.core.domain.song.usecase.DeleteSongUseCase
@@ -10,6 +11,7 @@ import com.amolieres.setlistync.core.domain.song.usecase.ObserveSongsUseCase
 import com.amolieres.setlistync.fake.FakeBandRepository
 import com.amolieres.setlistync.fake.FakeSongNoteRepository
 import com.amolieres.setlistync.fake.FakeSongRepository
+import com.amolieres.setlistync.fake.FakeUserPreferencesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -36,6 +38,7 @@ class BandSongsViewModelTest {
     private val fakeBandRepo = FakeBandRepository()
     private val fakeSongRepo = FakeSongRepository()
     private val fakeSongNoteRepo = FakeSongNoteRepository()
+    private val fakePrefsRepo = FakeUserPreferencesRepository()
     private val bandId = "band-1"
 
     private val viewModel by lazy {
@@ -43,7 +46,8 @@ class BandSongsViewModelTest {
             savedStateHandle = SavedStateHandle(mapOf("bandId" to bandId)),
             observeBand = ObserveBandUseCase(fakeBandRepo),
             observeSongs = ObserveSongsUseCase(fakeSongRepo),
-            deleteSong = DeleteSongUseCase(fakeSongRepo, fakeSongNoteRepo)
+            deleteSong = DeleteSongUseCase(fakeSongRepo, fakeSongNoteRepo),
+            observeNotation = ObserveNotationUseCase(fakePrefsRepo)
         )
     }
 

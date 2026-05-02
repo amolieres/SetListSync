@@ -3,9 +3,12 @@ package com.amolieres.setlistync.feature.band.presentation
 import androidx.lifecycle.SavedStateHandle
 import com.amolieres.setlistync.core.domain.band.model.Band
 import com.amolieres.setlistync.core.domain.band.usecase.DeleteBandUseCase
+import com.amolieres.setlistync.core.domain.band.usecase.DeleteGigUseCase
 import com.amolieres.setlistync.core.domain.band.usecase.ObserveBandUseCase
+import com.amolieres.setlistync.core.domain.band.usecase.ObserveGigsForBandUseCase
 import com.amolieres.setlistync.core.domain.song.usecase.ObserveSongsUseCase
 import com.amolieres.setlistync.fake.FakeBandRepository
+import com.amolieres.setlistync.fake.FakeGigRepository
 import com.amolieres.setlistync.fake.FakeSongRepository
 import com.amolieres.setlistync.feature.band.detail.presentation.BandDetailEvent
 import com.amolieres.setlistync.feature.band.detail.presentation.BandDetailUiEvent
@@ -36,6 +39,7 @@ class BandDetailViewModelTest {
 
     private val fakeRepo = FakeBandRepository()
     private val fakeSongRepo = FakeSongRepository()
+    private val fakeGigRepo = FakeGigRepository()
     private val bandId = "band-1"
 
     private val viewModel by lazy {
@@ -43,7 +47,9 @@ class BandDetailViewModelTest {
             savedStateHandle = SavedStateHandle(mapOf("bandId" to bandId)),
             observeBand = ObserveBandUseCase(fakeRepo),
             deleteBand = DeleteBandUseCase(fakeRepo),
-            observeSongs = ObserveSongsUseCase(fakeSongRepo)
+            observeSongs = ObserveSongsUseCase(fakeSongRepo),
+            observeGigs = ObserveGigsForBandUseCase(fakeGigRepo),
+            deleteGig = DeleteGigUseCase(fakeGigRepo)
         )
     }
 

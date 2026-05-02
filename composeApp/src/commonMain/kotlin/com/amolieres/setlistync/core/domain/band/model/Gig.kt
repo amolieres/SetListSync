@@ -12,5 +12,5 @@ data class Gig @OptIn(ExperimentalTime::class) constructor(
     val venue: String? = null,
     @Contextual val date: Instant? = null,
     val expectedDurationMinutes: Int? = null,
-    val setListIds: List<String>? = null
+    val sets: List<GigSet> = emptyList()
 )

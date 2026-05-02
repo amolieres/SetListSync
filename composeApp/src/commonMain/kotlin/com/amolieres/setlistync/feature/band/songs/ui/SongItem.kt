@@ -1,6 +1,7 @@
 package com.amolieres.setlistync.feature.band.songs.ui
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,7 +36,9 @@ fun SongItem(
     song: Song,
     noteNotation: NoteNotation,
     onEdit: () -> Unit,
-    onDelete: () -> Unit,
+    onDelete: (() -> Unit)? = null,
+    position: Int? = null,
+    dragHandleModifier: Modifier? = null,
     modifier: Modifier = Modifier
 ) {
     OutlinedCard(
@@ -48,12 +52,25 @@ fun SongItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(AppDimens.SpacingM)
         ) {
-            Icon(
-                imageVector = Icons.Default.MusicNote,
-                contentDescription = null,
-                modifier = Modifier.size(AppDimens.IconSizeMedium),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            if (position != null) {
+                Box(
+                    modifier = Modifier.size(AppDimens.IconSizeMedium),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = position.toString(),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            } else {
+                Icon(
+                    imageVector = Icons.Default.MusicNote,
+                    contentDescription = null,
+                    modifier = Modifier.size(AppDimens.IconSizeMedium),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
@@ -78,11 +95,21 @@ fun SongItem(
                 )
             }
 
-            IconButton(onClick = onDelete) {
+            if (onDelete != null) {
+                IconButton(onClick = onDelete) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = stringResource(Res.string.song_cd_delete),
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
+            if (dragHandleModifier != null) {
                 Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = stringResource(Res.string.song_cd_delete),
-                    tint = MaterialTheme.colorScheme.error
+                    imageVector = Icons.Default.DragHandle,
+                    contentDescription = null,
+                    modifier = dragHandleModifier.size(AppDimens.IconSizeMedium),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
@@ -93,7 +120,7 @@ fun SongItem(
 
 @Preview
 @Composable
-private fun SongItemFullPreview() {
+fun SongItemFullPreview() {
     SongItem(
         song = Song(
             id = SongId("1"),
@@ -111,7 +138,7 @@ private fun SongItemFullPreview() {
 
 @Preview
 @Composable
-private fun SongItemFrenchPreview() {
+fun SongItemFrenchPreview() {
     SongItem(
         song = Song(
             id = SongId("2"),
@@ -129,7 +156,7 @@ private fun SongItemFrenchPreview() {
 
 @Preview
 @Composable
-private fun SongItemMinimalPreview() {
+fun SongItemMinimalPreview() {
     SongItem(
         song = Song(
             id = SongId("3"),

@@ -44,7 +44,7 @@ fun AppLoadingButton(
 
 @Preview
 @Composable
-private fun AppLoadingButtonIdlePreview() {
+fun AppLoadingButtonIdlePreview() {
     AppLoadingButton(onClick = {}, isLoading = false) {
         Text("Enregistrer")
     }
@@ -52,7 +52,7 @@ private fun AppLoadingButtonIdlePreview() {
 
 @Preview
 @Composable
-private fun AppLoadingButtonLoadingPreview() {
+fun AppLoadingButtonLoadingPreview() {
     AppLoadingButton(onClick = {}, isLoading = true) {
         Text("Enregistrer")
     }

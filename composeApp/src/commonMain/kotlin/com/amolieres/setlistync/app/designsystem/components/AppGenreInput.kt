@@ -55,12 +55,12 @@ fun AppGenreInput(
 
 @Preview
 @Composable
-private fun AppGenreInputEmptyPreview() {
+fun AppGenreInputEmptyPreview() {
     AppGenreInput(value = "", onValueChange = {}, onAdd = {}, label = "Ajouter un style")
 }
 
 @Preview
 @Composable
-private fun AppGenreInputFilledPreview() {
+fun AppGenreInputFilledPreview() {
     AppGenreInput(value = "Rock", onValueChange = {}, onAdd = {}, label = "Ajouter un style")
 }

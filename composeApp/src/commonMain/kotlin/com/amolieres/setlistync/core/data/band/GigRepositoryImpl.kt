@@ -3,9 +3,10 @@ package com.amolieres.setlistync.core.data.band
 import com.amolieres.setlistync.core.data.local.dao.GigDao
 import com.amolieres.setlistync.core.data.local.entity.GigEntity
 import com.amolieres.setlistync.core.domain.band.model.Gig
+import com.amolieres.setlistync.core.domain.band.model.GigSet
 import com.amolieres.setlistync.core.domain.band.repository.GigRepository
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
@@ -24,6 +25,9 @@ class GigRepositoryImpl(
     override suspend fun getGigsByBandId(bandId: String): List<Gig> =
         gigDao.getGigsByBandId(bandId).map { it.toDomain() }
 
+    override fun observeGigsByBandId(bandId: String): Flow<List<Gig>> =
+        gigDao.observeGigsByBandId(bandId).map { list -> list.map { it.toDomain() } }
+
     override suspend fun updateGig(gig: Gig) {
         gigDao.updateGig(gig.toEntity())
     }
@@ -36,7 +40,7 @@ class GigRepositoryImpl(
         gigDao.deleteGigsByBandId(bandId)
     }
 
-    // --- Mappers ---
+    // ── Mappers ───────────────────────────────────────────────────────────────
 
     @OptIn(ExperimentalTime::class)
     private fun Gig.toEntity() = GigEntity(
@@ -45,7 +49,7 @@ class GigRepositoryImpl(
         venue = venue,
         dateEpochMs = date?.let { it.epochSeconds * 1000L + it.nanosecondsOfSecond / 1_000_000 },
         expectedDurationMinutes = expectedDurationMinutes,
-        setListIds = setListIds?.let { Json.encodeToString(it) }
+        sets = Json.encodeToString(sets)
     )
 
     @OptIn(ExperimentalTime::class)
@@ -55,6 +59,6 @@ class GigRepositoryImpl(
         venue = venue,
         date = dateEpochMs?.let { Instant.fromEpochMilliseconds(it) },
         expectedDurationMinutes = expectedDurationMinutes,
-        setListIds = setListIds?.let { Json.decodeFromString(it) }
+        sets = Json.decodeFromString<List<GigSet>>(sets)
     )
 }

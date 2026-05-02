@@ -46,7 +46,7 @@ fun AppConfirmDialog(
 
 @Preview
 @Composable
-private fun AppConfirmDialogPreview() {
+fun AppConfirmDialogPreview() {
     AppConfirmDialog(
         title = "Déconnexion",
         message = "Voulez-vous vraiment vous déconnecter ?",
@@ -59,7 +59,7 @@ private fun AppConfirmDialogPreview() {
 
 @Preview
 @Composable
-private fun AppConfirmDialogDestructivePreview() {
+fun AppConfirmDialogDestructivePreview() {
     AppConfirmDialog(
         title = "Supprimer le groupe",
         message = "Cette action est irréversible. Supprimer « The Rocketeers » ?",

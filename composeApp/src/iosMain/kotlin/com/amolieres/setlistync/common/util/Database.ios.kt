@@ -12,7 +12,12 @@ fun getDatabaseBuilder(): RoomDatabase.Builder<SetListSyncDatabase> {
     val dbFilePath = documentDirectory() + "/sls_room.db"
     return Room.databaseBuilder<SetListSyncDatabase>(
         name = dbFilePath,
-    ).addMigrations(SetListSyncDatabase.MIGRATION_2_3, SetListSyncDatabase.MIGRATION_3_4)
+    ).addMigrations(
+        SetListSyncDatabase.MIGRATION_2_3,
+        SetListSyncDatabase.MIGRATION_3_4,
+        SetListSyncDatabase.MIGRATION_4_5,
+        SetListSyncDatabase.MIGRATION_5_6
+    )
 }
 
 @OptIn(ExperimentalForeignApi::class)
